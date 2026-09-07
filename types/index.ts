@@ -45,8 +45,8 @@ export interface BankComparisonOption {
   bankName: string;
   accountPackage: string;
   welcomeBonus: string;
-  gicProcessingFee: string;
   monthlyFee: string;
+  studentRewards?: string;
   waterlooProximity: string;
   waterlooAddress: string;
   keyPerks: string[];
@@ -54,6 +54,7 @@ export interface BankComparisonOption {
   ctaLabel: string;
   isRecommendedFor?: string;
   isDigitalOnly?: boolean;
+  gicProcessingFee?: string;
 }
 
 export interface UserIntake {

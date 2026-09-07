@@ -587,7 +587,7 @@ export default function PerksHubPage() {
           </div>
 
           <Badge variant="emerald" className="self-start sm:self-auto font-mono text-[10px] sm:text-[11px] font-bold">
-            IRCC $23,448 vs $20,635 GIC Compliant
+            2026 Student Banking Packages
           </Badge>
         </div>
 

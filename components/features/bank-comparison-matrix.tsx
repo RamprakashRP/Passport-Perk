@@ -13,12 +13,12 @@ import {
   Award,
   Clock,
   Filter,
+  Gift,
 } from "lucide-react";
 import { BankComparisonOption } from "@/types";
 import { CANADIAN_BANK_OPTIONS } from "@/lib/data/default-tasks";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { IrccGicTooltip } from "@/components/ui/ircc-gic-tooltip";
 import { handleOutboundClick } from "@/lib/telemetry";
 import { cn } from "@/lib/utils";
 
@@ -36,8 +36,8 @@ export function BankComparisonMatrix({
   const filterOptions = [
     { id: "all", label: "All 5 Major Banks" },
     { id: "bonus", label: "Highest Welcome Bonus" },
-    { id: "proximity", label: "Closest to Campus Gates" },
-    { id: "fees", label: "Lowest GIC Processing Fee" },
+    { id: "rewards", label: "Points & Tech Rewards" },
+    { id: "proximity", label: "Closest to Campus" },
     { id: "digital", label: "100% Digital / No-Fee" },
   ];
 
@@ -50,8 +50,15 @@ export function BankComparisonMatrix({
         bank.welcomeBonus.includes("AirPods")
       );
     }
+    if (activeFilter === "rewards") {
+      return (
+        bank.studentRewards?.includes("Scene+") ||
+        bank.studentRewards?.includes("SPC+") ||
+        bank.studentRewards?.includes("Avion") ||
+        bank.studentRewards?.includes("TD Rewards")
+      );
+    }
     if (activeFilter === "proximity") return bank.id === "scotiabank" || bank.id === "td";
-    if (activeFilter === "fees") return bank.gicProcessingFee.includes("$0");
     if (activeFilter === "digital") return bank.isDigitalOnly;
     return true;
   });
@@ -91,13 +98,15 @@ export function BankComparisonMatrix({
               <Badge variant="zinc" className="text-[10px] font-mono font-semibold">
                 5 Major Institutions
               </Badge>
-              <IrccGicTooltip variant="pill" />
+              <Badge variant="emerald" className="text-[10px] font-bold">
+                2026 Student Offers
+              </Badge>
             </div>
             <h4 className="text-sm sm:text-base lg:text-lg font-bold tracking-tight text-white mt-0.5">
-              Canadian Student Banking & $23,448 vs $20,635 GIC Comparison Engine
+              Canadian Student Banking & Welcome Perks Suite
             </h4>
             <p className="text-xs text-zinc-400 mt-1 max-w-2xl leading-relaxed">
-              Objective side-by-side analysis of student chequing accounts, IRCC compliant GIC processing fees, welcome cash bonuses, and walking distance to campus gates.
+              Objective side-by-side analysis of student chequing accounts, welcome cash bonuses, tech rewards (AirPods & Scene+ points), zero monthly maintenance fees, and branch proximity to campus gates.
             </p>
           </div>
         </div>
@@ -163,24 +172,32 @@ export function BankComparisonMatrix({
                 <div className="space-y-2 pt-2 border-t border-white/[0.08] text-xs">
                   {/* Bonus */}
                   <div className="flex items-center justify-between p-2 rounded-xl bg-white/[0.03] border border-white/[0.07]">
-                    <span className="text-zinc-400 font-medium">Welcome Bonus</span>
-                    <span className="text-emerald-400 font-bold font-mono">
+                    <span className="text-zinc-400 font-medium flex items-center gap-1.5">
+                      <Gift className="w-3.5 h-3.5 text-emerald-400" />
+                      <span>Welcome Offer</span>
+                    </span>
+                    <span className="text-emerald-400 font-bold font-mono text-right text-[11px] sm:text-xs">
                       {bank.welcomeBonus}
                     </span>
                   </div>
 
-                  {/* GIC Processing Fee */}
-                  <div className="flex items-center justify-between p-2 rounded-xl bg-white/[0.03] border border-white/[0.07]">
-                    <span className="text-zinc-400 font-medium">GIC Processing Fee</span>
-                    <span className="text-zinc-200 font-mono font-semibold">
-                      {bank.gicProcessingFee}
-                    </span>
-                  </div>
+                  {/* Student Rewards */}
+                  {bank.studentRewards && (
+                    <div className="flex items-center justify-between p-2 rounded-xl bg-white/[0.03] border border-white/[0.07]">
+                      <span className="text-zinc-400 font-medium flex items-center gap-1.5">
+                        <Award className="w-3.5 h-3.5 text-blue-400" />
+                        <span>Rewards Program</span>
+                      </span>
+                      <span className="text-zinc-200 font-semibold text-right text-[11px]">
+                        {bank.studentRewards}
+                      </span>
+                    </div>
+                  )}
 
                   {/* Monthly Fee */}
                   <div className="flex items-center justify-between p-2 rounded-xl bg-white/[0.03] border border-white/[0.07]">
                     <span className="text-zinc-400 font-medium">Monthly Fee</span>
-                    <span className="text-zinc-200 font-mono font-semibold">
+                    <span className="text-emerald-300 font-mono font-semibold">
                       {bank.monthlyFee}
                     </span>
                   </div>
