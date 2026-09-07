@@ -414,16 +414,37 @@ export default function DocumentVaultPage() {
         </div>
       </div>
 
-      {/* Helpful Travel Notice */}
-      <div className="rounded-2xl bg-emerald-500/10 border border-emerald-500/20 p-5 flex items-start gap-3.5 shadow-2xs">
-        <Info className="w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5" />
-        <div className="space-y-1 text-xs">
-          <h4 className="font-bold text-emerald-300 text-sm">
-            Helpful Port of Entry Tip (2026)
-          </h4>
-          <p className="text-zinc-300 leading-relaxed">
-            Having physical printed copies of your Passport, Port of Entry (POE) Letter of Introduction, and Letter of Acceptance (LOA) in your personal bag makes clearing border customs fast and effortless, even if your phone battery is low or roaming data is unavailable.
-          </p>
+      {/* Helpful Travel & Airport SIN Notice */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="rounded-2xl bg-emerald-500/10 border border-emerald-500/20 p-4 sm:p-5 flex items-start gap-3.5 shadow-2xs">
+          <Info className="w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5" />
+          <div className="space-y-1 text-xs">
+            <h4 className="font-bold text-emerald-300 text-sm">
+              CBSA Border Inspection Protocol (2026)
+            </h4>
+            <p className="text-zinc-300 leading-relaxed">
+              Having physical printed copies of your Passport, Port of Entry (POE) Letter, and Letter of Acceptance (LOA) in your personal carry-on bag makes clearing customs fast and effortless, even if phone battery is low or roaming data is offline.
+            </p>
+          </div>
+        </div>
+
+        <div className="rounded-2xl bg-[#091e19]/90 border border-emerald-500/30 p-4 sm:p-5 flex items-start gap-3.5 shadow-2xs">
+          <div className="w-8 h-8 rounded-xl bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-300 flex-shrink-0 mt-0.5">
+            <Sparkles className="w-4 h-4 text-emerald-400" />
+          </div>
+          <div className="space-y-1 text-xs">
+            <div className="flex items-center gap-2">
+              <h4 className="font-bold text-white text-sm">
+                Airport Instant SIN Kiosk Hack
+              </h4>
+              <Badge variant="emerald" className="text-[9px] py-0 px-1.5 font-bold uppercase">
+                Save 4 Hours
+              </Badge>
+            </div>
+            <p className="text-zinc-300 leading-relaxed">
+              At <strong className="text-white">Toronto Pearson (Terminal 1 & 3)</strong> and <strong className="text-white">YVR Arrivals</strong>, Service Canada operates seasonal newcomer kiosks past baggage claim. Show your fresh Study Permit & Passport to get your official 9-digit SIN in <strong className="text-emerald-300">under 10 minutes</strong> before leaving the airport!
+            </p>
+          </div>
         </div>
       </div>
 

@@ -29,6 +29,8 @@ import {
   Music,
   CreditCard,
   Train,
+  Utensils,
+  Zap,
 } from "lucide-react";
 import { BankComparisonMatrix } from "@/components/features/bank-comparison-matrix";
 import { SubmitPerkCard } from "@/components/features/submit-perk-card";
@@ -57,51 +59,111 @@ interface PerkItem {
 }
 
 const EXCLUSIVE_PERKS: PerkItem[] = [
-  // --- TELECOM & CONNECTIVITY ---
+  // --- 2026 BANKING PROMOS & WELCOME PACKAGES ---
   {
-    id: "perk-esim-phonebox",
-    partnerId: "phonebox_airalo_esim",
-    category: "telecom",
-    title: "Canadian 5G eSIM Instant Activation",
-    partnerName: "Airalo / PhoneBox Canada",
-    badge: "15% Exclusive Student Discount",
-    valueNum: 35,
-    valueEst: "$35 CAD Saved",
+    id: "perk-td-student-promo",
+    partnerId: "td_student_gic",
+    category: "banking",
+    title: "TD Canada Trust 2026 Student Advantage Package",
+    partnerName: "TD Canada Trust",
+    badge: "Up to $350 Bonus + Guaranteed Card",
+    valueNum: 350,
+    valueEst: "$350 CAD Bonus Value",
     description:
-      "Activate an authentic Canadian mobile eSIM before boarding your flight. Zero airport roaming charges, instant QR code install, and 5G data the second you touch down in Canada.",
-    promoCode: "CANADA15",
+      "TD 2026 Student Offer: Earn up to $150 direct cash bonus on chequing, up to $200 in TD Rewards credit card points, guaranteed $1,000 credit limit with $0 Canadian credit history, and 7-day extended weekend branch hours.",
     keyPerks: [
-      "15% off any 10GB - 50GB 30-day Canadian data package",
-      "Instant eSIM profile download to Apple / Google Wallet",
-      "Local Canadian +1 phone number included for landlord & banking calls",
+      "Up to $150 cash bonus on chequing + up to $200 in TD Rewards credit card points",
+      "Guaranteed $1,000 credit limit without Canadian credit history or domestic co-signer",
+      "Extended 7-day branch network (open late evenings & Sundays near major campuses)",
     ],
-    ctaLabel: "Claim 15% Off eSIM",
-    ctaLink: "https://www.airalo.com/canada-esim?ref=passportperk",
+    ctaLabel: "Compare TD Student Package",
+    ctaLink: "https://www.td.com/ca/en/personal-banking/products/bank-accounts/chequing-accounts/student-chequing-account?ref=passportperk",
     regionSpecific: "All",
   },
   {
-    id: "perk-fizz-mobile",
-    partnerId: "fizz_mobile_student",
-    category: "telecom",
-    title: "Fizz Mobile Rollover Student Plans",
-    partnerName: "Fizz Mobile Canada",
-    badge: "$25 Welcome Referral Bonus",
-    valueNum: 75,
-    valueEst: "$75+ CAD Value",
+    id: "perk-rbc-student-promo",
+    partnerId: "rbc_student_advantage",
+    category: "banking",
+    title: "RBC Royal Bank 2026 Student Advantage Package",
+    partnerName: "RBC Royal Bank",
+    badge: "Free Apple AirPods or $100 Cash",
+    valueNum: 250,
+    valueEst: "$250 CAD Value",
     description:
-      "Canada's most flexible prepaid student network with 100% rollover unused data, customizable plans, and zero binding contracts or credit checks.",
-    promoCode: "FIZZ25",
+      "RBC 2026 Student Campaign: Choose between a Free pair of Apple AirPods (or tech credit) OR $100 cash bonus, plus Avion Points rewards on everyday debit card spending and NOMI AI automated financial budgeting.",
     keyPerks: [
-      "$25 CAD bill credit applied automatically on your 2nd month",
-      "Unused data automatically rolls over to your next month",
-      "No Canadian credit history or SIN required to activate",
+      "Free Apple AirPods or $100 cash bonus upon qualifying student account opening",
+      "Earn Avion Rewards points on everyday debit spending (redeemable for flights & Apple gear)",
+      "Integrated NOMI AI automated budgeting tracker inside the RBC mobile app",
     ],
-    ctaLabel: "Get $25 Fizz Credit",
-    ctaLink: "https://fizz.ca/en?ref=passportperk",
+    ctaLabel: "Compare RBC Student Package",
+    ctaLink: "https://www.rbcroyalbank.com/accounts/student-banking.html?ref=passportperk",
     regionSpecific: "All",
   },
 
-  // --- RETAIL, TECH & LIFESTYLE ---
+  // --- INSIDER SETTLEMENT & AIRPORT HACKS ---
+  {
+    id: "perk-airport-sin-hack",
+    partnerId: "service_canada_airport",
+    category: "transit",
+    title: "Pearson & YVR Airport Instant SIN Kiosk Shortcut",
+    partnerName: "Service Canada Airport Desks",
+    badge: "Skip 4-Hour Downtown Queues",
+    valueNum: 100,
+    valueEst: "Saves 4 Hours & $100 Time-Value",
+    description:
+      "Get your official 9-digit Social Insurance Number (SIN) printed in under 10 minutes right after baggage claim at Pearson Airport (Terminal 1 & 3 Arrivals) or Vancouver International (YVR). Skip the 3-4 hour lineups at downtown Service Canada centers and activate employer payroll immediately!",
+    keyPerks: [
+      "Seasonal Service Canada desks located inside Pearson T1/T3 & YVR Arrivals hall",
+      "Printed physical SIN confirmation letter in under 10 minutes with Study Permit & Passport",
+      "Enables immediate on-campus & off-campus payroll activation and bank verification on Day 1",
+    ],
+    ctaLabel: "View Airport SIN Desk Locations",
+    ctaLink: "https://www.canada.ca/en/employment-social-development/services/sin/before-applying.html",
+    regionSpecific: "All",
+  },
+
+  // --- DINING, FOOD & GROCERY HACKS ---
+  {
+    id: "perk-too-good-to-go",
+    partnerId: "too_good_to_go_ca",
+    category: "lifestyle",
+    title: "Too Good To Go (Surplus Restaurant & Grocery Meals)",
+    partnerName: "Too Good To Go Canada",
+    badge: "70% Off Meals ($3.99 - $6.99)",
+    valueNum: 500,
+    valueEst: "$500+ CAD / Year Saved",
+    description:
+      "Rescue delicious surplus meals, bakery boxes, and fresh groceries from top Canadian chains and local bakeries (Tim Hortons, Metro, Whole Foods, 7-Eleven, local cafes) for 1/3 of the retail price ($3.99 to $6.99 for $18 to $25 worth of food).",
+    keyPerks: [
+      "$18 to $25 CAD worth of fresh gourmet food for just $3.99 to $6.99",
+      "Hundreds of participating cafes, pizza joints, and supermarkets around UW, UofT, and UBC",
+      "Set push notifications to grab surprise bags during popular 4 PM - 8 PM pickup windows",
+    ],
+    ctaLabel: "Download Too Good To Go App",
+    ctaLink: "https://www.toogoodtogo.com/en-ca",
+    regionSpecific: "All",
+  },
+  {
+    id: "perk-pc-optimum-grocery",
+    partnerId: "pc_optimum_rewards",
+    category: "lifestyle",
+    title: "PC Optimum Grocery Hacks & 10-15% Student Tuesdays",
+    partnerName: "Loblaws / Zehrs / Shoppers Drug Mart",
+    badge: "10-15% Off Tuesdays + 20x Points",
+    valueNum: 380,
+    valueEst: "$380+ CAD / Year",
+    description:
+      "Stack student savings: 10%–15% off total grocery bills on Tuesdays at Zehrs, Real Canadian Superstore, and Bulk Barn (show Student ID), plus 20x Points events at Shoppers Drug Mart (30% equivalent cash back).",
+    keyPerks: [
+      "10-15% student discount off entire grocery cart every Tuesday (show WatCard/OneCard/TCard)",
+      "20x Points events at Shoppers Drug Mart (equivalent to 30% net cashback on essentials)",
+      "Stack with weekly digital app coupons to save $80+/month on everyday student groceries",
+    ],
+    ctaLabel: "Get PC Optimum & View Tuesday Stores",
+    ctaLink: "https://www.pcoptimum.ca/",
+    regionSpecific: "All",
+  },
   {
     id: "perk-spc-discount-card",
     partnerId: "spc_student_discount",
@@ -183,24 +245,48 @@ const EXCLUSIVE_PERKS: PerkItem[] = [
     ctaLink: "https://www.spotify.com/ca-en/student/",
     regionSpecific: "All",
   },
+
+  // --- TELECOM & CONNECTIVITY ---
   {
-    id: "perk-pc-optimum-grocery",
-    partnerId: "pc_optimum_rewards",
-    category: "lifestyle",
-    title: "PC Optimum Grocery & Pharmacy Rewards",
-    partnerName: "Loblaws / Shoppers Drug Mart",
-    badge: "Up to 30% Back in Free Groceries",
-    valueNum: 300,
-    valueEst: "$300+ CAD / Year",
+    id: "perk-esim-phonebox",
+    partnerId: "phonebox_airalo_esim",
+    category: "telecom",
+    title: "Canadian 5G eSIM Instant Activation",
+    partnerName: "Airalo / PhoneBox Canada",
+    badge: "15% Exclusive Student Discount",
+    valueNum: 35,
+    valueEst: "$35 CAD Saved",
     description:
-      "Earn points on everyday student grocery shopping at Zehrs, No Frills, Loblaws, and Shoppers Drug Mart. Redeem 10,000 points for $10 CAD cash off at the checkout register.",
+      "Activate an authentic Canadian mobile eSIM before boarding your flight. Zero airport roaming charges, instant QR code install, and 5G data the second you touch down in Canada.",
+    promoCode: "CANADA15",
     keyPerks: [
-      "Targeted weekly student coupons on milk, eggs, pantry staples, and produce",
-      "20x Points events at Shoppers Drug Mart (30% equivalent cash back)",
-      "Zero annual fees; digital card stored in Apple/Google Wallet",
+      "15% off any 10GB - 50GB 30-day Canadian data package",
+      "Instant eSIM profile download to Apple / Google Wallet",
+      "Local Canadian +1 phone number included for landlord & banking calls",
     ],
-    ctaLabel: "Join Free PC Optimum",
-    ctaLink: "https://www.pcoptimum.ca/",
+    ctaLabel: "Claim 15% Off eSIM",
+    ctaLink: "https://www.airalo.com/canada-esim?ref=passportperk",
+    regionSpecific: "All",
+  },
+  {
+    id: "perk-fizz-mobile",
+    partnerId: "fizz_mobile_student",
+    category: "telecom",
+    title: "Fizz Mobile Rollover Student Plans",
+    partnerName: "Fizz Mobile Canada",
+    badge: "$25 Welcome Referral Bonus",
+    valueNum: 75,
+    valueEst: "$75+ CAD Value",
+    description:
+      "Canada's most flexible prepaid student network with 100% rollover unused data, customizable plans, and zero binding contracts or credit checks.",
+    promoCode: "FIZZ25",
+    keyPerks: [
+      "$25 CAD bill credit applied automatically on your 2nd month",
+      "Unused data automatically rolls over to your next month",
+      "No Canadian credit history or SIN required to activate",
+    ],
+    ctaLabel: "Get $25 Fizz Credit",
+    ctaLink: "https://fizz.ca/en?ref=passportperk",
     regionSpecific: "All",
   },
 
@@ -438,21 +524,21 @@ export default function PerksHubPage() {
             <div className="flex items-center gap-2 flex-wrap">
               <Badge variant="emerald" className="px-2.5 sm:px-3 py-0.5 text-xs font-bold">
                 <Gift className="w-3.5 h-3.5 text-emerald-400" />
-                <span>Student Perks & Discounts</span>
+                <span>Student Perks & Insider Hacks</span>
               </Badge>
               <Badge variant="zinc" className="text-xs font-mono font-semibold">
-                12+ Verified Partner Offers
+                {EXCLUSIVE_PERKS.length} Verified Partner Deals
               </Badge>
               <IrccGicTooltip variant="pill" />
             </div>
 
             <h1 className="text-xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight bg-gradient-to-r from-white via-zinc-100 to-zinc-400 bg-clip-text text-transparent">
-              Student Discounts, Transit & Welcome Offers
+              Student Discounts, 2026 Bank Promos & Insider Hacks
             </h1>
 
             <p className="text-xs sm:text-sm text-zinc-400 leading-relaxed">
-              Curated student discounts, retail memberships, airport transit deals, and 5-bank comparison packages for newcomers arriving in{" "}
-              <strong className="text-white">{activeRegion.split(",")[0]}</strong>. All comparisons remain 100% objective and neutral.
+              Curated student discounts, retail memberships, airport SIN shortcuts, Too Good To Go food savings, and 5-bank comparison packages for newcomers arriving in{" "}
+              <strong className="text-white">{activeRegion.split(",")[0]}</strong>.
             </p>
           </div>
 
@@ -470,7 +556,7 @@ export default function PerksHubPage() {
 
             <div>
               <div className="text-2xl sm:text-3xl font-black font-mono text-white">
-                ${totalClaimedDollars > 0 ? totalClaimedDollars : totalAvailableDollars.toLocaleString()}<span className="text-emerald-400 text-lg sm:text-xl font-sans">+ CAD</span>
+                ${totalClaimedDollars > 0 ? totalClaimedDollars.toLocaleString() : totalAvailableDollars.toLocaleString()}<span className="text-emerald-400 text-lg sm:text-xl font-sans">+ CAD</span>
               </div>
               <p className="text-[11px] sm:text-xs text-zinc-400 mt-0.5">
                 {totalClaimedDollars > 0 ? "Saved so far in student welcome perks!" : "Estimated total student value across all verified perks"}
@@ -479,7 +565,7 @@ export default function PerksHubPage() {
 
             <div className="pt-2 border-t border-white/[0.08] flex items-center justify-between text-[11px] sm:text-xs text-zinc-400">
               <span>Avg. 1st Year Benefit:</span>
-              <span className="font-bold text-zinc-200">~$135 CAD / month</span>
+              <span className="font-bold text-zinc-200">~$175 CAD / month</span>
             </div>
           </div>
         </div>
@@ -492,7 +578,7 @@ export default function PerksHubPage() {
             <div className="flex items-center gap-2">
               <Building2 className="w-4 h-4 text-emerald-400" />
               <h2 className="text-lg sm:text-xl font-bold tracking-tight text-white">
-                5-Bank Canadian Student Comparison Matrix
+                5-Bank Canadian Student Comparison Matrix (2026 Promos)
               </h2>
             </div>
             <p className="text-xs text-zinc-400 mt-0.5 sm:mt-1">
@@ -518,20 +604,21 @@ export default function PerksHubPage() {
             <div className="flex items-center gap-2">
               <Sparkles className="w-4 h-4 text-amber-400" />
               <h2 className="text-lg sm:text-xl font-bold tracking-tight text-white">
-                Telecom, Transit & Student Retail Perks
+                Telecom, Transit, Dining & Retail Perks
               </h2>
             </div>
             <p className="text-xs text-zinc-400 mt-0.5 sm:mt-1">
-              Verified promo codes, student discounts, and transit passes to maximize your settlement budget.
+              Verified promo codes, student discounts, grocery hacks, and airport shortcuts to maximize your settlement budget.
             </p>
           </div>
 
           {/* Category Filter Pills (Touch Scrollable) */}
           <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
             {[
-              { id: "all", label: "All Perks (12)" },
-              { id: "transit", label: "Transit & Airport" },
-              { id: "lifestyle", label: "Discounts & Tech" },
+              { id: "all", label: `All Perks (${EXCLUSIVE_PERKS.length})` },
+              { id: "banking", label: "2026 Bank Promos" },
+              { id: "lifestyle", label: "Discounts & Food Hacks" },
+              { id: "transit", label: "Transit & Airport SIN" },
               { id: "telecom", label: "eSIM & Mobile" },
               { id: "housing", label: "Tenant Insurance" },
             ].map((cat) => (
@@ -584,6 +671,8 @@ export default function PerksHubPage() {
                               ? "blue"
                               : perk.category === "housing"
                               ? "amber"
+                              : perk.category === "banking"
+                              ? "emerald"
                               : "emerald"
                           }
                           className="font-mono text-[9px] sm:text-[10px] uppercase font-bold"

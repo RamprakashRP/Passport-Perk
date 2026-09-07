@@ -44,38 +44,38 @@ export const CANADIAN_BANK_OPTIONS: BankComparisonOption[] = [
     partnerId: "td_student_gic",
     bankName: "TD Canada Trust Student Package",
     accountPackage: "TD Student Chequing Account & $20,635 / $23,448 CAD GIC",
-    welcomeBonus: "$100 Cash Bonus",
-    gicProcessingFee: "$150 CAD",
-    monthlyFee: "$0 / month (no minimum balance required)",
+    welcomeBonus: "Up to $150–$350 Cash Bonus & 60K Points",
+    gicProcessingFee: "$150 CAD (Fee Rebates on Select Streams)",
+    monthlyFee: "$0 / month (unlimited Interac e-Transfers & debit)",
     waterlooProximity: "King & University (Waterloo), Bay & Bloor (Toronto), Broadway & Granville (Vancouver)",
     waterlooAddress: "255 King St N (Waterloo) | 77 Bloor St W (Toronto) | 999 W Broadway (Vancouver)",
     keyPerks: [
-      "Extended 7-day branch hours (open late evenings and weekends across Canada)",
-      "Guaranteed student credit card approval path without Canadian credit history",
-      "Seamless integration with TD Mobile Banking & Apple/Google Pay",
+      "2026 Welcome Offer: Up to $150 cash bonus on chequing + $200 bonus on TD Rewards credit card",
+      "Guaranteed $1,000 credit limit without Canadian credit history or domestic co-signer",
+      "Extended 7-day branch network (open late evenings and Sunday afternoons across campus corridors)",
     ],
-    ctaLink: "https://www.td.com/ca/en/personal-banking/products/bank-accounts/chequing-accounts/student-chequing-account?ref=newcomerengine",
-    ctaLabel: "Compare & Apply with TD Bank (7-Day Hours)",
-    isRecommendedFor: "Extended Weekend Hours & First Credit Card",
+    ctaLink: "https://www.td.com/ca/en/personal-banking/products/bank-accounts/chequing-accounts/student-chequing-account?ref=passportperk",
+    ctaLabel: "Compare & Apply with TD Bank (Up to $350 Bonus)",
+    isRecommendedFor: "Extended 7-Day Weekend Hours & Guaranteed Card",
   },
   {
     id: "rbc",
     partnerId: "rbc_student_advantage",
     bankName: "RBC Royal Bank Student Banking",
     accountPackage: "RBC Student Advantage Banking & $20,635 / $23,448 CAD GIC",
-    welcomeBonus: "$100 Bonus or Free Apple AirPods promo",
+    welcomeBonus: "$100 Cash Bonus OR Free Apple AirPods Promo",
     gicProcessingFee: "$150 CAD",
-    monthlyFee: "$0 / month while in full-time study",
+    monthlyFee: "$0 / month while enrolled in full-time study",
     waterlooProximity: "Uptown Waterloo, Royal Bank Plaza (Toronto), Robson & Burrard (Vancouver)",
     waterlooAddress: "34 King St S (Waterloo) | 200 Bay St (Toronto) | 1025 W Georgia St (Vancouver)",
     keyPerks: [
-      "Canada's largest financial institution with premier nationwide branch density",
-      "Avion Points rewards program on debit and credit card purchases",
-      "Integrated NOMI AI automated financial budgeting & savings insight",
+      "2026 Student Promo: Choose $100 direct cash or Free Apple AirPods / Beats tech credit",
+      "Avion Points rewards program on everyday debit and credit card spending (redeemable for flights & tech)",
+      "Integrated NOMI AI automated financial budgeting & savings insight inside the RBC app",
     ],
-    ctaLink: "https://www.rbcroyalbank.com/accounts/student-banking.html?ref=newcomerengine",
-    ctaLabel: "Compare & Apply with RBC (Avion Points)",
-    isRecommendedFor: "Largest National Network & Avion Points",
+    ctaLink: "https://www.rbcroyalbank.com/accounts/student-banking.html?ref=passportperk",
+    ctaLabel: "Compare & Apply with RBC (Free AirPods / $100)",
+    isRecommendedFor: "Free Apple AirPods / $100 & Largest National Network",
   },
   {
     id: "simplii",
@@ -315,31 +315,79 @@ export function getTasksForRegion(region: TargetCity = "Waterloo Region, ON"): T
       ],
     },
     {
-      id: "task-grocery-rewards",
-      title: isVancouver
-        ? "Download More Rewards & PC Optimum for Vancouver Grocery Points"
-        : "Download PC Optimum App for Grocery Points at Ontario Stores",
-      description: isVancouver
-        ? "Earn 10-30% back in grocery rewards points on everyday food shopping at Save-On-Foods, No Frills, and Shoppers Drug Mart across Metro Vancouver."
-        : "Earn 10-30% back in grocery rewards points on everyday food shopping at Zehrs, No Frills, Loblaws, and Shoppers Drug Mart.",
+      id: "task-airport-sin-hack",
+      title: "Airport Instant SIN Kiosk (Skip Downtown 4-Hour Queues)",
+      description: `💡 Insider Hack: At ${
+        isVancouver ? "Vancouver International (YVR International Arrivals)" : "Toronto Pearson (Terminal 1 & Terminal 3 Arrivals)"
+      }, Service Canada operates a seasonal newcomer desk directly after baggage claim. Present your Study Permit and Passport to receive your official 9-digit Social Insurance Number (SIN) in 10 minutes flat before leaving the terminal!`,
+      timelineStage: "transit_border",
+      priorityTier: "tier_1_mandatory",
+      category: "immigration",
+      isComplete: false,
+      cta_label: "View Airport SIN Desk Locations",
+      cta_link: "https://www.canada.ca/en/employment-social-development/services/sin/before-applying.html",
+      partnerId: "service_canada_airport",
+      isAffiliate: false,
+      estimatedTime: "10 mins",
+      impactLevel: "Critical",
+      localWaterlooTip: `Getting your SIN at ${
+        isVancouver ? "YVR" : "Pearson"
+      } saves you 3–4 hours of waiting in line at downtown Service Canada centers and allows you to activate employer payroll and bank accounts on Day 1.`,
+      keyRequirements: [
+        "Physical Study Permit issued by CBSA border officer",
+        "Original Passport with entry stamp / TRV",
+        "Printed or digital Canadian residential address",
+      ],
+    },
+    {
+      id: "task-too-good-to-go",
+      title: "Download Too Good To Go App (Surplus Gourmet Dining for 1/3 Price)",
+      description: "Save $500+ CAD/year on food. Rescue fresh surplus meals, bakery boxes, and grocery items from top Canadian restaurants, cafes, and supermarkets (Tim Hortons, Metro, 7-Eleven, local bakeries) for $3.99 to $6.99 (retail value $18 to $25).",
       timelineStage: "post_arrival",
       priorityTier: "tier_3_perks",
       category: "lifestyle",
       isComplete: false,
-      cta_label: "Download Grocery Rewards App",
+      cta_label: "Download Too Good To Go App",
+      cta_link: "https://www.toogoodtogo.com/en-ca",
+      partnerId: "too_good_to_go_ca",
+      isAffiliate: false,
+      estimatedTime: "3 mins",
+      impactLevel: "Recommended",
+      localWaterlooTip: isWaterloo
+        ? "Popular Waterloo pickup spots: Tim Hortons on University Ave, Sweet Dreams Teashop, Metro at Northfield, and local bakeries in Uptown Waterloo."
+        : isToronto
+        ? "Hundreds of Downtown Toronto cafes, Metro groceries, and sushi bars offer daily 70% off surprise bags."
+        : "Save on bakery boxes and organic groceries across Kitsilano, Broadway, and UBC campus.",
+      keyRequirements: [
+        "Download iOS / Android app and set notification alerts for 4 PM - 8 PM pickup windows",
+      ],
+    },
+    {
+      id: "task-grocery-rewards",
+      title: isVancouver
+        ? "PC Optimum & More Rewards: 10-15% Student Tuesdays & 20x Points"
+        : "PC Optimum Grocery Hack: 10-15% Student Tuesdays & 20x Points",
+      description: isVancouver
+        ? "Stack student grocery savings across Metro Vancouver: 10% student discount on Tuesdays, 20x PC Optimum Points events at Shoppers Drug Mart (30% back), and More Rewards at Save-On-Foods."
+        : "Stack student grocery savings: 10%–15% off total grocery bills on Tuesdays at Zehrs, Real Canadian Superstore, and Bulk Barn (show Student ID), plus 20x Points events at Shoppers Drug Mart (30% back).",
+      timelineStage: "post_arrival",
+      priorityTier: "tier_3_perks",
+      category: "lifestyle",
+      isComplete: false,
+      cta_label: "Download PC Optimum & View Tuesday Stores",
       cta_link: "https://www.pcoptimum.ca/",
       partnerId: "pc_optimum_rewards",
       isAffiliate: false,
       estimatedTime: "3 mins",
       impactLevel: "Recommended",
       localWaterlooTip: isWaterloo
-        ? "Closest student grocery locations: Zehrs at Conestoga Mall / University Ave, No Frills at Weber St N, and Shoppers in University Plaza."
+        ? "Tuesday Student Hack: Zehrs (Conestoga Mall & Laurentian) offers 10% off with WatCard/OneCard. Bulk Barn at King St gives 15% student discount on Wednesdays. Shoppers in University Plaza gives 20x points."
         : isToronto
-        ? "Accessible at all Metro, Loblaws, No Frills, and T&T Supermarket locations near subway stations."
-        : "Save-On-Foods at UBC Wesbrook Village & No Frills on 4th Ave provide the best student grocery value in Vancouver.",
+        ? "Tuesday Student Hack: Metro and Loblaws locations near UofT and TMU offer 10-15% student discounts every Tuesday/Wednesday."
+        : "Save-On-Foods (Wesbrook UBC) and No Frills (4th Ave) offer weekly student point multipliers and Tuesday discounts.",
       keyRequirements: [
-        "Download iOS / Android app",
-        "Scan barcode at self-checkout for instant student savings",
+        "Download PC Optimum iOS / Android app",
+        "Carry physical student ID card (WatCard, OneCard, TCard, UBC Card) for Tuesday register discounts",
       ],
     },
   ];

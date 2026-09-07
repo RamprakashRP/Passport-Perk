@@ -42,7 +42,14 @@ export function BankComparisonMatrix({
   ];
 
   const filteredBanks = CANADIAN_BANK_OPTIONS.filter((bank) => {
-    if (activeFilter === "bonus") return bank.welcomeBonus.includes("$150") || bank.welcomeBonus.includes("$400");
+    if (activeFilter === "bonus") {
+      return (
+        bank.welcomeBonus.includes("$150") ||
+        bank.welcomeBonus.includes("$350") ||
+        bank.welcomeBonus.includes("$400") ||
+        bank.welcomeBonus.includes("AirPods")
+      );
+    }
     if (activeFilter === "proximity") return bank.id === "scotiabank" || bank.id === "td";
     if (activeFilter === "fees") return bank.gicProcessingFee.includes("$0");
     if (activeFilter === "digital") return bank.isDigitalOnly;
