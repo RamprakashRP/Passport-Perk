@@ -81,6 +81,41 @@ export const metadata: Metadata = {
   },
 };
 
+const jsonLdStructuredData = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": "https://passportperk.com/#website",
+      "url": "https://passportperk.com",
+      "name": "PassportPerk",
+      "description": "Canadian newcomer settlement engine and student perks marketplace",
+      "inLanguage": "en-CA",
+    },
+    {
+      "@type": "Organization",
+      "@id": "https://passportperk.com/#organization",
+      "name": "PassportPerk",
+      "url": "https://passportperk.com",
+      "logo": "https://passportperk.com/favicon.ico",
+      "sameAs": ["https://github.com/RamprakashRP/Passport-Perk"],
+    },
+    {
+      "@type": "WebApplication",
+      "@id": "https://passportperk.com/#application",
+      "name": "PassportPerk Canadian Settlement Engine",
+      "url": "https://passportperk.com",
+      "applicationCategory": "FinanceApplication, EducationalApplication",
+      "operatingSystem": "All",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "CAD",
+      },
+    },
+  ],
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -106,6 +141,13 @@ export default function RootLayout({
                 page_path: window.location.pathname,
               });
             `,
+          }}
+        />
+        {/* Schema.org Structured Data (JSON-LD) for Search Engine Crawlers */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(jsonLdStructuredData),
           }}
         />
       </head>
