@@ -1,5 +1,5 @@
 -- =============================================================================
--- Supabase Schema for NorthStar Canadian Newcomer Settlement Engine
+-- Supabase Schema for PassportPerk Canadian Settlement & Student Perks Engine
 -- =============================================================================
 
 -- Enable UUID extension

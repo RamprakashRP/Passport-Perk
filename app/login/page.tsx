@@ -100,15 +100,15 @@ export default function LoginPage() {
       {/* Top Header */}
       <header className="w-full bg-[#080c14]/85 backdrop-blur-2xl border-b border-white/[0.08] h-16 flex items-center justify-between px-4 sm:px-6 lg:px-8 relative z-20">
         <Link href="/" className="flex items-center gap-2.5 group">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-zinc-950 font-bold shadow-[0_0_20px_rgba(16,185,129,0.3)] group-hover:scale-105 transition-transform">
+          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-500 via-teal-500 to-emerald-600 flex items-center justify-center text-zinc-950 font-bold shadow-[0_0_20px_rgba(16,185,129,0.3)] group-hover:scale-105 transition-transform">
             <Compass className="w-5 h-5 stroke-[2.5]" />
           </div>
           <div className="flex flex-col">
-            <span className="text-sm font-extrabold tracking-tight text-white flex items-center gap-1">
-              NorthStar <span className="text-emerald-400 font-mono text-xs">/ Guide</span>
+            <span className="text-base font-extrabold tracking-tight text-white flex items-center leading-none">
+              Passport<span className="bg-gradient-to-r from-emerald-400 to-teal-300 bg-clip-text text-transparent font-black">Perk</span>
             </span>
-            <span className="text-[10px] text-zinc-400 font-semibold tracking-wide">
-              Canadian Newcomer Settlement Engine
+            <span className="text-[10px] text-zinc-400 font-semibold tracking-wider uppercase mt-0.5">
+              Settlement & Perks Hub
             </span>
           </div>
         </Link>
@@ -133,7 +133,7 @@ export default function LoginPage() {
                 <span>Encrypted Cloud Sync</span>
               </Badge>
               <h2 className="text-2xl font-extrabold tracking-tight bg-gradient-to-r from-white via-zinc-100 to-zinc-400 bg-clip-text text-transparent">
-                Welcome to NorthStar
+                Welcome to PassportPerk
               </h2>
               <p className="text-xs text-zinc-400">
                 Sign in to seamlessly sync your settlement checklist, POE documents, and perks across all your devices.

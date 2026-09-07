@@ -293,7 +293,7 @@ export default function DashboardPage() {
   const exportSummaryText = useMemo(() => {
     const lines = [
       `=====================================================`,
-      `NORTHSTAR // CANADIAN PRE-ARRIVAL SETTLEMENT GUIDE`,
+      `PASSPORTPERK // CANADIAN PRE-ARRIVAL SETTLEMENT GUIDE`,
       `=====================================================`,
       `Destination: ${intake?.targetCity || "Waterloo Region, ON"}`,
       `Institution: ${intake?.institution || "Post-Secondary / Tech"}`,
@@ -327,7 +327,7 @@ export default function DashboardPage() {
       });
     });
 
-    lines.push(`\nGenerated via NorthStar Canadian Pre-Arrival Guide on ${new Date().toLocaleDateString()}`);
+    lines.push(`\nGenerated via PassportPerk Canadian Settlement Hub on ${new Date().toLocaleDateString()}`);
     return lines.join("\n");
   }, [intake, stats, tasks]);
 

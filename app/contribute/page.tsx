@@ -163,7 +163,7 @@ function ContributeContent() {
             </h1>
 
             <p className="text-xs sm:text-sm text-zinc-300 leading-relaxed">
-              Help build Canada&apos;s most reliable settlement engine for incoming students. Share secret student discounts, report technical glitches, or propose feature additions. Every contribution is reviewed and tested by our moderation team.
+              Help build PassportPerk — Canada&apos;s most trusted settlement and student perks hub. Share secret student discounts, report technical glitches, or propose feature additions. Every contribution is reviewed and tested by our team.
             </p>
           </div>
 

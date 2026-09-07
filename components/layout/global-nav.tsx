@@ -189,15 +189,15 @@ export function GlobalNav() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
           <div className="flex items-center gap-3 sm:gap-4 flex-shrink-0">
             <Link href="/" className="flex items-center gap-2.5 group flex-shrink-0">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center shadow-[0_0_20px_rgba(16,185,129,0.35)] text-zinc-950 font-bold group-hover:scale-105 transition-transform flex-shrink-0">
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-500 via-teal-500 to-emerald-600 flex items-center justify-center shadow-[0_0_20px_rgba(16,185,129,0.35)] text-zinc-950 font-bold group-hover:scale-105 transition-transform flex-shrink-0">
                 <Compass className="w-5 h-5 stroke-[2.5]" />
               </div>
               <div className="flex flex-col whitespace-nowrap">
-                <span className="text-sm font-extrabold tracking-tight text-white flex items-center gap-1">
-                  NorthStar <span className="text-emerald-400 font-mono text-xs font-bold">/ Guide</span>
+                <span className="text-base font-extrabold tracking-tight text-white flex items-center leading-none">
+                  Passport<span className="bg-gradient-to-r from-emerald-400 to-teal-300 bg-clip-text text-transparent font-black">Perk</span>
                 </span>
-                <span className="text-[10px] text-zinc-400 font-semibold tracking-wide hidden sm:inline">
-                  Canadian Settlement Engine
+                <span className="text-[10px] text-zinc-400 font-semibold tracking-wider uppercase mt-0.5 hidden sm:inline">
+                  Settlement & Perks Hub
                 </span>
               </div>
             </Link>

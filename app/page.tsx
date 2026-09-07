@@ -30,15 +30,15 @@ export default function HomePage() {
       <header className="sticky top-0 z-50 w-full bg-[#080c14]/85 backdrop-blur-2xl border-b border-white/[0.08] shadow-[0_4px_30px_rgba(0,0,0,0.4)]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-3 group">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-zinc-950 font-bold shadow-[0_0_20px_rgba(16,185,129,0.35)] group-hover:scale-105 transition-transform">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-500 via-teal-500 to-emerald-600 flex items-center justify-center text-zinc-950 font-bold shadow-[0_0_20px_rgba(16,185,129,0.35)] group-hover:scale-105 transition-transform">
               <Compass className="w-5 h-5 stroke-[2.5]" />
             </div>
             <div className="flex flex-col">
-              <span className="text-sm font-bold tracking-tight text-white flex items-center gap-1.5">
-                NorthStar <span className="text-emerald-400 font-mono text-xs">/ Guide</span>
+              <span className="text-base font-extrabold tracking-tight text-white flex items-center leading-none">
+                Passport<span className="bg-gradient-to-r from-emerald-400 to-teal-300 bg-clip-text text-transparent font-black">Perk</span>
               </span>
-              <span className="text-[10px] text-zinc-400 font-medium tracking-wide">
-                Canadian Newcomer Settlement Guide
+              <span className="text-[10px] text-zinc-400 font-semibold tracking-wider uppercase mt-0.5">
+                Canadian Settlement & Perks Hub
               </span>
             </div>
           </Link>
@@ -192,7 +192,7 @@ export default function HomePage() {
         <section className="w-full pt-12 border-t border-white/[0.08]">
           <div className="text-center max-w-2xl mx-auto mb-10">
             <Badge variant="blue" className="mb-2.5">
-              Why NorthStar
+              Why PassportPerk
             </Badge>
             <h3 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
               Clear Guidance, Complete Neutrality

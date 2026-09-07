@@ -3,7 +3,7 @@ import { GlobalNav } from "@/components/layout/global-nav";
 import { FeedbackProvider } from "@/components/features/feedback-provider";
 
 export const metadata = {
-  title: "Dashboard & Settlement Hub | NorthStar Guide",
+  title: "Dashboard & Settlement Hub | PassportPerk",
   description:
     "Unified newcomer settlement guide: IRCC checklist, 5-Bank comparison matrix, and POE document vault.",
 };
