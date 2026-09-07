@@ -25,11 +25,16 @@ import {
   MapPin,
   Clock,
   Calculator,
+  Laptop,
+  Music,
+  CreditCard,
+  Train,
 } from "lucide-react";
 import { BankComparisonMatrix } from "@/components/features/bank-comparison-matrix";
 import { SubmitPerkCard } from "@/components/features/submit-perk-card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { IrccGicTooltip } from "@/components/ui/ircc-gic-tooltip";
 import { handleOutboundClick } from "@/lib/telemetry";
 import { syncTaskStatusToSupabase } from "@/lib/supabase";
 import { triggerConfetti } from "@/lib/confetti";
@@ -52,6 +57,7 @@ interface PerkItem {
 }
 
 const EXCLUSIVE_PERKS: PerkItem[] = [
+  // --- TELECOM & CONNECTIVITY ---
   {
     id: "perk-esim-phonebox",
     partnerId: "phonebox_airalo_esim",
@@ -62,36 +68,119 @@ const EXCLUSIVE_PERKS: PerkItem[] = [
     valueNum: 35,
     valueEst: "$35 CAD Saved",
     description:
-      "Activate an authentic Canadian mobile eSIM before boarding your flight. Zero airport roaming charges, instant QR code install, and 5G data the second you land in Canada.",
+      "Activate an authentic Canadian mobile eSIM before boarding your flight. Zero airport roaming charges, instant QR code install, and 5G data the second you touch down in Canada.",
     promoCode: "CANADA15",
     keyPerks: [
       "15% off any 10GB - 50GB 30-day Canadian data package",
-      "Instant eSIM profile download to Apple/Google Wallet",
+      "Instant eSIM profile download to Apple / Google Wallet",
       "Local Canadian +1 phone number included for landlord & banking calls",
     ],
     ctaLabel: "Claim 15% Off eSIM",
-    ctaLink: "https://www.airalo.com/canada-esim?ref=newcomerengine",
+    ctaLink: "https://www.airalo.com/canada-esim?ref=passportperk",
     regionSpecific: "All",
   },
+  {
+    id: "perk-fizz-mobile",
+    partnerId: "fizz_mobile_student",
+    category: "telecom",
+    title: "Fizz Mobile Rollover Student Plans",
+    partnerName: "Fizz Mobile Canada",
+    badge: "$25 Welcome Referral Bonus",
+    valueNum: 75,
+    valueEst: "$75+ CAD Value",
+    description:
+      "Canada's most flexible prepaid student network with 100% rollover unused data, customizable plans, and zero binding contracts or credit checks.",
+    promoCode: "FIZZ25",
+    keyPerks: [
+      "$25 CAD bill credit applied automatically on your 2nd month",
+      "Unused data automatically rolls over to your next month",
+      "No Canadian credit history or SIN required to activate",
+    ],
+    ctaLabel: "Get $25 Fizz Credit",
+    ctaLink: "https://fizz.ca/en?ref=passportperk",
+    regionSpecific: "All",
+  },
+
+  // --- RETAIL, TECH & LIFESTYLE ---
   {
     id: "perk-spc-discount-card",
     partnerId: "spc_student_discount",
     category: "lifestyle",
     title: "SPC+ (Student Price Card) Membership",
-    partnerName: "SPC Canada / CIBC Student Partner",
+    partnerName: "SPC Canada / CIBC Partner",
     badge: "Free with CIBC / $11.99 Value",
     valueNum: 250,
     valueEst: "$250+ CAD / Year",
     description:
-      "Canada's #1 student discount membership. Unlock 10% to 25% instant discounts on 450+ top Canadian brands including Apple, Samsung, DoorDash, Adidas, H&M, and Rexall.",
+      "Canada's #1 student discount membership. Unlock 10% to 25% instant discounts at 450+ top brands including Apple, Samsung, DoorDash, Adidas, H&M, and Rexall.",
     promoCode: "STUDENT2026",
     keyPerks: [
       "10-25% off food, fashion, technology, and travel across Canada",
       "Free 1-year digital membership when opening a CIBC Student Account",
       "Instant barcode scan via SPC Mobile iOS/Android App",
     ],
-    ctaLabel: "Unlock Free SPC+ Membership",
-    ctaLink: "https://www.spccard.ca/?ref=newcomerengine",
+    ctaLabel: "Unlock Free SPC+ Pass",
+    ctaLink: "https://www.spccard.ca/?ref=passportperk",
+    regionSpecific: "All",
+  },
+  {
+    id: "perk-apple-education",
+    partnerId: "apple_education_canada",
+    category: "lifestyle",
+    title: "Apple Education Pricing & Back-to-School",
+    partnerName: "Apple Canada",
+    badge: "Save Up to $200 + Gift Card",
+    valueNum: 200,
+    valueEst: "$200+ CAD Saved",
+    description:
+      "Special higher education pricing on MacBook Air, MacBook Pro, and iPad for Canadian university & college students, plus 20% off AppleCare+ protection.",
+    keyPerks: [
+      "Save up to $200 CAD on Mac laptops and up to $100 on iPads",
+      "Seasonal promotion includes bonus $150–$200 Apple Gift Card",
+      "Available with valid student email (.edu, @uwaterloo.ca, @utoronto.ca)",
+    ],
+    ctaLabel: "View Apple Student Store",
+    ctaLink: "https://www.apple.com/ca_edu_93120/shop",
+    regionSpecific: "All",
+  },
+  {
+    id: "perk-amazon-prime-student",
+    partnerId: "amazon_prime_student_ca",
+    category: "lifestyle",
+    title: "Amazon Prime Student (6-Month Free Trial)",
+    partnerName: "Amazon Canada",
+    badge: "6 Months Free + 50% Off",
+    valueNum: 60,
+    valueEst: "$60 CAD Saved",
+    description:
+      "Enjoy 6 months of fast, free 1-2 day delivery for college textbooks, dorm essentials, and winter clothing, plus full Prime Video and Amazon Music streaming access.",
+    keyPerks: [
+      "Full 6-month trial with $0 charge for verified college/university students",
+      "50% discounted membership ($4.99 CAD/mo) after trial ends",
+      "Free Two-Day and One-Day Shipping to Canadian campuses and residences",
+    ],
+    ctaLabel: "Start 6-Month Free Trial",
+    ctaLink: "https://www.amazon.ca/joinstudent?ref=passportperk",
+    regionSpecific: "All",
+  },
+  {
+    id: "perk-spotify-student",
+    partnerId: "spotify_student_canada",
+    category: "lifestyle",
+    title: "Spotify Premium Student (50% Off)",
+    partnerName: "Spotify Canada",
+    badge: "$5.99 CAD / Month",
+    valueNum: 72,
+    valueEst: "$72 CAD / Year",
+    description:
+      "Ad-free music, offline listening downloads, and unlimited skips with SheerID verification for all enrolled post-secondary students in Canada.",
+    keyPerks: [
+      "50% discount off standard Individual Premium ($5.99 vs $11.99/mo)",
+      "High-fidelity offline downloads for study sessions and transit commutes",
+      "Verified easily with your Canadian student portal or admission letter",
+    ],
+    ctaLabel: "Get Spotify Student",
+    ctaLink: "https://www.spotify.com/ca-en/student/",
     regionSpecific: "All",
   },
   {
@@ -104,25 +193,47 @@ const EXCLUSIVE_PERKS: PerkItem[] = [
     valueNum: 300,
     valueEst: "$300+ CAD / Year",
     description:
-      "Earn points on everyday student grocery shopping at Zehrs, No Frills, Loblaws, and Shoppers Drug Mart. Redeem 10,000 points for $10 CAD off at the checkout register.",
+      "Earn points on everyday student grocery shopping at Zehrs, No Frills, Loblaws, and Shoppers Drug Mart. Redeem 10,000 points for $10 CAD cash off at the checkout register.",
     keyPerks: [
       "Targeted weekly student coupons on milk, eggs, pantry staples, and produce",
       "20x Points events at Shoppers Drug Mart (30% equivalent cash back)",
       "Zero annual fees; digital card stored in Apple/Google Wallet",
     ],
-    ctaLabel: "Join Free PC Optimum Program",
+    ctaLabel: "Join Free PC Optimum",
     ctaLink: "https://www.pcoptimum.ca/",
     regionSpecific: "All",
+  },
+
+  // --- AIRPORT & REGIONAL TRANSIT ---
+  {
+    id: "perk-grt-ion-waterloo",
+    partnerId: "grt_ion_waterloo",
+    category: "transit",
+    title: "GRT ION Light Rail & Bus (WatCard / OneCard U-Pass)",
+    partnerName: "Grand River Transit (Waterloo Region)",
+    badge: "Unlimited Transit Included",
+    valueNum: 380,
+    valueEst: "$380+ CAD / Term",
+    description:
+      "University of Waterloo and Wilfrid Laurier students receive unlimited access to the ION Light Rail and all Grand River Transit buses automatically loaded on their student ID card.",
+    keyPerks: [
+      "Direct ION Light Rail connection between UW, Laurier, Uptown Waterloo, and Kitchener",
+      "No PRESTO card needed; simply tap your physical or digital WatCard / OneCard",
+      "Runs every 10-15 minutes throughout the day across Kitchener-Waterloo",
+    ],
+    ctaLabel: "View GRT Student U-Pass Info",
+    ctaLink: "https://www.grt.ca/en/fares-passes/post-secondary-students.aspx",
+    regionSpecific: "Waterloo",
   },
   {
     id: "perk-go-transit-waterloo",
     partnerId: "go_transit_ontario",
     category: "transit",
-    title: "GO Transit Student Discount (Route 25 to UW/Laurier)",
+    title: "GO Transit Student Discount (Route 25 & Ontario Rail)",
     partnerName: "Metrolinx GO Transit",
     badge: "40% Off Adult Fares",
-    valueNum: 120,
-    valueEst: "$120+ CAD Saved",
+    valueNum: 140,
+    valueEst: "$140+ CAD Saved",
     description:
       "Travel from Toronto Pearson Airport / Square One directly to University of Waterloo Davis Centre & Laurier for under $15 CAD using post-secondary PRESTO discount fares.",
     keyPerks: [
@@ -130,7 +241,7 @@ const EXCLUSIVE_PERKS: PerkItem[] = [
       "Seamless bus drop-off directly on University of Waterloo campus",
       "40% fare discount linked automatically to your PRESTO card",
     ],
-    ctaLabel: "Setup PRESTO Student Transit Discount",
+    ctaLabel: "Setup PRESTO 40% Student Pass",
     ctaLink: "https://www.gotransit.com/en/student-discount",
     regionSpecific: "Waterloo",
   },
@@ -155,6 +266,26 @@ const EXCLUSIVE_PERKS: PerkItem[] = [
     regionSpecific: "Toronto",
   },
   {
+    id: "perk-ttc-toronto",
+    partnerId: "ttc_toronto_transit",
+    category: "transit",
+    title: "TTC Post-Secondary Monthly Transit Pass",
+    partnerName: "Toronto Transit Commission (TTC)",
+    badge: "Save $30+ CAD / Month",
+    valueNum: 120,
+    valueEst: "$120+ CAD Saved",
+    description:
+      "Unlimited monthly subway, streetcar, and bus transit across Toronto for enrolled post-secondary students loaded directly onto your PRESTO card.",
+    keyPerks: [
+      "Discounted $128.15 CAD monthly pass (vs $156 regular adult pass)",
+      "Unlimited rides across all 4 subway lines and 140+ bus/streetcar routes",
+      "One-tap digital PRESTO in Apple Wallet and Google Wallet",
+    ],
+    ctaLabel: "Setup TTC Post-Secondary Pass",
+    ctaLink: "https://www.ttc.ca/fares-and-passes/Post-Secondary-Students",
+    regionSpecific: "Toronto",
+  },
+  {
     id: "perk-skytrain-vancouver",
     partnerId: "translink_bc_yvr",
     category: "transit",
@@ -174,6 +305,8 @@ const EXCLUSIVE_PERKS: PerkItem[] = [
     ctaLink: "https://upassbc.translink.ca/",
     regionSpecific: "Vancouver",
   },
+
+  // --- HOUSING & SETTLEMENT ---
   {
     id: "perk-tenant-insurance",
     partnerId: "square_one_insurance",
@@ -192,7 +325,7 @@ const EXCLUSIVE_PERKS: PerkItem[] = [
       "$1,000,000 to $2,000,000 CAD comprehensive tenant liability protection",
     ],
     ctaLabel: "Get $12/mo Tenant Insurance Quote",
-    ctaLink: "https://www.squareone.ca/tenant-insurance?ref=newcomerengine",
+    ctaLink: "https://www.squareone.ca/tenant-insurance?ref=passportperk",
     regionSpecific: "All",
   },
 ];
@@ -291,37 +424,40 @@ export default function PerksHubPage() {
     return claimedPerks[p.id] ? acc + p.valueNum : acc;
   }, 0);
 
+  const totalAvailableDollars = EXCLUSIVE_PERKS.reduce((acc, p) => acc + p.valueNum, 0);
+
   return (
-    <div className="flex flex-col gap-10">
+    <div className="flex flex-col gap-6 sm:gap-8 lg:gap-10">
       {/* Hero Banner: Perks Marketplace Header */}
-      <div className="w-full bg-[#0d1322]/80 backdrop-blur-2xl border border-white/[0.08] rounded-3xl p-6 sm:p-8 relative overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,0.4)]">
+      <div className="w-full bg-[#0d1322]/80 backdrop-blur-2xl border border-white/[0.08] rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-8 relative overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,0.4)]">
         <div className="absolute top-0 right-0 -mr-16 -mt-16 w-80 h-80 rounded-full bg-emerald-500/10 blur-3xl pointer-events-none -z-10" />
         <div className="absolute bottom-0 left-1/3 -mb-20 w-80 h-80 rounded-full bg-amber-500/10 blur-3xl pointer-events-none -z-10" />
 
-        <div className="relative z-10 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
-          <div className="max-w-2xl flex flex-col gap-3">
-            <div className="flex items-center gap-2">
-              <Badge variant="emerald" className="px-3 py-0.5 text-xs font-bold">
+        <div className="relative z-10 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5 sm:gap-6">
+          <div className="max-w-2xl flex flex-col gap-2.5 sm:gap-3">
+            <div className="flex items-center gap-2 flex-wrap">
+              <Badge variant="emerald" className="px-2.5 sm:px-3 py-0.5 text-xs font-bold">
                 <Gift className="w-3.5 h-3.5 text-emerald-400" />
                 <span>Student Perks & Discounts</span>
               </Badge>
               <Badge variant="zinc" className="text-xs font-mono font-semibold">
-                5 Major Banks + Verified Partners
+                12+ Verified Partner Offers
               </Badge>
+              <IrccGicTooltip variant="pill" />
             </div>
 
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight bg-gradient-to-r from-white via-zinc-100 to-zinc-400 bg-clip-text text-transparent">
-              Student Discounts, Banking & Welcome Offers
+            <h1 className="text-xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight bg-gradient-to-r from-white via-zinc-100 to-zinc-400 bg-clip-text text-transparent">
+              Student Discounts, Transit & Welcome Offers
             </h1>
 
-            <p className="text-sm text-zinc-400 leading-relaxed">
-              Curated welcome bonuses, student banking packages, and verified promo codes for newcomers arriving in{" "}
-              <strong className="text-white">{activeRegion.split(",")[0]}</strong>. All bank comparisons remain 100% objective and transparent.
+            <p className="text-xs sm:text-sm text-zinc-400 leading-relaxed">
+              Curated student discounts, retail memberships, airport transit deals, and 5-bank comparison packages for newcomers arriving in{" "}
+              <strong className="text-white">{activeRegion.split(",")[0]}</strong>. All comparisons remain 100% objective and neutral.
             </p>
           </div>
 
           {/* Interactive Savings Calculator Box */}
-          <div className="bg-white/[0.03] border border-white/[0.08] rounded-2xl p-5 flex flex-col gap-3 min-w-[260px] shadow-2xs">
+          <div className="bg-white/[0.03] border border-white/[0.08] rounded-xl sm:rounded-2xl p-3.5 sm:p-5 flex flex-col gap-2.5 sm:gap-3 min-w-full sm:min-w-[260px] shadow-2xs">
             <div className="flex items-center justify-between">
               <span className="text-[11px] font-mono uppercase tracking-wider text-emerald-400 font-bold flex items-center gap-1.5">
                 <Calculator className="w-3.5 h-3.5" />
@@ -333,39 +469,39 @@ export default function PerksHubPage() {
             </div>
 
             <div>
-              <div className="text-3xl font-black font-mono text-white">
-                ${totalClaimedDollars > 0 ? totalClaimedDollars : "1,250"}<span className="text-emerald-400 text-xl font-sans">+ CAD</span>
+              <div className="text-2xl sm:text-3xl font-black font-mono text-white">
+                ${totalClaimedDollars > 0 ? totalClaimedDollars : totalAvailableDollars.toLocaleString()}<span className="text-emerald-400 text-lg sm:text-xl font-sans">+ CAD</span>
               </div>
-              <p className="text-xs text-zinc-400 mt-0.5">
-                {totalClaimedDollars > 0 ? "Saved so far in student welcome perks!" : "Estimated total value available across all partner perks"}
+              <p className="text-[11px] sm:text-xs text-zinc-400 mt-0.5">
+                {totalClaimedDollars > 0 ? "Saved so far in student welcome perks!" : "Estimated total student value across all verified perks"}
               </p>
             </div>
 
-            <div className="pt-2 border-t border-white/[0.08] flex items-center justify-between text-xs text-zinc-400">
+            <div className="pt-2 border-t border-white/[0.08] flex items-center justify-between text-[11px] sm:text-xs text-zinc-400">
               <span>Avg. 1st Year Benefit:</span>
-              <span className="font-bold text-zinc-200">~$104 CAD / month</span>
+              <span className="font-bold text-zinc-200">~$135 CAD / month</span>
             </div>
           </div>
         </div>
       </div>
 
       {/* Section 1: 5-Bank Comparison Engine */}
-      <section className="flex flex-col gap-5">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/[0.08] pb-4">
+      <section className="flex flex-col gap-4 sm:gap-5">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/[0.08] pb-3 sm:pb-4">
           <div>
             <div className="flex items-center gap-2">
               <Building2 className="w-4 h-4 text-emerald-400" />
-              <h2 className="text-xl font-bold tracking-tight text-white">
+              <h2 className="text-lg sm:text-xl font-bold tracking-tight text-white">
                 5-Bank Canadian Student Comparison Matrix
               </h2>
             </div>
-            <p className="text-xs text-zinc-400 mt-1">
+            <p className="text-xs text-zinc-400 mt-0.5 sm:mt-1">
               Compare Scotiabank, CIBC, TD, RBC, and Simplii Financial side-by-side with complete aggregator neutrality.
             </p>
           </div>
 
-          <Badge variant="emerald" className="self-start sm:self-auto font-mono text-[11px] font-bold">
-            IRCC $23,448 GIC Compliant
+          <Badge variant="emerald" className="self-start sm:self-auto font-mono text-[10px] sm:text-[11px] font-bold">
+            IRCC $23,448 vs $20,635 GIC Compliant
           </Badge>
         </div>
 
@@ -376,34 +512,34 @@ export default function PerksHubPage() {
       <SubmitPerkCard />
 
       {/* Section 2: Perks & Life Hacks */}
-      <section className="flex flex-col gap-6 pt-6 border-t border-white/[0.08]">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <section className="flex flex-col gap-5 sm:gap-6 pt-4 sm:pt-6 border-t border-white/[0.08]">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
           <div>
             <div className="flex items-center gap-2">
               <Sparkles className="w-4 h-4 text-amber-400" />
-              <h2 className="text-xl font-bold tracking-tight text-white">
-                Telecom, Discounts & Transit Offers
+              <h2 className="text-lg sm:text-xl font-bold tracking-tight text-white">
+                Telecom, Transit & Student Retail Perks
               </h2>
             </div>
-            <p className="text-xs text-zinc-400 mt-1">
-              Exclusive student discount codes and essential partner resources for a smooth landing.
+            <p className="text-xs text-zinc-400 mt-0.5 sm:mt-1">
+              Verified promo codes, student discounts, and transit passes to maximize your settlement budget.
             </p>
           </div>
 
-          {/* Category Filter Pills */}
+          {/* Category Filter Pills (Touch Scrollable) */}
           <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
             {[
-              { id: "all", label: "All Perks" },
+              { id: "all", label: "All Perks (12)" },
+              { id: "transit", label: "Transit & Airport" },
+              { id: "lifestyle", label: "Discounts & Tech" },
               { id: "telecom", label: "eSIM & Mobile" },
-              { id: "lifestyle", label: "Discounts & Grocery" },
-              { id: "transit", label: "Airport Transit" },
               { id: "housing", label: "Tenant Insurance" },
             ].map((cat) => (
               <button
                 key={cat.id}
                 type="button"
                 onClick={() => setActiveCategory(cat.id)}
-                className={`whitespace-nowrap px-3.5 py-1.5 rounded-xl text-xs font-medium border transition-all cursor-pointer ${
+                className={`whitespace-nowrap px-3 py-1.5 rounded-xl text-xs font-medium border transition-all cursor-pointer ${
                   activeCategory === cat.id
                     ? "bg-emerald-500/20 text-emerald-300 border-emerald-500/40 font-bold shadow-2xs"
                     : "bg-[#0d1322]/70 text-zinc-400 border-white/[0.08] hover:border-white/[0.18] hover:text-white hover:bg-white/[0.04]"
@@ -416,7 +552,7 @@ export default function PerksHubPage() {
         </div>
 
         {/* Perks Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
           <AnimatePresence mode="popLayout">
             {filteredPerks.map((perk) => {
               const isClaimed = Boolean(claimedPerks[perk.id]);
@@ -430,16 +566,16 @@ export default function PerksHubPage() {
                   exit={{ opacity: 0, scale: 0.98 }}
                   whileHover={{ y: -2 }}
                   transition={{ duration: 0.2 }}
-                  className={`border rounded-2xl p-5 sm:p-6 flex flex-col justify-between gap-5 transition-all ${
+                  className={`border rounded-2xl p-4 sm:p-5 lg:p-6 flex flex-col justify-between gap-4 sm:gap-5 transition-all ${
                     isClaimed
                       ? "border-emerald-500/25 bg-[#0d1322]/50 shadow-2xs"
                       : "bg-[#0d1322]/80 backdrop-blur-xl border-white/[0.08] hover:border-emerald-500/40 hover:shadow-[0_0_30px_rgba(16,185,129,0.12)]"
                   }`}
                 >
-                  <div className="flex flex-col gap-3.5">
+                  <div className="flex flex-col gap-3 sm:gap-3.5">
                     {/* Card Top: Category + Value + Claim Toggle */}
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="flex flex-wrap items-center gap-2">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
                         <Badge
                           variant={
                             perk.category === "telecom"
@@ -450,11 +586,11 @@ export default function PerksHubPage() {
                               ? "amber"
                               : "emerald"
                           }
-                          className="font-mono text-[10px] uppercase font-bold"
+                          className="font-mono text-[9px] sm:text-[10px] uppercase font-bold"
                         >
                           {perk.category}
                         </Badge>
-                        <Badge variant="emerald" className="font-bold text-[11px]">
+                        <Badge variant="emerald" className="font-bold text-[10px] sm:text-[11px] py-0 px-2">
                           {perk.badge}
                         </Badge>
                       </div>
@@ -463,16 +599,16 @@ export default function PerksHubPage() {
                       <button
                         type="button"
                         onClick={() => handleToggleClaim(perk.id)}
-                        className="flex items-center gap-1.5 text-xs font-semibold text-zinc-400 hover:text-emerald-300 transition-colors focus:outline-none cursor-pointer"
+                        className="flex items-center gap-1 text-[11px] sm:text-xs font-semibold text-zinc-400 hover:text-emerald-300 transition-colors focus:outline-none cursor-pointer flex-shrink-0"
                       >
                         {isClaimed ? (
                           <span className="inline-flex items-center gap-1 text-emerald-400 font-bold">
-                            <CheckCircle2 className="w-4 h-4 fill-emerald-500/20" />
+                            <CheckCircle2 className="w-3.5 h-3.5 fill-emerald-500/20" />
                             <span>Claimed</span>
                           </span>
                         ) : (
                           <span className="inline-flex items-center gap-1 text-zinc-400 hover:text-white">
-                            <Circle className="w-4 h-4 stroke-[1.8]" />
+                            <Circle className="w-3.5 h-3.5 stroke-[1.8]" />
                             <span>Mark Claimed</span>
                           </span>
                         )}
@@ -482,28 +618,28 @@ export default function PerksHubPage() {
                     {/* Title + Partner Name */}
                     <div>
                       <h3
-                        className={`text-lg font-bold tracking-tight transition-colors ${
+                        className={`text-base sm:text-lg font-bold tracking-tight transition-colors leading-snug ${
                           isClaimed ? "text-zinc-500 line-through" : "text-white"
                         }`}
                       >
                         {perk.title}
                       </h3>
-                      <p className="text-xs font-mono text-zinc-400 mt-0.5">
+                      <p className="text-[11px] sm:text-xs font-mono text-zinc-400 mt-0.5">
                         Partner: <span className="text-zinc-200 font-semibold">{perk.partnerName}</span>
                       </p>
                     </div>
 
-                    <p className="text-xs text-zinc-400 leading-relaxed">
+                    <p className="text-xs text-zinc-400 leading-relaxed line-clamp-3">
                       {perk.description}
                     </p>
 
                     {/* Promo Code Box */}
                     {perk.promoCode && (
-                      <div className="flex items-center justify-between p-2.5 rounded-xl bg-white/[0.03] border border-dashed border-emerald-500/40">
-                        <div className="flex items-center gap-2">
-                          <Tag className="w-3.5 h-3.5 text-emerald-400" />
-                          <span className="text-xs text-zinc-400 font-medium">Promo Code:</span>
-                          <span className="text-xs font-mono font-bold text-emerald-300 tracking-wider">
+                      <div className="flex items-center justify-between p-2 sm:p-2.5 rounded-xl bg-white/[0.03] border border-dashed border-emerald-500/40">
+                        <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
+                          <Tag className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
+                          <span className="text-[11px] sm:text-xs text-zinc-400 font-medium">Promo:</span>
+                          <span className="text-xs font-mono font-bold text-emerald-300 tracking-wider truncate">
                             {perk.promoCode}
                           </span>
                         </div>
@@ -511,7 +647,7 @@ export default function PerksHubPage() {
                         <button
                           type="button"
                           onClick={() => handleCopyCode(perk.promoCode!)}
-                          className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-[11px] font-mono font-bold text-emerald-300 transition-colors cursor-pointer border border-emerald-500/30"
+                          className="flex items-center gap-1 px-2 sm:px-2.5 py-1 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-[10px] sm:text-[11px] font-mono font-bold text-emerald-300 transition-colors cursor-pointer border border-emerald-500/30 flex-shrink-0"
                         >
                           {copiedCode === perk.promoCode ? (
                             <>
@@ -529,21 +665,21 @@ export default function PerksHubPage() {
                     )}
 
                     {/* Key Perks Bullet List */}
-                    <ul className="space-y-1.5 pt-1 text-xs text-zinc-300 border-t border-white/[0.08]">
+                    <ul className="space-y-1.5 pt-1 text-[11px] sm:text-xs text-zinc-300 border-t border-white/[0.08]">
                       {perk.keyPerks.map((item, idx) => (
-                        <li key={idx} className="flex items-start gap-2">
+                        <li key={idx} className="flex items-start gap-1.5">
                           <span className="text-emerald-400 font-bold mt-0.5">•</span>
-                          <span>{item}</span>
+                          <span className="leading-snug">{item}</span>
                         </li>
                       ))}
                     </ul>
                   </div>
 
                   {/* Action CTA Button */}
-                  <div className="pt-3 border-t border-white/[0.08] flex items-center justify-between gap-3">
-                    <div className="flex items-center gap-1 text-xs font-mono text-zinc-400 font-medium">
-                      <TrendingUp className="w-3.5 h-3.5 text-emerald-400" />
-                      <span>{perk.valueEst}</span>
+                  <div className="pt-3 border-t border-white/[0.08] flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-1 text-[11px] sm:text-xs font-mono text-zinc-400 font-medium">
+                      <TrendingUp className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
+                      <span className="truncate">{perk.valueEst}</span>
                     </div>
 
                     <a
@@ -552,7 +688,7 @@ export default function PerksHubPage() {
                       rel="noopener noreferrer"
                       onClick={() => handlePerkCta(perk)}
                     >
-                      <Button variant="affiliate" size="sm" className="gap-2 shadow-2xs">
+                      <Button variant="affiliate" size="sm" className="gap-1.5 text-xs py-1.5 sm:py-2 px-3 shadow-2xs">
                         <span>{perk.ctaLabel}</span>
                         <ExternalLink className="w-3.5 h-3.5" />
                       </Button>
@@ -566,13 +702,13 @@ export default function PerksHubPage() {
       </section>
 
       {/* Bottom CTA to Checklist */}
-      <div className="bg-[#0d1322]/80 backdrop-blur-xl border border-white/[0.08] rounded-2xl p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-[0_8px_30px_rgba(0,0,0,0.3)]">
-        <div className="flex items-center gap-3.5">
-          <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 flex-shrink-0">
-            <ShieldCheck className="w-5 h-5" />
+      <div className="bg-[#0d1322]/80 backdrop-blur-xl border border-white/[0.08] rounded-2xl p-4 sm:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-[0_8px_30px_rgba(0,0,0,0.3)]">
+        <div className="flex items-center gap-3 sm:gap-3.5">
+          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 flex-shrink-0">
+            <ShieldCheck className="w-4 h-4 sm:w-5 sm:h-5" />
           </div>
           <div>
-            <h4 className="text-base font-bold text-white">
+            <h4 className="text-sm sm:text-base font-bold text-white">
               Ready to review your essential settlement steps?
             </h4>
             <p className="text-xs text-zinc-400 mt-0.5">
@@ -581,14 +717,14 @@ export default function PerksHubPage() {
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2.5 sm:gap-3">
           <Link href="/dashboard/documents">
-            <Button variant="secondary" size="sm" className="shadow-2xs">
+            <Button variant="secondary" size="sm" className="shadow-2xs text-xs">
               POE Documents
             </Button>
           </Link>
           <Link href="/dashboard">
-            <Button variant="primary" size="sm" className="gap-1.5 shadow-xs">
+            <Button variant="primary" size="sm" className="gap-1.5 shadow-xs text-xs">
               <span>Go to Checklist</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </Button>

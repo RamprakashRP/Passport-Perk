@@ -25,6 +25,7 @@ import { UserIntake, ChecklistStats } from "@/types";
 import { Button } from "@/components/ui/button";
 import { ProgressBar } from "@/components/ui/progress-bar";
 import { Badge } from "@/components/ui/badge";
+import { IrccGicTooltip } from "@/components/ui/ircc-gic-tooltip";
 import { formatDaysRemaining, cn } from "@/lib/utils";
 
 interface DashboardHeaderProps {
@@ -91,14 +92,14 @@ export function DashboardHeader({
         };
 
   return (
-    <div className="w-full bg-[#0d1322]/80 backdrop-blur-2xl border border-white/[0.08] rounded-3xl p-6 sm:p-8 relative overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,0.4)]">
+    <div className="w-full bg-[#0d1322]/80 backdrop-blur-2xl border border-white/[0.08] rounded-3xl p-4 sm:p-6 lg:p-8 relative overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,0.4)]">
       {/* Background soft ambient tint */}
       <div className="absolute top-0 right-0 -mr-20 -mt-20 w-80 h-80 rounded-full bg-emerald-500/10 blur-3xl pointer-events-none -z-10" />
       <div className="absolute bottom-0 left-1/3 -mb-20 w-80 h-80 rounded-full bg-blue-500/10 blur-3xl pointer-events-none -z-10" />
 
-      <div className="relative z-10 flex flex-col gap-6">
+      <div className="relative z-10 flex flex-col gap-5 sm:gap-6">
         {/* Top bar: Brand + User Intake Badge + Action Controls */}
-        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 border-b border-white/[0.08] pb-6">
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 border-b border-white/[0.08] pb-5 sm:pb-6">
           <div className="flex flex-col gap-1.5">
             <div className="flex items-center gap-2">
               <span className="flex h-2 w-2 relative">
@@ -113,7 +114,7 @@ export function DashboardHeader({
             <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight bg-gradient-to-r from-white via-zinc-100 to-zinc-400 bg-clip-text text-transparent">
               Your Personalized Settlement Roadmap
             </h1>
-            <p className="text-sm text-zinc-400">
+            <p className="text-xs sm:text-sm text-zinc-400">
               Clear, step-by-step guidance for arriving at{" "}
               <span className="text-white font-bold">{intake?.targetCity || "Waterloo Region"}</span>
               {intake?.institution ? ` (${intake.institution})` : ""}
@@ -121,7 +122,7 @@ export function DashboardHeader({
           </div>
 
           {/* Quick Header Actions */}
-          <div className="flex items-center flex-wrap gap-2.5">
+          <div className="flex items-center flex-wrap gap-2 sm:gap-2.5">
             <Link href="/">
               <Button variant="secondary" size="sm" className="gap-1.5 shadow-2xs">
                 <RotateCcw className="w-3.5 h-3.5 text-zinc-400" />
@@ -138,113 +139,82 @@ export function DashboardHeader({
 
         {/* Middle row: User Profile Chips */}
         {intake && (
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            <div className="bg-white/[0.03] border border-white/[0.08] hover:border-white/[0.15] rounded-2xl p-3.5 flex items-center gap-3 transition-colors">
-              <div className="w-9 h-9 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center flex-shrink-0">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3">
+            <div className="bg-white/[0.03] border border-white/[0.08] hover:border-white/[0.15] rounded-2xl p-3 sm:p-3.5 flex items-center gap-2.5 sm:gap-3 transition-colors">
+              <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center flex-shrink-0">
                 <MapPin className="w-4 h-4" />
               </div>
               <div className="min-w-0">
-                <p className="text-[10px] text-zinc-400 uppercase font-mono font-bold">Destination</p>
+                <p className="text-[9px] sm:text-[10px] text-zinc-400 uppercase font-mono font-bold">Destination</p>
                 <p className="text-xs font-bold text-white truncate">{intake.targetCity}</p>
               </div>
             </div>
 
-            <div className="bg-white/[0.03] border border-white/[0.08] hover:border-white/[0.15] rounded-2xl p-3.5 flex items-center gap-3 transition-colors">
-              <div className="w-9 h-9 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-400 flex items-center justify-center flex-shrink-0">
+            <div className="bg-white/[0.03] border border-white/[0.08] hover:border-white/[0.15] rounded-2xl p-3 sm:p-3.5 flex items-center gap-2.5 sm:gap-3 transition-colors">
+              <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-400 flex items-center justify-center flex-shrink-0">
                 <GraduationCap className="w-4 h-4" />
               </div>
               <div className="min-w-0">
-                <p className="text-[10px] text-zinc-400 uppercase font-mono font-bold">Institution</p>
+                <p className="text-[9px] sm:text-[10px] text-zinc-400 uppercase font-mono font-bold">Institution</p>
                 <p className="text-xs font-bold text-white truncate">{intake.institution}</p>
               </div>
             </div>
 
-            <div className="bg-white/[0.03] border border-white/[0.08] hover:border-white/[0.15] rounded-2xl p-3.5 flex items-center gap-3 transition-colors">
-              <div className="w-9 h-9 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center flex-shrink-0">
+            <div className="bg-white/[0.03] border border-white/[0.08] hover:border-white/[0.15] rounded-2xl p-3 sm:p-3.5 flex items-center gap-2.5 sm:gap-3 transition-colors">
+              <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center flex-shrink-0">
                 <Calendar className="w-4 h-4" />
               </div>
               <div className="min-w-0">
-                <p className="text-[10px] text-zinc-400 uppercase font-mono font-bold">Target Intake</p>
+                <p className="text-[9px] sm:text-[10px] text-zinc-400 uppercase font-mono font-bold">Target Intake</p>
                 <p className="text-xs font-bold text-white truncate">{intake.intakeMonth}</p>
               </div>
             </div>
 
-            <div className="bg-white/[0.03] border border-white/[0.08] hover:border-white/[0.15] rounded-2xl p-3.5 flex items-center gap-3 transition-colors">
-              <div className="w-9 h-9 rounded-xl bg-purple-500/10 border border-purple-500/20 text-purple-400 flex items-center justify-center flex-shrink-0">
+            <div className="bg-white/[0.03] border border-white/[0.08] hover:border-white/[0.15] rounded-2xl p-3 sm:p-3.5 flex items-center gap-2.5 sm:gap-3 transition-colors">
+              <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-purple-500/10 border border-purple-500/20 text-purple-400 flex items-center justify-center flex-shrink-0">
                 <Award className="w-4 h-4" />
               </div>
               <div className="min-w-0">
-                <p className="text-[10px] text-zinc-400 uppercase font-mono font-bold">Visa Stream</p>
+                <p className="text-[9px] sm:text-[10px] text-zinc-400 uppercase font-mono font-bold">Visa Stream</p>
                 <p className="text-xs font-bold text-white truncate">{intake.visa_type}</p>
               </div>
             </div>
           </div>
         )}
 
-        {/* Bottom row: Readiness Index & Countdown & Climate Tip */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
-          {/* Readiness Meter */}
-          <div className="md:col-span-2 bg-white/[0.03] border border-white/[0.08] rounded-2xl p-5 flex flex-col justify-between gap-3 shadow-2xs">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Sparkles className="w-4 h-4 text-emerald-400" />
-                <span className="text-sm font-bold text-white">
-                  Overall Settlement Progress
-                </span>
-              </div>
-              <span className="text-xs font-mono font-bold text-emerald-400 bg-emerald-500/10 px-2.5 py-0.5 rounded-full border border-emerald-500/20">
-                {stats.completed} of {stats.total} Tasks Completed
+        {/* Progress & Countdown Bar */}
+        <div className="p-3.5 sm:p-4 rounded-2xl bg-white/[0.03] border border-white/[0.08] flex flex-col gap-3">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+            <div className="flex items-center gap-2">
+              <span className="font-bold text-white">Settlement Readiness:</span>
+              <span className="font-mono text-emerald-400 font-bold">{stats.percentage}%</span>
+              <span className="text-zinc-400">
+                ({stats.completed}/{stats.total} total steps completed)
               </span>
             </div>
 
-            <ProgressBar
-              percentage={stats.percentage}
-              size="md"
-              showPercentage={true}
-            />
-
-            <div className="flex items-center justify-between text-xs text-zinc-400">
-              <span>
-                {stats.percentage === 100
-                  ? "🎉 100% Complete! You are fully organized for your trip."
-                  : stats.percentage >= 50
-                  ? "Great progress! You are well on your way to a seamless arrival."
-                  : "Start with Phase 01: Verify your Student GIC and order your Canadian eSIM."}
+            <div className="flex items-center gap-3">
+              <span className="text-[11px] text-zinc-400 font-mono">
+                {stats.criticalPending > 0 ? (
+                  <strong className="text-amber-400">{stats.criticalPending} priority steps pending</strong>
+                ) : (
+                  <strong className="text-emerald-400">All mandatory steps completed!</strong>
+                )}
               </span>
-              {stats.tierProgress?.tier_1_mandatory && (
-                <span className={stats.tierProgress.tier_1_mandatory.completed === stats.tierProgress.tier_1_mandatory.total ? "text-emerald-400 font-bold" : "text-amber-400 font-bold"}>
-                  Essential Steps: {stats.tierProgress.tier_1_mandatory.completed}/{stats.tierProgress.tier_1_mandatory.total}
-                </span>
+
+              {arrivalInfo && (
+                <Badge variant={arrivalInfo.days <= 14 && !arrivalInfo.isPast ? "amber" : "emerald"} className="text-[10px] font-mono">
+                  {arrivalInfo.text}
+                </Badge>
               )}
             </div>
           </div>
 
-          {/* Travel Countdown Card */}
-          <div className="bg-white/[0.03] border border-white/[0.08] rounded-2xl p-5 flex flex-col justify-between shadow-2xs">
-            <div className="flex items-center justify-between">
-              <span className="text-[11px] font-mono text-zinc-400 uppercase tracking-wider font-bold">
-                Travel Countdown
-              </span>
-              <CloudSun className="w-4 h-4 text-amber-400" />
-            </div>
-
-            <div className="my-1">
-              <h3 className="text-2xl font-bold font-mono text-emerald-400 tracking-tight">
-                {arrivalInfo.text}
-              </h3>
-              <p className="text-xs text-zinc-400 mt-0.5">
-                Arrival: <strong className="text-zinc-200">{intake?.arrival_date || "2026-09-01"}</strong> ({weather.temp})
-              </p>
-            </div>
-
-            <div className="text-[11px] text-zinc-400 font-medium truncate">
-              💡 {weather.tip}
-            </div>
-          </div>
+          <ProgressBar percentage={stats.percentage} size="md" />
         </div>
 
         {/* Interactive Living Expense Budget Breakdown Widget with GIC Switcher */}
-        <div className="rounded-2xl border border-emerald-500/20 bg-[#091e19]/60 backdrop-blur-xl p-4 sm:p-5 flex flex-col gap-3.5 shadow-2xs">
+        <div className="rounded-2xl border border-emerald-500/20 bg-[#091e19]/60 backdrop-blur-xl p-3.5 sm:p-5 flex flex-col gap-3.5 shadow-2xs">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div className="flex items-start sm:items-center gap-2.5">
               <div className="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center justify-center font-bold font-mono text-sm flex-shrink-0">
@@ -252,14 +222,15 @@ export function DashboardHeader({
               </div>
               <div>
                 <div className="flex items-center gap-2 flex-wrap">
-                  <h4 className="text-sm font-bold text-white">
+                  <h4 className="text-xs sm:text-sm font-bold text-white">
                     Student Living Expense Budget Breakdown ({budgetData.total})
                   </h4>
                   <Badge variant="emerald" className="text-[10px] py-0 px-2">
                     {selectedGicTier === "20635" ? "$20,635 Previous Rate" : "$23,448 Current Rate"}
                   </Badge>
+                  <IrccGicTooltip variant="pill" currentTier={selectedGicTier} />
                 </div>
-                <p className="text-xs text-zinc-400 mt-0.5">
+                <p className="text-[11px] sm:text-xs text-zinc-400 mt-0.5">
                   Estimated monthly living budget ({budgetData.monthlyBudget}/mo) released throughout your 1st year
                 </p>
               </div>
@@ -272,7 +243,7 @@ export function DashboardHeader({
                   type="button"
                   onClick={() => setSelectedGicTier("20635")}
                   className={cn(
-                    "px-2.5 py-1 rounded-lg transition-all cursor-pointer",
+                    "px-2.5 py-1 rounded-lg transition-all cursor-pointer text-xs",
                     selectedGicTier === "20635"
                       ? "bg-emerald-500 text-zinc-950 font-bold shadow-2xs"
                       : "text-zinc-400 hover:text-white"
@@ -284,7 +255,7 @@ export function DashboardHeader({
                   type="button"
                   onClick={() => setSelectedGicTier("23448")}
                   className={cn(
-                    "px-2.5 py-1 rounded-lg transition-all cursor-pointer",
+                    "px-2.5 py-1 rounded-lg transition-all cursor-pointer text-xs",
                     selectedGicTier === "23448"
                       ? "bg-emerald-500 text-zinc-950 font-bold shadow-2xs"
                       : "text-zinc-400 hover:text-white"

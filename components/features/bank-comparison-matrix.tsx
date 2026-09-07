@@ -18,6 +18,7 @@ import { BankComparisonOption } from "@/types";
 import { CANADIAN_BANK_OPTIONS } from "@/lib/data/default-tasks";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { IrccGicTooltip } from "@/components/ui/ircc-gic-tooltip";
 import { handleOutboundClick } from "@/lib/telemetry";
 import { cn } from "@/lib/utils";
 
@@ -68,27 +69,28 @@ export function BankComparisonMatrix({
   };
 
   return (
-    <div className={cn("w-full flex flex-col gap-5", className)}>
+    <div className={cn("w-full flex flex-col gap-4 sm:gap-5", className)}>
       {/* Matrix Header & Neutrality Guarantee */}
-      <div className="bg-[#0d1322]/80 backdrop-blur-xl border border-white/[0.08] rounded-2xl p-5 sm:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-[0_8px_30px_rgba(0,0,0,0.3)]">
-        <div className="flex items-start gap-3.5">
-          <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 flex-shrink-0">
-            <ShieldCheck className="w-5 h-5" />
+      <div className="bg-[#0d1322]/80 backdrop-blur-xl border border-white/[0.08] rounded-2xl p-4 sm:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-[0_8px_30px_rgba(0,0,0,0.3)]">
+        <div className="flex items-start gap-3 sm:gap-3.5">
+          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 flex-shrink-0">
+            <ShieldCheck className="w-4 h-4 sm:w-5 sm:h-5" />
           </div>
           <div>
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-mono uppercase text-emerald-400 font-bold tracking-wider">
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="text-[11px] sm:text-xs font-mono uppercase text-emerald-400 font-bold tracking-wider">
                 Objective Aggregator Neutrality
               </span>
               <Badge variant="zinc" className="text-[10px] font-mono font-semibold">
                 5 Major Institutions
               </Badge>
+              <IrccGicTooltip variant="pill" />
             </div>
-            <h4 className="text-base sm:text-lg font-bold tracking-tight text-white mt-0.5">
-              Canadian Student Banking & $23,448 GIC Comparison Engine
+            <h4 className="text-sm sm:text-base lg:text-lg font-bold tracking-tight text-white mt-0.5">
+              Canadian Student Banking & $23,448 vs $20,635 GIC Comparison Engine
             </h4>
             <p className="text-xs text-zinc-400 mt-1 max-w-2xl leading-relaxed">
-              Objective side-by-side analysis of student chequing accounts, $23,448 CAD GIC processing fees, welcome cash bonuses, and walking distance to campus gates.
+              Objective side-by-side analysis of student chequing accounts, IRCC compliant GIC processing fees, welcome cash bonuses, and walking distance to campus gates.
             </p>
           </div>
         </div>
