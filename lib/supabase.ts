@@ -47,8 +47,12 @@ export function notifyCloudSync(status: CloudSyncStatus, message?: string) {
 }
 
 // -----------------------------------------------------------------------------
-// AUTHENTICATION HELPERS
-// -----------------------------------------------------------------------------
+const getSiteOrigin = () => {
+  if (typeof window !== "undefined" && window.location.origin) {
+    return window.location.origin;
+  }
+  return process.env.NEXT_PUBLIC_SITE_URL || "https://passportperk.com";
+};
 
 /**
  * Sign in using Google OAuth with automatic redirect to /auth/callback or /dashboard
@@ -58,7 +62,7 @@ export async function signInWithGoogle() {
     return { data: null, error: new Error("Supabase is not configured.") };
   }
 
-  const origin = typeof window !== "undefined" ? window.location.origin : "";
+  const origin = getSiteOrigin();
   const redirectTo = `${origin}/auth/callback?next=/dashboard`;
 
   return await supabase.auth.signInWithOAuth({
@@ -81,7 +85,7 @@ export async function signInWithMagicLink(email: string) {
     return { data: null, error: new Error("Supabase is not configured.") };
   }
 
-  const origin = typeof window !== "undefined" ? window.location.origin : "";
+  const origin = getSiteOrigin();
   const emailRedirectTo = `${origin}/auth/callback?next=/dashboard`;
 
   return await supabase.auth.signInWithOtp({

@@ -327,7 +327,7 @@ export default function DashboardPage() {
       });
     });
 
-    lines.push(`\nGenerated via PassportPerk Canadian Settlement Hub on ${new Date().toLocaleDateString()}`);
+    lines.push(`\nGenerated via PassportPerk Canadian Settlement Hub (https://passportperk.com) on ${new Date().toLocaleDateString()}`);
     return lines.join("\n");
   }, [intake, stats, tasks]);
 
