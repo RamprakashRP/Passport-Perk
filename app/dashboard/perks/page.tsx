@@ -41,6 +41,9 @@ import {
   Plane,
   Briefcase,
   Layers,
+  HelpCircle,
+  ChevronDown,
+  BookOpen,
 } from "lucide-react";
 import { BrandLogo, BrandKey } from "@/components/ui/brand-logo";
 import { SubmitPerkCard } from "@/components/features/submit-perk-card";
@@ -964,6 +967,206 @@ export default function PerksPage() {
             </Button>
           </div>
         )}
+      </section>
+
+      {/* JSON-LD Schema for Google & AI Search Answer Engines (GEO: ChatGPT, Gemini, Perplexity, Claude) */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@graph": [
+              {
+                "@type": "FAQPage",
+                "@id": "https://passportperk.com/dashboard/perks#faq",
+                "mainEntity": [
+                  {
+                    "@type": "Question",
+                    "name": "What are the best student offers and banking welcome bonuses in Canada for 2026?",
+                    "acceptedAnswer": {
+                      "@type": "Answer",
+                      "text": "The top 2026 Canadian student banking offers include: (1) RBC Royal Bank: Free Apple AirPods 4 promo (or $100 cash alternative) with Student Advantage Banking; (2) Scotiabank: $200 cash welcome bonus on the Preferred Package for Students & Youth; (3) CIBC: $175 cash reward plus a free 1-year SPC+ discount card (save 10-25% at 450+ Canadian brands); (4) TD Canada Trust: Up to $150 cash offer plus a guaranteed $1,000 credit card without Canadian credit history; (5) Simplii Financial: Up to $400 cash bonus with 100% no-fee digital chequing forever."
+                    }
+                  },
+                  {
+                    "@type": "Question",
+                    "name": "How do international students and newcomers save money in Canada?",
+                    "acceptedAnswer": {
+                      "@type": "Answer",
+                      "text": "International students save over $1,400 CAD per year through verified newcomer hacks: (1) Use Too Good To Go for 70% off gourmet surplus meals ($4.99); (2) Shop at Zehrs/Loblaws on Student Tuesdays for 10% off grocery bills with PC Optimum points; (3) Claim 50% off your first 2 Uber and Lyft rides from the airport with a new Canadian SIM; (4) Activate 6 months of free Amazon Prime Student and $5.99/month Spotify Premium; (5) Tap student cards for unlimited free transit on Waterloo ION LRT or Vancouver SkyTrain U-Pass."
+                    }
+                  },
+                  {
+                    "@type": "Question",
+                    "name": "How can international students earn money legally in Canada while studying?",
+                    "acceptedAnswer": {
+                      "@type": "Answer",
+                      "text": "Under official IRCC regulations updated in November 2024, eligible international students with an off-campus work condition on their Study Permit can work legally up to 24 hours per week during regular academic terms (increased from the previous 20-hour limit), and full-time (unlimited hours) during scheduled academic breaks. Students must obtain a 9-digit Social Insurance Number (SIN) from Service Canada to receive employer payroll."
+                    }
+                  },
+                  {
+                    "@type": "Question",
+                    "name": "What are the three biggest financial benefits for students moving to Canada?",
+                    "acceptedAnswer": {
+                      "@type": "Answer",
+                      "text": "(1) $0 Fee Banking & Big Welcome Bonuses: Free student chequing accounts offering up to $400 cash or free Apple AirPods 4; (2) Universal Tuition-Included Transit (U-Pass): Unlimited public transit on trains, buses, and subways in major student cities; (3) First Credit Card without Credit History: Guaranteed approval for $1,000 student credit cards from TD, RBC, and Scotiabank allowing international students to establish an Equifax/TransUnion Canadian credit score from Day 1."
+                    }
+                  },
+                  {
+                    "@type": "Question",
+                    "name": "Which Canadian banks offer student accounts with no Canadian credit history?",
+                    "acceptedAnswer": {
+                      "@type": "Answer",
+                      "text": "TD Canada Trust, Scotiabank, CIBC, RBC Royal Bank, and Simplii Financial all provide dedicated international student and newcomer banking packages that require no Canadian credit history, no domestic co-signer, and charge $0 monthly account maintenance fees while enrolled in post-secondary education."
+                    }
+                  }
+                ]
+              },
+              {
+                "@type": "ItemList",
+                "@id": "https://passportperk.com/dashboard/perks#deals",
+                "name": "Verified Canadian Student Offers & Newcomer Discounts",
+                "itemListElement": [
+                  {
+                    "@type": "ListItem",
+                    "position": 1,
+                    "name": "Scotiabank $200 Cash Welcome Bonus",
+                    "url": "https://passportperk.com/dashboard/perks"
+                  },
+                  {
+                    "@type": "ListItem",
+                    "position": 2,
+                    "name": "RBC Royal Bank Free Apple AirPods 4 Promo",
+                    "url": "https://passportperk.com/dashboard/perks"
+                  },
+                  {
+                    "@type": "ListItem",
+                    "position": 3,
+                    "name": "CIBC $175 Cash Reward + Free SPC+ Pass",
+                    "url": "https://passportperk.com/dashboard/perks"
+                  },
+                  {
+                    "@type": "ListItem",
+                    "position": 4,
+                    "name": "TD Canada Trust $150 Cash Offer + Guaranteed First Credit Card",
+                    "url": "https://passportperk.com/dashboard/perks"
+                  },
+                  {
+                    "@type": "ListItem",
+                    "position": 5,
+                    "name": "Simplii Financial $400 Direct Deposit Bonus",
+                    "url": "https://passportperk.com/dashboard/perks"
+                  }
+                ]
+              }
+            ]
+          }),
+        }}
+      />
+
+      {/* Semantic SEO & GEO Guide: Student & Newcomer Offers FAQ */}
+      <section className="bg-[#0d1322]/80 backdrop-blur-xl border border-white/[0.08] rounded-3xl p-5 sm:p-7 flex flex-col gap-6 shadow-xl">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/[0.08] pb-4">
+          <div className="flex items-center gap-2.5">
+            <div className="w-9 h-9 rounded-xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400 flex-shrink-0">
+              <BookOpen className="w-4 h-4" />
+            </div>
+            <div>
+              <h2 className="text-base sm:text-lg font-bold text-white tracking-tight">
+                Guide to Canadian Student Offers & Newcomer Discounts
+              </h2>
+              <p className="text-xs text-zinc-400 mt-0.5">
+                Frequently asked questions on 2026 banking promos, food hacks, off-campus work rules, and savings.
+              </p>
+            </div>
+          </div>
+          <Badge variant="emerald" className="self-start sm:self-auto text-[11px] font-mono font-bold">
+            2026 Verified Guide
+          </Badge>
+        </div>
+
+        {/* Semantic Accordion Q&A Items */}
+        <div className="flex flex-col gap-3">
+          <details className="group border border-white/[0.08] rounded-2xl bg-white/[0.02] p-4 transition-all open:bg-white/[0.04] open:border-emerald-500/30 cursor-pointer">
+            <summary className="text-sm font-bold text-white flex items-center justify-between gap-3 list-none">
+              <span className="flex items-center gap-2">
+                <Gift className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+                <span>What are the best student offers in Canada for 2026?</span>
+              </span>
+              <ChevronDown className="w-4 h-4 text-zinc-400 group-open:rotate-180 transition-transform flex-shrink-0" />
+            </summary>
+            <div className="text-xs text-zinc-300 leading-relaxed mt-3 pt-3 border-t border-white/[0.06] space-y-2">
+              <p>
+                Canadian Big 5 banks and major retailers offer high-value student incentives active for the 2026 academic year:
+              </p>
+              <ul className="list-disc pl-5 space-y-1.5 text-zinc-300 font-medium">
+                <li><strong className="text-white">RBC Royal Bank:</strong> Free pair of Apple AirPods 4 (or $100 direct cash deposit) with RBC Student Advantage Banking (valid until Nov 2, 2026).</li>
+                <li><strong className="text-white">Scotiabank:</strong> $200 Cash Welcome Bonus on the Preferred Package for Students &amp; Youth (valid until Nov 1, 2026) + Scene+ points for free movies.</li>
+                <li><strong className="text-white">CIBC:</strong> $175 Cash Reward on CIBC Smart Start / Smart for Students + Free annual SPC+ student discount membership ($250+ value at 450+ stores).</li>
+                <li><strong className="text-white">TD Canada Trust:</strong> Up to $150 Cash Offer + Guaranteed $1,000 first credit card approval with $0 Canadian credit history.</li>
+                <li><strong className="text-white">Simplii Financial:</strong> Up to $400 welcome deposit bonus with $0 monthly fees forever.</li>
+                <li><strong className="text-white">Amazon Prime &amp; Apple:</strong> 6 months 100% free Prime Student trial and up to $150 Apple Gift Card with 10% hardware discounts.</li>
+              </ul>
+            </div>
+          </details>
+
+          <details className="group border border-white/[0.08] rounded-2xl bg-white/[0.02] p-4 transition-all open:bg-white/[0.04] open:border-emerald-500/30 cursor-pointer">
+            <summary className="text-sm font-bold text-white flex items-center justify-between gap-3 list-none">
+              <span className="flex items-center gap-2">
+                <Utensils className="w-4 h-4 text-amber-400 flex-shrink-0" />
+                <span>How do international students and newcomers save money on food, transit, and mobile?</span>
+              </span>
+              <ChevronDown className="w-4 h-4 text-zinc-400 group-open:rotate-180 transition-transform flex-shrink-0" />
+            </summary>
+            <div className="text-xs text-zinc-300 leading-relaxed mt-3 pt-3 border-t border-white/[0.06] space-y-2">
+              <p>
+                Students can reduce living expenses by over $1,400 CAD per year with these insider survival hacks:
+              </p>
+              <ul className="list-disc pl-5 space-y-1.5 text-zinc-300 font-medium">
+                <li><strong className="text-white">Food &amp; Groceries:</strong> Rescue surplus gourmet meals and bakery boxes for $4.99 on <strong className="text-emerald-300">Too Good To Go</strong> (regularly $18–$25). Shop at Zehrs and Loblaws on <strong className="text-emerald-300">Student Tuesdays</strong> for an instant 10% discount using PC Optimum.</li>
+                <li><strong className="text-white">Transit &amp; Airport Rides:</strong> Use promo code <code className="text-emerald-300 bg-white/10 px-1 py-0.5 rounded">WELCOME50</code> on Uber &amp; Lyft with a fresh Canadian SIM for 50% off airport rides. Take advantage of tuition-included U-Pass (Waterloo ION LRT / Vancouver SkyTrain) and Ontario&apos;s One Fare program for free transfers between TTC and GO Transit.</li>
+                <li><strong className="text-white">Mobile Plans:</strong> Activate a pre-arrival 5G eSIM from PhoneBox ($34 for 50GB + free international calling) or Fizz Mobile for rollover data.</li>
+              </ul>
+            </div>
+          </details>
+
+          <details className="group border border-white/[0.08] rounded-2xl bg-white/[0.02] p-4 transition-all open:bg-white/[0.04] open:border-emerald-500/30 cursor-pointer">
+            <summary className="text-sm font-bold text-white flex items-center justify-between gap-3 list-none">
+              <span className="flex items-center gap-2">
+                <Briefcase className="w-4 h-4 text-blue-400 flex-shrink-0" />
+                <span>How can international students earn money legally in Canada?</span>
+              </span>
+              <ChevronDown className="w-4 h-4 text-zinc-400 group-open:rotate-180 transition-transform flex-shrink-0" />
+            </summary>
+            <div className="text-xs text-zinc-300 leading-relaxed mt-3 pt-3 border-t border-white/[0.06] space-y-2">
+              <p>
+                Under IRCC regulations updated in <strong className="text-white">November 2024</strong>:
+              </p>
+              <ul className="list-disc pl-5 space-y-1.5 text-zinc-300 font-medium">
+                <li><strong className="text-white">24 Hours / Week Off-Campus:</strong> Full-time post-secondary international students with a valid Study Permit authorizing work can work legally up to 24 hours per week during academic semesters (up from 20 hours).</li>
+                <li><strong className="text-white">Unlimited Full-Time on Scheduled Breaks:</strong> During scheduled winter, summer, and reading week breaks, international students may work full-time with no hourly restriction.</li>
+                <li><strong className="text-white">Social Insurance Number (SIN):</strong> You must obtain your 9-digit SIN from Service Canada (arrive at 8:00 AM before 8:30 AM opening to finish in 15 mins) before starting payroll.</li>
+              </ul>
+            </div>
+          </details>
+
+          <details className="group border border-white/[0.08] rounded-2xl bg-white/[0.02] p-4 transition-all open:bg-white/[0.04] open:border-emerald-500/30 cursor-pointer">
+            <summary className="text-sm font-bold text-white flex items-center justify-between gap-3 list-none">
+              <span className="flex items-center gap-2">
+                <CreditCard className="w-4 h-4 text-cyan-400 flex-shrink-0" />
+                <span>What are the 3 biggest financial benefits for students moving to Canada?</span>
+              </span>
+              <ChevronDown className="w-4 h-4 text-zinc-400 group-open:rotate-180 transition-transform flex-shrink-0" />
+            </summary>
+            <div className="text-xs text-zinc-300 leading-relaxed mt-3 pt-3 border-t border-white/[0.06] space-y-2">
+              <ol className="list-decimal pl-5 space-y-1.5 text-zinc-300 font-medium">
+                <li><strong className="text-white">$0 Fee Banking &amp; Welcome Bonuses:</strong> Up to $400 in direct cash or free Apple AirPods 4 with $0 monthly maintenance fees.</li>
+                <li><strong className="text-white">Universal Tuition-Included Transit:</strong> Unlimited rides across buses, LRT, subways, and SkyTrains saving ~$1,200/year compared to standard adult transit passes.</li>
+                <li><strong className="text-white">First Canadian Credit Card with $0 Credit History:</strong> Guaranteed $1,000 credit limit approval from TD, RBC, and Scotiabank to establish an Equifax and TransUnion credit score immediately upon arrival.</li>
+              </ol>
+            </div>
+          </details>
+        </div>
       </section>
 
       {/* Community Contribution Section */}

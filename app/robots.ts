@@ -10,6 +10,24 @@ export default function robots(): MetadataRoute.Robots {
         allow: "/",
         disallow: ["/auth/callback", "/api/"],
       },
+      // Explicitly allow leading AI search engines and answer engines (GEO)
+      {
+        userAgent: [
+          "Googlebot",
+          "Google-Extended",
+          "GPTBot",
+          "ChatGPT-User",
+          "ClaudeBot",
+          "anthropic-ai",
+          "PerplexityBot",
+          "Bingbot",
+          "Applebot-Extended",
+          "cohere-ai",
+          "Bytespider",
+        ],
+        allow: ["/", "/dashboard/perks", "/dashboard", "/dashboard/documents", "/contribute"],
+        disallow: ["/auth/callback", "/api/"],
+      },
     ],
     sitemap: `${siteUrl}/sitemap.xml`,
   };

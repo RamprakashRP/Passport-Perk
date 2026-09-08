@@ -8,32 +8,32 @@ export default function sitemap(): MetadataRoute.Sitemap {
     {
       url: `${siteUrl}`,
       lastModified: currentDate,
-      changeFrequency: "weekly",
+      changeFrequency: "daily",
+      priority: 1.0,
+    },
+    {
+      url: `${siteUrl}/dashboard/perks`,
+      lastModified: currentDate,
+      changeFrequency: "daily",
       priority: 1.0,
     },
     {
       url: `${siteUrl}/dashboard`,
       lastModified: currentDate,
       changeFrequency: "daily",
-      priority: 0.9,
-    },
-    {
-      url: `${siteUrl}/dashboard/perks`,
-      lastModified: currentDate,
-      changeFrequency: "daily",
-      priority: 0.9,
+      priority: 0.95,
     },
     {
       url: `${siteUrl}/dashboard/documents`,
       lastModified: currentDate,
       changeFrequency: "weekly",
-      priority: 0.8,
+      priority: 0.85,
     },
     {
       url: `${siteUrl}/contribute`,
       lastModified: currentDate,
       changeFrequency: "weekly",
-      priority: 0.7,
+      priority: 0.75,
     },
     {
       url: `${siteUrl}/login`,
