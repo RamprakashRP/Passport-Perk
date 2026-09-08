@@ -428,6 +428,24 @@ const ALL_ATOMIC_PERKS: AtomicPerk[] = [
   },
 ];
 
+const AUDIENCE_OPTIONS = [
+  { id: "all", label: "👥 All Audiences" },
+  { id: "students", label: "🎓 Int'l Students" },
+  { id: "newcomers", label: "🧳 All Newcomers (PR & Work)" },
+  { id: "pre_arrival", label: "✈️ Pre-Arrival (Before Flying)" },
+  { id: "enrolled", label: "📚 College & University" },
+];
+
+const CATEGORY_OPTIONS = [
+  { id: "all", label: "🔥 All Deals" },
+  { id: "banking", label: "💰 Banking & Cash" },
+  { id: "tech", label: "🎧 Tech & Gear" },
+  { id: "food", label: "🍕 Food & Groceries" },
+  { id: "telecom", label: "📱 Mobile & 5G" },
+  { id: "transit", label: "🚆 Transit & Rides" },
+  { id: "housing", label: "🏠 Tenant Insurance" },
+];
+
 export default function PerksPage() {
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [activeCategory, setActiveCategory] = useState<string>("all");
@@ -436,6 +454,7 @@ export default function PerksPage() {
   const [activeRegion, setActiveRegion] = useState<string>("All Canada");
   const [claimedPerks, setClaimedPerks] = useState<Record<string, boolean>>({});
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
+  const [isFiltersOpen, setIsFiltersOpen] = useState<boolean>(false);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -585,7 +604,15 @@ export default function PerksPage() {
 
   const totalAvailableDollars = ALL_ATOMIC_PERKS.reduce((acc, p) => acc + p.valueDollars, 0);
 
-  const isAnyFilterActive = searchQuery.trim() !== "" || activeCategory !== "all" || activeAudience !== "all" || sortBy !== "highest_value";
+  const activeFilterCount =
+    (activeCategory !== "all" ? 1 : 0) +
+    (activeAudience !== "all" ? 1 : 0);
+
+  const isAnyFilterActive =
+    searchQuery.trim() !== "" ||
+    activeCategory !== "all" ||
+    activeAudience !== "all" ||
+    sortBy !== "highest_value";
 
   return (
     <div className="flex flex-col gap-6 sm:gap-8 lg:gap-10">
@@ -645,139 +672,233 @@ export default function PerksPage() {
         </div>
       </div>
 
-      {/* Control Panel: Search Bar, Audience Persona Filters, Category Filters & Sort Controls */}
-      <section className="flex flex-col gap-4 bg-[#0d1322]/80 backdrop-blur-xl border border-white/[0.08] rounded-3xl p-4 sm:p-6 shadow-xl">
-        {/* Row 1: Search Input & Sort Selector */}
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
-          {/* Interactive Search Bar */}
-          <div className="relative flex-1">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
+      {/* Sleek, Modern & Retractable Filter, Search & Sort Control Center */}
+      <section className="flex flex-col gap-2.5">
+        {/* Primary Compact Bar (Glassmorphic, Ultra-sleek) */}
+        <div className="bg-[#0d1322]/90 backdrop-blur-2xl border border-white/[0.1] rounded-2xl p-2.5 sm:p-3 shadow-lg flex flex-col md:flex-row items-stretch md:items-center justify-between gap-2.5 sm:gap-3 transition-all">
+          
+          {/* Left: Sleek Search Bar */}
+          <div className="relative flex-1 min-w-[240px]">
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400 pointer-events-none" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search by brand, bank, perk, keyword (e.g. Scotiabank, AirPods, eSIM, Cash, Food)..."
-              className="w-full pl-10 pr-10 py-2.5 rounded-2xl bg-white/[0.04] border border-white/[0.1] text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-emerald-500/60 focus:ring-1 focus:ring-emerald-500/40 transition-all font-medium"
+              placeholder="Search 17 student offers, banks, codes, or perks..."
+              className="w-full pl-10 pr-9 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-xs sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/30 transition-all font-medium"
             />
             {searchQuery && (
               <button
                 type="button"
                 onClick={() => setSearchQuery("")}
-                className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-full text-zinc-400 hover:text-white hover:bg-white/10 transition-colors"
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 rounded-full text-zinc-400 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
+                title="Clear search"
               >
                 <X className="w-3.5 h-3.5" />
               </button>
             )}
           </div>
 
-          {/* Sort Selector Dropdown */}
-          <div className="flex items-center gap-2 flex-shrink-0 self-end sm:self-auto">
-            <span className="text-xs font-mono text-zinc-400 flex items-center gap-1">
-              <ArrowUpDown className="w-3.5 h-3.5 text-emerald-400" />
-              <span>Sort:</span>
-            </span>
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value as any)}
-              className="bg-[#0d1322] border border-white/[0.12] rounded-xl px-3 py-2 text-xs font-semibold text-white focus:outline-none focus:border-emerald-400 cursor-pointer shadow-sm"
+          {/* Right Controls: Filters Toggle & Sort Dropdown */}
+          <div className="flex items-center gap-2 justify-between sm:justify-end flex-wrap sm:flex-nowrap">
+            
+            {/* Retractable Filters Toggle Button */}
+            <button
+              type="button"
+              onClick={() => setIsFiltersOpen(!isFiltersOpen)}
+              className={cn(
+                "flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold border transition-all cursor-pointer select-none",
+                isFiltersOpen || activeFilterCount > 0
+                  ? "bg-emerald-500/15 border-emerald-500/40 text-emerald-300 shadow-[0_0_15px_rgba(16,185,129,0.15)]"
+                  : "bg-white/[0.04] border-white/[0.08] text-zinc-300 hover:text-white hover:bg-white/[0.08] hover:border-white/[0.15]"
+              )}
             >
-              <option value="highest_value">💰 Highest Value ($ CAD)</option>
-              <option value="expiring_soon">⏳ Expiring Soon (2026 Promos)</option>
-              <option value="popular">🔥 Most Popular</option>
-              <option value="alphabetical">🔤 Brand Name (A-Z)</option>
-            </select>
-          </div>
-        </div>
-
-        {/* Row 2: Audience / Persona Quick Filter Pills */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pt-3 border-t border-white/[0.06]">
-          <div className="flex items-center gap-1.5 flex-shrink-0">
-            <Users className="w-3.5 h-3.5 text-cyan-400" />
-            <span className="text-xs font-bold text-zinc-300">Who Can Claim:</span>
-          </div>
-
-          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none flex-wrap">
-            {[
-              { id: "all", label: "👥 All Audiences", count: ALL_ATOMIC_PERKS.length },
-              { id: "students", label: "🎓 Int'l Students" },
-              { id: "newcomers", label: "🧳 All Newcomers (PR & Work)" },
-              { id: "pre_arrival", label: "✈️ Pre-Arrival (Before Flying)" },
-              { id: "enrolled", label: "📚 College & University" },
-            ].map((aud) => (
-              <button
-                key={aud.id}
-                type="button"
-                onClick={() => setActiveAudience(aud.id)}
+              <SlidersHorizontal className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
+              <span>Filters</span>
+              {activeFilterCount > 0 && (
+                <span className="w-4 h-4 rounded-full bg-emerald-500 text-zinc-950 font-mono text-[10px] font-black flex items-center justify-center">
+                  {activeFilterCount}
+                </span>
+              )}
+              <ChevronDown
                 className={cn(
-                  "whitespace-nowrap px-3 py-1 rounded-xl text-xs font-semibold border transition-all cursor-pointer",
-                  activeAudience === aud.id
-                    ? "bg-cyan-500/20 text-cyan-300 border-cyan-400/50 font-bold shadow-[0_0_12px_rgba(6,182,212,0.2)]"
-                    : "bg-white/[0.02] text-zinc-400 border-white/[0.06] hover:border-white/[0.15] hover:text-white"
+                  "w-3.5 h-3.5 text-zinc-400 transition-transform duration-200",
+                  isFiltersOpen && "rotate-180 text-emerald-400"
                 )}
+              />
+            </button>
+
+            {/* Modern Minimalist Sort Selector */}
+            <div className="relative flex items-center">
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value as any)}
+                aria-label="Sort offers"
+                className="appearance-none bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] hover:border-white/[0.15] rounded-xl pl-8 pr-7 py-2 text-xs font-semibold text-zinc-200 hover:text-white focus:outline-none focus:border-emerald-500/50 cursor-pointer transition-all shadow-sm"
               >
-                {aud.label}
-              </button>
-            ))}
+                <option value="highest_value" className="bg-[#0d1322] text-white">💰 Highest Value</option>
+                <option value="expiring_soon" className="bg-[#0d1322] text-white">⏳ Expiring Soon</option>
+                <option value="popular" className="bg-[#0d1322] text-white">🔥 Most Popular</option>
+                <option value="alphabetical" className="bg-[#0d1322] text-white">🔤 Brand (A-Z)</option>
+              </select>
+              <ArrowUpDown className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-zinc-400 pointer-events-none" />
+              <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-3 h-3 text-zinc-400 pointer-events-none" />
+            </div>
+
           </div>
         </div>
 
-        {/* Row 3: Category Filter Pills */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pt-3 border-t border-white/[0.06]">
-          <div className="flex items-center gap-1.5 flex-shrink-0">
-            <Layers className="w-3.5 h-3.5 text-emerald-400" />
-            <span className="text-xs font-bold text-zinc-300">Category:</span>
-          </div>
-
-          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
-            {[
-              { id: "all", label: `🔥 All Deals (${ALL_ATOMIC_PERKS.length})` },
-              { id: "banking", label: "💰 Banking & Cash" },
-              { id: "tech", label: "🎧 Tech & Gear" },
-              { id: "food", label: "🍕 Food & Groceries" },
-              { id: "telecom", label: "📱 Mobile & 5G" },
-              { id: "transit", label: "🚆 Transit & Rides" },
-              { id: "housing", label: "🏠 Tenant Insurance" },
-            ].map((cat) => (
-              <button
-                key={cat.id}
-                type="button"
-                onClick={() => setActiveCategory(cat.id)}
-                className={cn(
-                  "whitespace-nowrap px-3.5 py-1.5 rounded-xl text-xs font-semibold border transition-all cursor-pointer",
-                  activeCategory === cat.id
-                    ? "bg-emerald-500 text-zinc-950 border-emerald-400 font-bold shadow-[0_0_15px_rgba(16,185,129,0.3)]"
-                    : "bg-[#0d1322]/70 text-zinc-400 border-white/[0.08] hover:border-white/[0.18] hover:text-white"
-                )}
-              >
-                {cat.label}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Filter Summary & Active Indicator */}
-        <div className="flex items-center justify-between gap-2 pt-2 text-xs text-zinc-400">
-          <div className="flex items-center gap-2">
-            <span>
-              Showing <strong className="text-white font-mono">{filteredAndSortedPerks.length}</strong> of {ALL_ATOMIC_PERKS.length} verified deals
-            </span>
-            {searchQuery && (
-              <span className="bg-white/[0.06] px-2 py-0.5 rounded-md text-zinc-300 text-[11px] font-mono">
-                Keyword: &quot;{searchQuery}&quot;
+        {/* Active Filters Quick Strip (Always visible when filters active even if panel is closed) */}
+        {(isAnyFilterActive || searchQuery.trim() !== "") && (
+          <div className="flex items-center justify-between gap-2 px-2 py-1 text-xs">
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <span className="text-[11px] font-mono text-zinc-400">
+                Showing <strong className="text-white">{filteredAndSortedPerks.length}</strong> of {ALL_ATOMIC_PERKS.length}:
               </span>
-            )}
-          </div>
 
-          {isAnyFilterActive && (
+              {activeAudience !== "all" && (
+                <button
+                  type="button"
+                  onClick={() => setActiveAudience("all")}
+                  className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg bg-cyan-500/15 border border-cyan-500/30 text-cyan-300 text-[11px] font-medium hover:bg-cyan-500/25 transition-colors cursor-pointer"
+                >
+                  <span>{AUDIENCE_OPTIONS.find((a) => a.id === activeAudience)?.label || activeAudience}</span>
+                  <X className="w-3 h-3" />
+                </button>
+              )}
+
+              {activeCategory !== "all" && (
+                <button
+                  type="button"
+                  onClick={() => setActiveCategory("all")}
+                  className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-[11px] font-medium hover:bg-emerald-500/25 transition-colors cursor-pointer"
+                >
+                  <span>{CATEGORY_OPTIONS.find((c) => c.id === activeCategory)?.label || activeCategory}</span>
+                  <X className="w-3 h-3" />
+                </button>
+              )}
+
+              {searchQuery.trim() !== "" && (
+                <button
+                  type="button"
+                  onClick={() => setSearchQuery("")}
+                  className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg bg-white/[0.08] border border-white/[0.12] text-zinc-300 text-[11px] font-medium hover:bg-white/[0.15] transition-colors cursor-pointer"
+                >
+                  <span>&quot;{searchQuery}&quot;</span>
+                  <X className="w-3 h-3" />
+                </button>
+              )}
+            </div>
+
             <button
               type="button"
               onClick={resetAllFilters}
-              className="text-emerald-400 hover:text-emerald-300 underline text-xs font-semibold cursor-pointer"
+              className="text-[11px] font-semibold text-zinc-400 hover:text-emerald-400 transition-colors flex-shrink-0 cursor-pointer ml-auto"
             >
-              Reset All Filters
+              Reset All
             </button>
+          </div>
+        )}
+
+        {/* Smooth Retractable Drawer / Collapsible Accordion Panel */}
+        <AnimatePresence>
+          {isFiltersOpen && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.22, ease: "easeInOut" }}
+              className="overflow-hidden"
+            >
+              <div className="bg-[#0d1322]/90 backdrop-blur-2xl border border-white/[0.1] rounded-2xl p-4 sm:p-5 flex flex-col gap-4 shadow-xl">
+                
+                {/* Section 1: Audience / Persona Selection */}
+                <div className="flex flex-col gap-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-zinc-300 flex items-center gap-1.5">
+                      <Users className="w-3.5 h-3.5 text-cyan-400" />
+                      <span>Eligibility / Visa Persona</span>
+                    </span>
+                    <span className="text-[10px] font-mono text-zinc-500">Filter by student or visa type</span>
+                  </div>
+
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    {AUDIENCE_OPTIONS.map((aud) => (
+                      <button
+                        key={aud.id}
+                        type="button"
+                        onClick={() => setActiveAudience(aud.id)}
+                        className={cn(
+                          "px-3 py-1.5 rounded-xl text-xs font-medium border transition-all cursor-pointer flex items-center gap-1.5",
+                          activeAudience === aud.id
+                            ? "bg-cyan-500/20 text-cyan-300 border-cyan-400/50 font-bold shadow-[0_0_12px_rgba(6,182,212,0.25)]"
+                            : "bg-white/[0.03] text-zinc-400 border-white/[0.06] hover:border-white/[0.15] hover:text-white"
+                        )}
+                      >
+                        {aud.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Section 2: Category Selection */}
+                <div className="flex flex-col gap-2 pt-3 border-t border-white/[0.06]">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-zinc-300 flex items-center gap-1.5">
+                      <Layers className="w-3.5 h-3.5 text-emerald-400" />
+                      <span>Offer Category</span>
+                    </span>
+                    <span className="text-[10px] font-mono text-zinc-500">Filter by perk category</span>
+                  </div>
+
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    {CATEGORY_OPTIONS.map((cat) => (
+                      <button
+                        key={cat.id}
+                        type="button"
+                        onClick={() => setActiveCategory(cat.id)}
+                        className={cn(
+                          "px-3 py-1.5 rounded-xl text-xs font-medium border transition-all cursor-pointer flex items-center gap-1.5",
+                          activeCategory === cat.id
+                            ? "bg-emerald-500 text-zinc-950 border-emerald-400 font-bold shadow-[0_0_12px_rgba(16,185,129,0.3)]"
+                            : "bg-white/[0.03] text-zinc-400 border-white/[0.06] hover:border-white/[0.15] hover:text-white"
+                        )}
+                      >
+                        {cat.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Drawer Footer Actions */}
+                <div className="flex items-center justify-between pt-3 border-t border-white/[0.06]">
+                  <span className="text-xs text-zinc-400 font-medium">
+                    Found <strong className="text-emerald-400 font-mono">{filteredAndSortedPerks.length}</strong> matching offers
+                  </span>
+                  <div className="flex items-center gap-2">
+                    {isAnyFilterActive && (
+                      <button
+                        type="button"
+                        onClick={resetAllFilters}
+                        className="px-3 py-1 text-xs text-zinc-400 hover:text-white transition-colors cursor-pointer"
+                      >
+                        Clear All
+                      </button>
+                    )}
+                    <button
+                      type="button"
+                      onClick={() => setIsFiltersOpen(false)}
+                      className="px-3 py-1 bg-white/10 hover:bg-white/15 text-white text-xs font-semibold rounded-lg transition-colors cursor-pointer"
+                    >
+                      Done
+                    </button>
+                  </div>
+                </div>
+
+              </div>
+            </motion.div>
           )}
-        </div>
+        </AnimatePresence>
       </section>
 
       {/* Main Deals Marketplace Section */}
