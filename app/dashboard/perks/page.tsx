@@ -31,6 +31,16 @@ import {
   Train,
   Utensils,
   Zap,
+  Search,
+  X,
+  SlidersHorizontal,
+  Users,
+  ArrowUpDown,
+  Filter,
+  GraduationCap,
+  Plane,
+  Briefcase,
+  Layers,
 } from "lucide-react";
 import { BrandLogo, BrandKey } from "@/components/ui/brand-logo";
 import { SubmitPerkCard } from "@/components/features/submit-perk-card";
@@ -40,6 +50,13 @@ import { handleOutboundClick } from "@/lib/telemetry";
 import { syncTaskStatusToSupabase } from "@/lib/supabase";
 import { triggerConfetti } from "@/lib/confetti";
 import { cn } from "@/lib/utils";
+
+export type AudienceCategory =
+  | "students"
+  | "newcomers"
+  | "pre_arrival"
+  | "enrolled"
+  | "all_residents";
 
 interface AtomicPerk {
   id: string;
@@ -57,6 +74,8 @@ interface AtomicPerk {
   valueDollars: number;
   badgeTag: string;
   regionSpecific?: "Waterloo" | "Toronto" | "Vancouver" | "All";
+  eligibleAudiences: AudienceCategory[];
+  audienceTags: string[];
 }
 
 const ALL_ATOMIC_PERKS: AtomicPerk[] = [
@@ -80,6 +99,8 @@ const ALL_ATOMIC_PERKS: AtomicPerk[] = [
     valueDollars: 200,
     badgeTag: "Ends Nov 1, 2026",
     regionSpecific: "All",
+    eligibleAudiences: ["students", "enrolled", "pre_arrival"],
+    audienceTags: ["🎓 Int'l Students", "📚 Enrolled Students", "✈️ Pre-Arrival"],
   },
   {
     id: "rbc-package",
@@ -100,6 +121,8 @@ const ALL_ATOMIC_PERKS: AtomicPerk[] = [
     valueDollars: 240,
     badgeTag: "Ends Nov 2, 2026",
     regionSpecific: "All",
+    eligibleAudiences: ["students", "enrolled"],
+    audienceTags: ["🎓 Int'l Students", "📚 Post-Secondary"],
   },
   {
     id: "cibc-package",
@@ -120,6 +143,8 @@ const ALL_ATOMIC_PERKS: AtomicPerk[] = [
     valueDollars: 295,
     badgeTag: "Top Cash + Perks",
     regionSpecific: "All",
+    eligibleAudiences: ["students", "newcomers", "pre_arrival"],
+    audienceTags: ["🎓 Int'l Students", "🧳 Newcomers (PR/Work)", "✈️ Pre-Arrival"],
   },
   {
     id: "td-package",
@@ -140,6 +165,8 @@ const ALL_ATOMIC_PERKS: AtomicPerk[] = [
     valueDollars: 150,
     badgeTag: "Ends Nov 2, 2026",
     regionSpecific: "All",
+    eligibleAudiences: ["students", "newcomers", "enrolled"],
+    audienceTags: ["🎓 Int'l Students", "🧳 All Newcomers", "📚 University Enrolled"],
   },
   {
     id: "simplii-package",
@@ -160,6 +187,8 @@ const ALL_ATOMIC_PERKS: AtomicPerk[] = [
     valueDollars: 400,
     badgeTag: "$0 Fees Forever",
     regionSpecific: "All",
+    eligibleAudiences: ["students", "newcomers", "all_residents"],
+    audienceTags: ["🎓 Int'l Students", "🧳 PR / Work Permits", "🍁 All Residents"],
   },
 
   // --- TECH & ENTERTAINMENT ---
@@ -178,6 +207,8 @@ const ALL_ATOMIC_PERKS: AtomicPerk[] = [
     valueDollars: 150,
     badgeTag: "Hardware Discount",
     regionSpecific: "All",
+    eligibleAudiences: ["students", "enrolled"],
+    audienceTags: ["🎓 Int'l Students", "📚 College & University"],
   },
   {
     id: "perk-amazon-prime-student",
@@ -194,6 +225,8 @@ const ALL_ATOMIC_PERKS: AtomicPerk[] = [
     valueDollars: 60,
     badgeTag: "Free Trial",
     regionSpecific: "All",
+    eligibleAudiences: ["students", "enrolled"],
+    audienceTags: ["🎓 Int'l Students", "📚 Post-Secondary (.edu)"],
   },
   {
     id: "perk-spotify-student",
@@ -210,6 +243,8 @@ const ALL_ATOMIC_PERKS: AtomicPerk[] = [
     valueDollars: 60,
     badgeTag: "50% Off Subscription",
     regionSpecific: "All",
+    eligibleAudiences: ["students", "enrolled"],
+    audienceTags: ["🎓 Int'l Students", "📚 SheerID Verified"],
   },
 
   // --- FOOD & GROCERY SAVINGS ---
@@ -228,6 +263,8 @@ const ALL_ATOMIC_PERKS: AtomicPerk[] = [
     valueDollars: 150,
     badgeTag: "Surplus Food App",
     regionSpecific: "All",
+    eligibleAudiences: ["students", "newcomers", "all_residents"],
+    audienceTags: ["🎓 Int'l Students", "🧳 All Newcomers", "🍁 Open to All"],
   },
   {
     id: "perk-pc-optimum-grocery",
@@ -244,6 +281,8 @@ const ALL_ATOMIC_PERKS: AtomicPerk[] = [
     valueDollars: 80,
     badgeTag: "10% Grocery Hack",
     regionSpecific: "All",
+    eligibleAudiences: ["students", "enrolled"],
+    audienceTags: ["🎓 Int'l Students", "📚 Student ID Cardholders"],
   },
 
   // --- MOBILE & ESIM ---
@@ -263,6 +302,8 @@ const ALL_ATOMIC_PERKS: AtomicPerk[] = [
     valueDollars: 50,
     badgeTag: "Pre-Arrival 5G eSIM",
     regionSpecific: "All",
+    eligibleAudiences: ["pre_arrival", "students", "newcomers"],
+    audienceTags: ["✈️ Pre-Arrival (Before Flying)", "🎓 Int'l Students", "🧳 Newcomers"],
   },
   {
     id: "perk-fizz-mobile",
@@ -280,6 +321,8 @@ const ALL_ATOMIC_PERKS: AtomicPerk[] = [
     valueDollars: 25,
     badgeTag: "Rollover Data",
     regionSpecific: "All",
+    eligibleAudiences: ["students", "newcomers", "all_residents"],
+    audienceTags: ["🎓 Int'l Students", "🧳 All Newcomers", "🍁 All Residents"],
   },
 
   // --- TRANSIT & RIDESHARE ---
@@ -303,6 +346,8 @@ const ALL_ATOMIC_PERKS: AtomicPerk[] = [
     valueDollars: 30,
     badgeTag: "Arrival Rideshare Hack",
     regionSpecific: "All",
+    eligibleAudiences: ["pre_arrival", "students", "newcomers"],
+    audienceTags: ["✈️ New Landings (Airport)", "🎓 Int'l Students", "🧳 All Newcomers"],
   },
   {
     id: "perk-grt-ion-waterloo",
@@ -319,6 +364,8 @@ const ALL_ATOMIC_PERKS: AtomicPerk[] = [
     valueDollars: 360,
     badgeTag: "Unlimited U-Pass",
     regionSpecific: "Waterloo",
+    eligibleAudiences: ["students", "enrolled"],
+    audienceTags: ["🎓 Int'l Students", "📚 UW / Laurier / Conestoga"],
   },
   {
     id: "perk-up-express-toronto",
@@ -335,6 +382,8 @@ const ALL_ATOMIC_PERKS: AtomicPerk[] = [
     valueDollars: 120,
     badgeTag: "One Fare Program",
     regionSpecific: "Toronto",
+    eligibleAudiences: ["students", "newcomers", "all_residents"],
+    audienceTags: ["🎓 Int'l Students", "🧳 All Commuters", "🍁 PRESTO Users"],
   },
   {
     id: "perk-skytrain-vancouver",
@@ -351,6 +400,8 @@ const ALL_ATOMIC_PERKS: AtomicPerk[] = [
     valueDollars: 450,
     badgeTag: "All-Zone U-Pass",
     regionSpecific: "Vancouver",
+    eligibleAudiences: ["students", "enrolled"],
+    audienceTags: ["🎓 Int'l Students", "📚 UBC / SFU Students"],
   },
 
   // --- TENANT INSURANCE ---
@@ -369,11 +420,16 @@ const ALL_ATOMIC_PERKS: AtomicPerk[] = [
     valueDollars: 50,
     badgeTag: "Landlord Required",
     regionSpecific: "All",
+    eligibleAudiences: ["students", "newcomers", "all_residents"],
+    audienceTags: ["🎓 Int'l Students", "🧳 All Renters / PR", "🏠 Apartment Leases"],
   },
 ];
 
 export default function PerksPage() {
+  const [searchQuery, setSearchQuery] = useState<string>("");
   const [activeCategory, setActiveCategory] = useState<string>("all");
+  const [activeAudience, setActiveAudience] = useState<string>("all");
+  const [sortBy, setSortBy] = useState<"highest_value" | "expiring_soon" | "alphabetical" | "popular">("highest_value");
   const [activeRegion, setActiveRegion] = useState<string>("All Canada");
   const [claimedPerks, setClaimedPerks] = useState<Record<string, boolean>>({});
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
@@ -451,16 +507,72 @@ export default function PerksPage() {
     });
   };
 
-  const filteredPerks = ALL_ATOMIC_PERKS.filter((perk) => {
+  const resetAllFilters = () => {
+    setSearchQuery("");
+    setActiveCategory("all");
+    setActiveAudience("all");
+    setSortBy("highest_value");
+  };
+
+  // Filter & Search Logic
+  const filteredAndSortedPerks = ALL_ATOMIC_PERKS.filter((perk) => {
+    // 1. Category Filter
     if (activeCategory !== "all" && perk.category !== activeCategory) return false;
 
+    // 2. Audience Filter
+    if (activeAudience !== "all" && !perk.eligibleAudiences.includes(activeAudience as AudienceCategory)) {
+      return false;
+    }
+
+    // 3. Region Filter
     if (perk.regionSpecific && perk.regionSpecific !== "All") {
       if (activeRegion.includes("Waterloo") && perk.regionSpecific !== "Waterloo") return false;
       if (activeRegion.includes("Toronto") && perk.regionSpecific !== "Toronto") return false;
       if (activeRegion.includes("Vancouver") && perk.regionSpecific !== "Vancouver") return false;
     }
 
+    // 4. Keyword Search across Brand, Hero, Title, Description, Audience Tags & Key points
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase();
+      const matchesBrand = perk.brandName.toLowerCase().includes(q);
+      const matchesHero = perk.heroPerk.toLowerCase().includes(q);
+      const matchesDetail = perk.perkDetail.toLowerCase().includes(q);
+      const matchesDesc = perk.description.toLowerCase().includes(q);
+      const matchesBadge = perk.badgeTag.toLowerCase().includes(q);
+      const matchesAudience = perk.audienceTags.some((t) => t.toLowerCase().includes(q));
+      const matchesKeyPoints = perk.keyPoints.some((k) => k.toLowerCase().includes(q));
+      const matchesCode = perk.promoCode?.toLowerCase().includes(q);
+
+      if (
+        !matchesBrand &&
+        !matchesHero &&
+        !matchesDetail &&
+        !matchesDesc &&
+        !matchesBadge &&
+        !matchesAudience &&
+        !matchesKeyPoints &&
+        !matchesCode
+      ) {
+        return false;
+      }
+    }
+
     return true;
+  }).sort((a, b) => {
+    if (sortBy === "highest_value") {
+      return b.valueDollars - a.valueDollars;
+    }
+    if (sortBy === "expiring_soon") {
+      const aExp = a.badgeTag.includes("Ends") ? 1 : 0;
+      const bExp = b.badgeTag.includes("Ends") ? 1 : 0;
+      if (aExp !== bExp) return bExp - aExp;
+      return b.valueDollars - a.valueDollars;
+    }
+    if (sortBy === "alphabetical") {
+      return a.brandName.localeCompare(b.brandName);
+    }
+    // "popular"
+    return 0;
   });
 
   const totalClaimedCount = Object.values(claimedPerks).filter(Boolean).length;
@@ -469,6 +581,8 @@ export default function PerksPage() {
   }, 0);
 
   const totalAvailableDollars = ALL_ATOMIC_PERKS.reduce((acc, p) => acc + p.valueDollars, 0);
+
+  const isAnyFilterActive = searchQuery.trim() !== "" || activeCategory !== "all" || activeAudience !== "all" || sortBy !== "highest_value";
 
   return (
     <div className="flex flex-col gap-6 sm:gap-8 lg:gap-10">
@@ -482,7 +596,7 @@ export default function PerksPage() {
             <div className="flex items-center gap-2 flex-wrap">
               <Badge variant="emerald" className="px-2.5 sm:px-3 py-0.5 text-xs font-bold">
                 <Gift className="w-3.5 h-3.5 text-emerald-400" />
-                <span>Student Deals & Perks</span>
+                <span>Student & Newcomer Deals</span>
               </Badge>
               <Badge variant="zinc" className="text-xs font-mono font-semibold">
                 {ALL_ATOMIC_PERKS.length} Verified Offers
@@ -494,7 +608,7 @@ export default function PerksPage() {
             </h1>
 
             <p className="text-xs sm:text-sm text-zinc-400 leading-relaxed">
-              Every current student offer, banking cash bonus, tech discount, and grocery hack in one clean hub. Zero fluff, instant savings for newcomers in{" "}
+              Every current student offer, banking cash bonus, tech discount, and grocery hack in one clean hub. Search by brand, bank, or visa type for newcomers in{" "}
               <strong className="text-white">{activeRegion.split(",")[0]}</strong>.
             </p>
           </div>
@@ -528,30 +642,97 @@ export default function PerksPage() {
         </div>
       </div>
 
-      {/* Main Deals Marketplace Section */}
-      <section className="flex flex-col gap-5 sm:gap-6">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 border-b border-white/[0.08] pb-4">
-          <div>
-            <div className="flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-emerald-400" />
-              <h2 className="text-lg sm:text-xl font-bold tracking-tight text-white">
-                All Verified Student Deals
-              </h2>
-            </div>
-            <p className="text-xs text-zinc-400 mt-0.5">
-              Select any category to filter offers. Tap any card to claim with student status.
-            </p>
+      {/* Control Panel: Search Bar, Audience Persona Filters, Category Filters & Sort Controls */}
+      <section className="flex flex-col gap-4 bg-[#0d1322]/80 backdrop-blur-xl border border-white/[0.08] rounded-3xl p-4 sm:p-6 shadow-xl">
+        {/* Row 1: Search Input & Sort Selector */}
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+          {/* Interactive Search Bar */}
+          <div className="relative flex-1">
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search by brand, bank, perk, keyword (e.g. Scotiabank, AirPods, eSIM, Cash, Food)..."
+              className="w-full pl-10 pr-10 py-2.5 rounded-2xl bg-white/[0.04] border border-white/[0.1] text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-emerald-500/60 focus:ring-1 focus:ring-emerald-500/40 transition-all font-medium"
+            />
+            {searchQuery && (
+              <button
+                type="button"
+                onClick={() => setSearchQuery("")}
+                className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-full text-zinc-400 hover:text-white hover:bg-white/10 transition-colors"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            )}
           </div>
 
-          {/* Category Filter Pills (Touch Scrollable) */}
-          <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+          {/* Sort Selector Dropdown */}
+          <div className="flex items-center gap-2 flex-shrink-0 self-end sm:self-auto">
+            <span className="text-xs font-mono text-zinc-400 flex items-center gap-1">
+              <ArrowUpDown className="w-3.5 h-3.5 text-emerald-400" />
+              <span>Sort:</span>
+            </span>
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value as any)}
+              className="bg-[#0d1322] border border-white/[0.12] rounded-xl px-3 py-2 text-xs font-semibold text-white focus:outline-none focus:border-emerald-400 cursor-pointer shadow-sm"
+            >
+              <option value="highest_value">💰 Highest Value ($ CAD)</option>
+              <option value="expiring_soon">⏳ Expiring Soon (2026 Promos)</option>
+              <option value="popular">🔥 Most Popular</option>
+              <option value="alphabetical">🔤 Brand Name (A-Z)</option>
+            </select>
+          </div>
+        </div>
+
+        {/* Row 2: Audience / Persona Quick Filter Pills */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pt-3 border-t border-white/[0.06]">
+          <div className="flex items-center gap-1.5 flex-shrink-0">
+            <Users className="w-3.5 h-3.5 text-cyan-400" />
+            <span className="text-xs font-bold text-zinc-300">Who Can Claim:</span>
+          </div>
+
+          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none flex-wrap">
+            {[
+              { id: "all", label: "👥 All Audiences", count: ALL_ATOMIC_PERKS.length },
+              { id: "students", label: "🎓 Int'l Students" },
+              { id: "newcomers", label: "🧳 All Newcomers (PR & Work)" },
+              { id: "pre_arrival", label: "✈️ Pre-Arrival (Before Flying)" },
+              { id: "enrolled", label: "📚 College & University" },
+            ].map((aud) => (
+              <button
+                key={aud.id}
+                type="button"
+                onClick={() => setActiveAudience(aud.id)}
+                className={cn(
+                  "whitespace-nowrap px-3 py-1 rounded-xl text-xs font-semibold border transition-all cursor-pointer",
+                  activeAudience === aud.id
+                    ? "bg-cyan-500/20 text-cyan-300 border-cyan-400/50 font-bold shadow-[0_0_12px_rgba(6,182,212,0.2)]"
+                    : "bg-white/[0.02] text-zinc-400 border-white/[0.06] hover:border-white/[0.15] hover:text-white"
+                )}
+              >
+                {aud.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Row 3: Category Filter Pills */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pt-3 border-t border-white/[0.06]">
+          <div className="flex items-center gap-1.5 flex-shrink-0">
+            <Layers className="w-3.5 h-3.5 text-emerald-400" />
+            <span className="text-xs font-bold text-zinc-300">Category:</span>
+          </div>
+
+          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
             {[
               { id: "all", label: `🔥 All Deals (${ALL_ATOMIC_PERKS.length})` },
               { id: "banking", label: "💰 Banking & Cash" },
-              { id: "tech", label: "🎧 Tech & Stream" },
+              { id: "tech", label: "🎧 Tech & Gear" },
               { id: "food", label: "🍕 Food & Groceries" },
               { id: "telecom", label: "📱 Mobile & 5G" },
-              { id: "transit", label: "🚆 Transit & Passes" },
+              { id: "transit", label: "🚆 Transit & Rides" },
               { id: "housing", label: "🏠 Tenant Insurance" },
             ].map((cat) => (
               <button
@@ -571,156 +752,218 @@ export default function PerksPage() {
           </div>
         </div>
 
-        {/* Atomic Deal Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
-          <AnimatePresence mode="popLayout">
-            {filteredPerks.map((perk) => {
-              const isClaimed = Boolean(claimedPerks[perk.id]);
+        {/* Filter Summary & Active Indicator */}
+        <div className="flex items-center justify-between gap-2 pt-2 text-xs text-zinc-400">
+          <div className="flex items-center gap-2">
+            <span>
+              Showing <strong className="text-white font-mono">{filteredAndSortedPerks.length}</strong> of {ALL_ATOMIC_PERKS.length} verified deals
+            </span>
+            {searchQuery && (
+              <span className="bg-white/[0.06] px-2 py-0.5 rounded-md text-zinc-300 text-[11px] font-mono">
+                Keyword: &quot;{searchQuery}&quot;
+              </span>
+            )}
+          </div>
 
-              return (
-                <motion.div
-                  key={perk.id}
-                  layout
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.96 }}
-                  whileHover={{ y: -4 }}
-                  transition={{ duration: 0.2 }}
-                  className={cn(
-                    "relative border rounded-3xl p-5 sm:p-6 flex flex-col justify-between gap-5 transition-all group overflow-hidden shadow-lg",
-                    isClaimed
-                      ? "border-emerald-500/30 bg-[#0d1322]/60 shadow-2xs"
-                      : "bg-[#0d1322]/90 backdrop-blur-2xl border-white/[0.1] hover:border-emerald-500/40 hover:shadow-[0_12px_40px_rgba(0,0,0,0.5)]"
-                  )}
-                >
-                  {/* Subtle Ambient Radial Glow */}
-                  <div className="absolute top-0 right-0 -mr-12 -mt-12 w-48 h-48 rounded-full bg-emerald-500/10 blur-3xl pointer-events-none opacity-30 group-hover:opacity-60 transition-opacity" />
+          {isAnyFilterActive && (
+            <button
+              type="button"
+              onClick={resetAllFilters}
+              className="text-emerald-400 hover:text-emerald-300 underline text-xs font-semibold cursor-pointer"
+            >
+              Reset All Filters
+            </button>
+          )}
+        </div>
+      </section>
 
-                  <div className="relative z-10 flex flex-col gap-4">
-                    {/* Top Row: Authentic Brand Logo + Partner Info + Save Button */}
-                    <div className="flex items-start justify-between gap-2">
-                      <div className="flex items-center gap-3 min-w-0">
-                        {/* Authentic Brand SVG Vector Logo */}
-                        <BrandLogo brand={perk.brandKey} size="md" />
+      {/* Main Deals Marketplace Section */}
+      <section className="flex flex-col gap-5 sm:gap-6">
+        {/* Deal Cards Grid */}
+        {filteredAndSortedPerks.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
+            <AnimatePresence mode="popLayout">
+              {filteredAndSortedPerks.map((perk) => {
+                const isClaimed = Boolean(claimedPerks[perk.id]);
 
-                        <div className="min-w-0">
-                          <h3
-                            className={cn(
-                              "text-sm font-bold tracking-tight transition-colors truncate",
-                              isClaimed ? "text-zinc-500 line-through" : "text-white"
-                            )}
-                          >
-                            {perk.brandName}
-                          </h3>
-                          <div className="flex items-center gap-1.5 mt-0.5">
-                            <span className="text-[10px] font-mono text-zinc-400 capitalize truncate">
-                              {perk.category} • {perk.regionSpecific === "All" ? "All Canada" : perk.regionSpecific}
-                            </span>
+                return (
+                  <motion.div
+                    key={perk.id}
+                    layout
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.96 }}
+                    whileHover={{ y: -4 }}
+                    transition={{ duration: 0.2 }}
+                    className={cn(
+                      "relative border rounded-3xl p-5 sm:p-6 flex flex-col justify-between gap-5 transition-all group overflow-hidden shadow-lg",
+                      isClaimed
+                        ? "border-emerald-500/30 bg-[#0d1322]/60 shadow-2xs"
+                        : "bg-[#0d1322]/90 backdrop-blur-2xl border-white/[0.1] hover:border-emerald-500/40 hover:shadow-[0_12px_40px_rgba(0,0,0,0.5)]"
+                    )}
+                  >
+                    {/* Subtle Ambient Radial Glow */}
+                    <div className="absolute top-0 right-0 -mr-12 -mt-12 w-48 h-48 rounded-full bg-emerald-500/10 blur-3xl pointer-events-none opacity-30 group-hover:opacity-60 transition-opacity" />
+
+                    <div className="relative z-10 flex flex-col gap-3.5">
+                      {/* Top Row: Authentic Brand Logo + Partner Info + Save Button */}
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="flex items-center gap-3 min-w-0">
+                          {/* Authentic Brand SVG Vector Logo */}
+                          <BrandLogo brand={perk.brandKey} size="md" />
+
+                          <div className="min-w-0">
+                            <h3
+                              className={cn(
+                                "text-sm font-bold tracking-tight transition-colors truncate",
+                                isClaimed ? "text-zinc-500 line-through" : "text-white"
+                              )}
+                            >
+                              {perk.brandName}
+                            </h3>
+                            <div className="flex items-center gap-1.5 mt-0.5">
+                              <span className="text-[10px] font-mono text-zinc-400 capitalize truncate">
+                                {perk.category} • {perk.regionSpecific === "All" ? "All Canada" : perk.regionSpecific}
+                              </span>
+                            </div>
                           </div>
                         </div>
-                      </div>
 
-                      {/* Save / Claim Toggle */}
-                      <button
-                        type="button"
-                        onClick={() => handleToggleClaim(perk.id)}
-                        className="flex items-center gap-1 text-[11px] font-semibold text-zinc-400 hover:text-emerald-300 transition-colors focus:outline-none cursor-pointer flex-shrink-0"
-                      >
-                        {isClaimed ? (
-                          <span className="inline-flex items-center gap-1 text-emerald-400 font-bold">
-                            <CheckCircle2 className="w-4 h-4 fill-emerald-500/20" />
-                            <span>Saved</span>
-                          </span>
-                        ) : (
-                          <span className="inline-flex items-center gap-1 text-zinc-400 hover:text-white">
-                            <Circle className="w-4 h-4 stroke-[1.8]" />
-                            <span>Save</span>
-                          </span>
-                        )}
-                      </button>
-                    </div>
-
-                    {/* ZOOMED-IN HIGHLIGHTED PERK BADGE */}
-                    <div className="py-1">
-                      <div className="text-3xl sm:text-4xl font-black tracking-tight bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-300 bg-clip-text text-transparent leading-none">
-                        {perk.heroPerk}
-                      </div>
-                      <p className="text-xs font-bold text-zinc-200 mt-1.5 leading-snug">
-                        {perk.perkDetail}
-                      </p>
-                    </div>
-
-                    {/* Clear 1-2 Sentence Description */}
-                    <p className="text-xs text-zinc-400 leading-relaxed line-clamp-2">
-                      {perk.description}
-                    </p>
-
-                    {/* Promo Code Box (if applicable) */}
-                    {perk.promoCode && (
-                      <div className="flex items-center justify-between p-2.5 rounded-2xl bg-white/[0.04] border border-dashed border-emerald-500/40">
-                        <div className="flex items-center gap-2 min-w-0">
-                          <Tag className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
-                          <span className="text-[11px] text-zinc-400 font-medium">Code:</span>
-                          <span className="text-xs font-mono font-bold text-emerald-300 tracking-wider truncate">
-                            {perk.promoCode}
-                          </span>
-                        </div>
-
+                        {/* Save / Claim Toggle */}
                         <button
                           type="button"
-                          onClick={() => handleCopyCode(perk.promoCode!)}
-                          className="flex items-center gap-1 px-2.5 py-1 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 text-[11px] font-mono font-bold text-emerald-300 transition-colors cursor-pointer border border-emerald-500/30 flex-shrink-0"
+                          onClick={() => handleToggleClaim(perk.id)}
+                          className="flex items-center gap-1 text-[11px] font-semibold text-zinc-400 hover:text-emerald-300 transition-colors focus:outline-none cursor-pointer flex-shrink-0"
                         >
-                          {copiedCode === perk.promoCode ? (
-                            <>
-                              <Check className="w-3 h-3 text-emerald-400" />
-                              <span>Copied!</span>
-                            </>
+                          {isClaimed ? (
+                            <span className="inline-flex items-center gap-1 text-emerald-400 font-bold">
+                              <CheckCircle2 className="w-4 h-4 fill-emerald-500/20" />
+                              <span>Saved</span>
+                            </span>
                           ) : (
-                            <>
-                              <Copy className="w-3 h-3" />
-                              <span>Copy</span>
-                            </>
+                            <span className="inline-flex items-center gap-1 text-zinc-400 hover:text-white">
+                              <Circle className="w-4 h-4 stroke-[1.8]" />
+                              <span>Save</span>
+                            </span>
                           )}
                         </button>
                       </div>
-                    )}
 
-                    {/* Key Benefits Chips */}
-                    <div className="flex flex-col gap-1.5 pt-0.5">
-                      {perk.keyPoints.map((item, idx) => (
-                        <div key={idx} className="flex items-center gap-2 text-[11px] font-medium text-zinc-300">
-                          <Check className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0 stroke-[2.5]" />
-                          <span className="truncate">{item}</span>
+                      {/* Who Can Claim - Eligibility Badges */}
+                      <div className="flex flex-wrap gap-1 items-center pt-0.5">
+                        {perk.audienceTags.map((tag, idx) => (
+                          <span
+                            key={idx}
+                            className="px-2 py-0.5 rounded-lg bg-white/[0.04] border border-white/[0.08] text-[10px] font-semibold text-cyan-300 flex items-center gap-1"
+                          >
+                            <span>{tag}</span>
+                          </span>
+                        ))}
+                      </div>
+
+                      {/* ZOOMED-IN HIGHLIGHTED PERK BADGE */}
+                      <div className="py-0.5">
+                        <div className="text-3xl sm:text-4xl font-black tracking-tight bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-300 bg-clip-text text-transparent leading-none">
+                          {perk.heroPerk}
                         </div>
-                      ))}
-                    </div>
-                  </div>
+                        <p className="text-xs font-bold text-zinc-200 mt-1.5 leading-snug">
+                          {perk.perkDetail}
+                        </p>
+                      </div>
 
-                  {/* Bottom Action CTA Button */}
-                  <div className="relative z-10 pt-3 border-t border-white/[0.08]">
-                    <a
-                      href={perk.ctaLink}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      onClick={() => handlePerkCta(perk)}
-                      className="block w-full"
-                    >
-                      <Button
-                        variant="primary"
-                        size="md"
-                        className="w-full justify-between items-center py-2.5 px-4 rounded-2xl font-bold text-xs shadow-md group-hover:scale-[1.02] transition-transform"
+                      {/* Clear 1-2 Sentence Description */}
+                      <p className="text-xs text-zinc-400 leading-relaxed line-clamp-2">
+                        {perk.description}
+                      </p>
+
+                      {/* Promo Code Box (if applicable) */}
+                      {perk.promoCode && (
+                        <div className="flex items-center justify-between p-2.5 rounded-2xl bg-white/[0.04] border border-dashed border-emerald-500/40">
+                          <div className="flex items-center gap-2 min-w-0">
+                            <Tag className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
+                            <span className="text-[11px] text-zinc-400 font-medium">Code:</span>
+                            <span className="text-xs font-mono font-bold text-emerald-300 tracking-wider truncate">
+                              {perk.promoCode}
+                            </span>
+                          </div>
+
+                          <button
+                            type="button"
+                            onClick={() => handleCopyCode(perk.promoCode!)}
+                            className="flex items-center gap-1 px-2.5 py-1 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 text-[11px] font-mono font-bold text-emerald-300 transition-colors cursor-pointer border border-emerald-500/30 flex-shrink-0"
+                          >
+                            {copiedCode === perk.promoCode ? (
+                              <>
+                                <Check className="w-3 h-3 text-emerald-400" />
+                                <span>Copied!</span>
+                              </>
+                            ) : (
+                              <>
+                                <Copy className="w-3 h-3" />
+                                <span>Copy</span>
+                              </>
+                            )}
+                          </button>
+                        </div>
+                      )}
+
+                      {/* Key Benefits Chips */}
+                      <div className="flex flex-col gap-1.5 pt-0.5">
+                        {perk.keyPoints.map((item, idx) => (
+                          <div key={idx} className="flex items-center gap-2 text-[11px] font-medium text-zinc-300">
+                            <Check className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0 stroke-[2.5]" />
+                            <span className="truncate">{item}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Bottom Action CTA Button */}
+                    <div className="relative z-10 pt-3 border-t border-white/[0.08]">
+                      <a
+                        href={perk.ctaLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={() => handlePerkCta(perk)}
+                        className="block w-full"
                       >
-                        <span>{perk.ctaLabel}</span>
-                        <ArrowRight className="w-4 h-4 text-zinc-950 group-hover:translate-x-1 transition-transform" />
-                      </Button>
-                    </a>
-                  </div>
-                </motion.div>
-              );
-            })}
-          </AnimatePresence>
-        </div>
+                        <Button
+                          variant="primary"
+                          size="md"
+                          className="w-full justify-between items-center py-2.5 px-4 rounded-2xl font-bold text-xs shadow-md group-hover:scale-[1.02] transition-transform"
+                        >
+                          <span>{perk.ctaLabel}</span>
+                          <ArrowRight className="w-4 h-4 text-zinc-950 group-hover:translate-x-1 transition-transform" />
+                        </Button>
+                      </a>
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </AnimatePresence>
+          </div>
+        ) : (
+          /* Empty State when Search or Filters yield 0 results */
+          <div className="bg-[#0d1322]/80 border border-white/[0.08] rounded-3xl p-8 sm:p-12 flex flex-col items-center justify-center text-center gap-4">
+            <div className="w-14 h-14 rounded-2xl bg-white/[0.04] border border-white/10 flex items-center justify-center text-zinc-400">
+              <Search className="w-7 h-7 text-zinc-500" />
+            </div>
+            <div className="max-w-md">
+              <h3 className="text-lg font-bold text-white">No Offers Found</h3>
+              <p className="text-xs text-zinc-400 mt-1">
+                No verified perks match your current search &quot;{searchQuery}&quot; or filter combination.
+              </p>
+            </div>
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={resetAllFilters}
+              className="mt-2 text-xs rounded-xl"
+            >
+              Reset All Filters
+            </Button>
+          </div>
+        )}
       </section>
 
       {/* Community Contribution Section */}
