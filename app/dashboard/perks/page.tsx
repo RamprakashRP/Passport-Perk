@@ -406,6 +406,28 @@ const ALL_ATOMIC_PERKS: AtomicPerk[] = [
     eligibleAudiences: ["students", "enrolled"],
     audienceTags: ["🎓 Int'l Students", "📚 UBC / SFU Students"],
   },
+  {
+    id: "perk-ttc-postsecondary-pass",
+    partnerId: "ttc_postsecondary_pass",
+    brandKey: "ttc-toronto",
+    brandName: "TTC Post-Secondary Pass",
+    category: "transit",
+    heroPerk: "$334 / YR SAVINGS",
+    perkDetail: "$128.15 / mo Student Pass (Save $28/mo)",
+    description: "Post-secondary students at U of T, TMU, York U, George Brown, Seneca, and Humber save $27.85/month on unlimited TTC subway, streetcar, and bus passes with PRESTO.",
+    keyPoints: [
+      "$128.15 monthly student rate (regular adult $156.00)",
+      "Unlimited TTC subway, streetcar & bus rides",
+      "Valid with PRESTO post-secondary student photo ID",
+    ],
+    ctaLabel: "Set Up TTC Student PRESTO",
+    ctaLink: "https://www.ttc.ca/fares-and-passes/Fare-information/TTC-Monthly-Pass?ref=passportperk",
+    valueDollars: 334,
+    badgeTag: "Student Monthly Pass",
+    regionSpecific: "Toronto",
+    eligibleAudiences: ["students", "enrolled"],
+    audienceTags: ["🎓 Int'l Students", "📚 U of T / TMU / York U"],
+  },
 
   // --- TENANT INSURANCE ---
   {
@@ -426,6 +448,13 @@ const ALL_ATOMIC_PERKS: AtomicPerk[] = [
     eligibleAudiences: ["students", "newcomers", "all_residents"],
     audienceTags: ["🎓 Int'l Students", "🧳 All Renters / PR", "🏠 Apartment Leases"],
   },
+];
+
+const REGION_OPTIONS = [
+  { id: "Waterloo Region, ON", label: "📍 Waterloo Region", shortName: "Waterloo" },
+  { id: "Toronto, ON", label: "📍 Toronto (GTA)", shortName: "Toronto" },
+  { id: "Vancouver, BC", label: "📍 Vancouver (Metro)", shortName: "Vancouver" },
+  { id: "All Canada", label: "🍁 All Canada", shortName: "All Canada" },
 ];
 
 const AUDIENCE_OPTIONS = [
@@ -451,7 +480,7 @@ export default function PerksPage() {
   const [activeCategory, setActiveCategory] = useState<string>("all");
   const [activeAudience, setActiveAudience] = useState<string>("all");
   const [sortBy, setSortBy] = useState<"highest_value" | "expiring_soon" | "alphabetical" | "popular">("highest_value");
-  const [activeRegion, setActiveRegion] = useState<string>("All Canada");
+  const [activeRegion, setActiveRegion] = useState<string>("Waterloo Region, ON");
   const [claimedPerks, setClaimedPerks] = useState<Record<string, boolean>>({});
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
   const [isFiltersOpen, setIsFiltersOpen] = useState<boolean>(false);
@@ -467,30 +496,61 @@ export default function PerksPage() {
         }
       }
 
-      const intakeData = localStorage.getItem("northstar_user_profile");
+      // Read intake/destination city from all stored storage locations
+      const intakeData =
+        localStorage.getItem("waterloo_newcomer_intake") ||
+        localStorage.getItem("northstar_user_profile");
       if (intakeData) {
         try {
           const parsed = JSON.parse(intakeData);
-          if (parsed.destinationCity) {
-            setActiveRegion(parsed.destinationCity);
+          const city = parsed.targetCity || parsed.destinationCity;
+          if (city) {
+            setActiveRegion(city);
           }
         } catch (e) {
           console.error("Failed to parse intake profile", e);
         }
       }
 
+      // Listen to region-changed custom events dispatched by the top navigation bar
       const handleRegionEvent = (e: any) => {
-        if (e.detail?.region) {
-          setActiveRegion(e.detail.region);
+        const city = e.detail?.targetCity || e.detail?.region || e.detail?.city;
+        if (city) {
+          setActiveRegion(city);
         }
       };
 
-      window.addEventListener("region-changed", handleRegionEvent);
+      window.addEventListener("region-changed", handleRegionEvent as EventListener);
       return () => {
-        window.removeEventListener("region-changed", handleRegionEvent);
+        window.removeEventListener("region-changed", handleRegionEvent as EventListener);
       };
     }
   }, []);
+
+  const handleSwitchCity = (cityId: string) => {
+    setActiveRegion(cityId);
+    if (typeof window !== "undefined") {
+      try {
+        const stored = localStorage.getItem("waterloo_newcomer_intake");
+        let existing = {};
+        if (stored) {
+          try {
+            existing = JSON.parse(stored);
+          } catch {}
+        }
+        const updated = { ...existing, targetCity: cityId };
+        localStorage.setItem("waterloo_newcomer_intake", JSON.stringify(updated));
+
+        window.dispatchEvent(
+          new CustomEvent("region-changed", {
+            detail: { targetCity: cityId },
+          })
+        );
+      } catch (e) {
+        console.error("Failed to switch city", e);
+      }
+    }
+  };
 
   const handleToggleClaim = (perkId: string) => {
     const nextState = !claimedPerks[perkId];
@@ -546,11 +606,22 @@ export default function PerksPage() {
       return false;
     }
 
-    // 3. Region Filter
+    // 3. Region Filter (Strictly matches selected region; displays national 'All' everywhere)
     if (perk.regionSpecific && perk.regionSpecific !== "All") {
-      if (activeRegion.includes("Waterloo") && perk.regionSpecific !== "Waterloo") return false;
-      if (activeRegion.includes("Toronto") && perk.regionSpecific !== "Toronto") return false;
-      if (activeRegion.includes("Vancouver") && perk.regionSpecific !== "Vancouver") return false;
+      const regionLower = activeRegion.toLowerCase();
+      const isWaterloo = regionLower.includes("waterloo");
+      const isToronto = regionLower.includes("toronto");
+      const isVancouver = regionLower.includes("vancouver");
+      const isAllCanada = regionLower.includes("all");
+
+      if (isAllCanada) {
+        // When All Canada is selected, show every region's offers
+        return true;
+      }
+
+      if (isWaterloo && perk.regionSpecific !== "Waterloo") return false;
+      if (isToronto && perk.regionSpecific !== "Toronto") return false;
+      if (isVancouver && perk.regionSpecific !== "Vancouver") return false;
     }
 
     // 4. Keyword Search across Brand, Hero, Title, Description, Audience Tags & Key points
@@ -614,6 +685,10 @@ export default function PerksPage() {
     activeAudience !== "all" ||
     sortBy !== "highest_value";
 
+  const displayRegionName = activeRegion.toLowerCase().includes("all")
+    ? "All Canada"
+    : activeRegion.split(",")[0];
+
   return (
     <div className="flex flex-col gap-6 sm:gap-8 lg:gap-10">
       {/* Hero Banner: Student Marketplace Header (UNiDAYS / Student Beans Vibe) */}
@@ -629,7 +704,7 @@ export default function PerksPage() {
                 <span>Student & Newcomer Deals</span>
               </Badge>
               <Badge variant="zinc" className="text-xs font-mono font-semibold">
-                {ALL_ATOMIC_PERKS.length} Verified Offers
+                {filteredAndSortedPerks.length} Available in {displayRegionName}
               </Badge>
             </div>
 
@@ -638,8 +713,8 @@ export default function PerksPage() {
             </h1>
 
             <p className="text-xs sm:text-sm text-zinc-400 leading-relaxed">
-              Every current student offer, banking cash bonus, tech discount, and grocery hack in one clean hub. Search by brand, bank, or visa type for newcomers in{" "}
-              <strong className="text-white">{activeRegion.split(",")[0]}</strong>.
+              Every current student offer, banking cash bonus, tech discount, and grocery hack in one clean hub. Filtered for students & newcomers in{" "}
+              <strong className="text-emerald-400 font-semibold">{displayRegionName}</strong>.
             </p>
           </div>
 
@@ -651,7 +726,7 @@ export default function PerksPage() {
                 <span>Savings Tracker</span>
               </span>
               <span className="text-xs font-mono font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
-                {totalClaimedCount}/{ALL_ATOMIC_PERKS.length} Saved
+                {totalClaimedCount}/{filteredAndSortedPerks.length} Saved
               </span>
             </div>
 
@@ -684,7 +759,7 @@ export default function PerksPage() {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search 17 student offers, banks, codes, or perks..."
+              placeholder={`Search ${filteredAndSortedPerks.length} offers in ${displayRegionName}...`}
               className="w-full pl-10 pr-9 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-xs sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/30 transition-all font-medium"
             />
             {searchQuery && (
@@ -699,9 +774,20 @@ export default function PerksPage() {
             )}
           </div>
 
-          {/* Right Controls: Filters Toggle & Sort Dropdown */}
+          {/* Right Controls: Region Pill, Filters Toggle & Sort Dropdown */}
           <div className="flex items-center gap-2 justify-between sm:justify-end flex-wrap sm:flex-nowrap">
             
+            {/* Quick Active Region Switcher Pill */}
+            <button
+              type="button"
+              onClick={() => setIsFiltersOpen(true)}
+              className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold bg-white/[0.04] border border-white/[0.08] text-zinc-300 hover:text-emerald-300 hover:border-emerald-500/30 transition-all cursor-pointer"
+              title="Click to change destination city"
+            >
+              <MapPin className="w-3.5 h-3.5 text-emerald-400" />
+              <span className="whitespace-nowrap">{displayRegionName}</span>
+            </button>
+
             {/* Retractable Filters Toggle Button */}
             <button
               type="button"
@@ -748,57 +834,57 @@ export default function PerksPage() {
           </div>
         </div>
 
-        {/* Active Filters Quick Strip (Always visible when filters active even if panel is closed) */}
-        {(isAnyFilterActive || searchQuery.trim() !== "") && (
-          <div className="flex items-center justify-between gap-2 px-2 py-1 text-xs">
-            <div className="flex items-center gap-1.5 flex-wrap">
-              <span className="text-[11px] font-mono text-zinc-400">
-                Showing <strong className="text-white">{filteredAndSortedPerks.length}</strong> of {ALL_ATOMIC_PERKS.length}:
-              </span>
+        {/* Active Filters Quick Strip */}
+        <div className="flex items-center justify-between gap-2 px-2 py-1 text-xs">
+          <div className="flex items-center gap-1.5 flex-wrap">
+            <span className="text-[11px] font-mono text-zinc-400">
+              Showing <strong className="text-white">{filteredAndSortedPerks.length}</strong> deals for <strong className="text-emerald-400">{displayRegionName}</strong>:
+            </span>
 
-              {activeAudience !== "all" && (
-                <button
-                  type="button"
-                  onClick={() => setActiveAudience("all")}
-                  className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg bg-cyan-500/15 border border-cyan-500/30 text-cyan-300 text-[11px] font-medium hover:bg-cyan-500/25 transition-colors cursor-pointer"
-                >
-                  <span>{AUDIENCE_OPTIONS.find((a) => a.id === activeAudience)?.label || activeAudience}</span>
-                  <X className="w-3 h-3" />
-                </button>
-              )}
+            {activeAudience !== "all" && (
+              <button
+                type="button"
+                onClick={() => setActiveAudience("all")}
+                className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg bg-cyan-500/15 border border-cyan-500/30 text-cyan-300 text-[11px] font-medium hover:bg-cyan-500/25 transition-colors cursor-pointer"
+              >
+                <span>{AUDIENCE_OPTIONS.find((a) => a.id === activeAudience)?.label || activeAudience}</span>
+                <X className="w-3 h-3" />
+              </button>
+            )}
 
-              {activeCategory !== "all" && (
-                <button
-                  type="button"
-                  onClick={() => setActiveCategory("all")}
-                  className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-[11px] font-medium hover:bg-emerald-500/25 transition-colors cursor-pointer"
-                >
-                  <span>{CATEGORY_OPTIONS.find((c) => c.id === activeCategory)?.label || activeCategory}</span>
-                  <X className="w-3 h-3" />
-                </button>
-              )}
+            {activeCategory !== "all" && (
+              <button
+                type="button"
+                onClick={() => setActiveCategory("all")}
+                className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-[11px] font-medium hover:bg-emerald-500/25 transition-colors cursor-pointer"
+              >
+                <span>{CATEGORY_OPTIONS.find((c) => c.id === activeCategory)?.label || activeCategory}</span>
+                <X className="w-3 h-3" />
+              </button>
+            )}
 
-              {searchQuery.trim() !== "" && (
-                <button
-                  type="button"
-                  onClick={() => setSearchQuery("")}
-                  className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg bg-white/[0.08] border border-white/[0.12] text-zinc-300 text-[11px] font-medium hover:bg-white/[0.15] transition-colors cursor-pointer"
-                >
-                  <span>&quot;{searchQuery}&quot;</span>
-                  <X className="w-3 h-3" />
-                </button>
-              )}
-            </div>
+            {searchQuery.trim() !== "" && (
+              <button
+                type="button"
+                onClick={() => setSearchQuery("")}
+                className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg bg-white/[0.08] border border-white/[0.12] text-zinc-300 text-[11px] font-medium hover:bg-white/[0.15] transition-colors cursor-pointer"
+              >
+                <span>&quot;{searchQuery}&quot;</span>
+                <X className="w-3 h-3" />
+              </button>
+            )}
+          </div>
 
+          {isAnyFilterActive && (
             <button
               type="button"
               onClick={resetAllFilters}
               className="text-[11px] font-semibold text-zinc-400 hover:text-emerald-400 transition-colors flex-shrink-0 cursor-pointer ml-auto"
             >
-              Reset All
+              Reset Filters
             </button>
-          </div>
-        )}
+          )}
+        </div>
 
         {/* Smooth Retractable Drawer / Collapsible Accordion Panel */}
         <AnimatePresence>
@@ -812,8 +898,45 @@ export default function PerksPage() {
             >
               <div className="bg-[#0d1322]/90 backdrop-blur-2xl border border-white/[0.1] rounded-2xl p-4 sm:p-5 flex flex-col gap-4 shadow-xl">
                 
-                {/* Section 1: Audience / Persona Selection */}
+                {/* Section 1: Destination Hub / Region Selection */}
                 <div className="flex flex-col gap-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-zinc-300 flex items-center gap-1.5">
+                      <MapPin className="w-3.5 h-3.5 text-emerald-400" />
+                      <span>Destination Hub / Region</span>
+                    </span>
+                    <span className="text-[10px] font-mono text-zinc-500">Filter local transit & grocery deals</span>
+                  </div>
+
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    {REGION_OPTIONS.map((reg) => {
+                      const isSelected =
+                        (reg.id === "All Canada" && activeRegion.toLowerCase().includes("all")) ||
+                        (reg.id.includes("Waterloo") && activeRegion.toLowerCase().includes("waterloo")) ||
+                        (reg.id.includes("Toronto") && activeRegion.toLowerCase().includes("toronto")) ||
+                        (reg.id.includes("Vancouver") && activeRegion.toLowerCase().includes("vancouver"));
+
+                      return (
+                        <button
+                          key={reg.id}
+                          type="button"
+                          onClick={() => handleSwitchCity(reg.id)}
+                          className={cn(
+                            "px-3 py-1.5 rounded-xl text-xs font-medium border transition-all cursor-pointer flex items-center gap-1.5",
+                            isSelected
+                              ? "bg-emerald-500 text-zinc-950 border-emerald-400 font-bold shadow-[0_0_12px_rgba(16,185,129,0.3)]"
+                              : "bg-white/[0.03] text-zinc-400 border-white/[0.06] hover:border-white/[0.15] hover:text-white"
+                          )}
+                        >
+                          {reg.label}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Section 2: Audience / Persona Selection */}
+                <div className="flex flex-col gap-2 pt-3 border-t border-white/[0.06]">
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-bold text-zinc-300 flex items-center gap-1.5">
                       <Users className="w-3.5 h-3.5 text-cyan-400" />
@@ -841,7 +964,7 @@ export default function PerksPage() {
                   </div>
                 </div>
 
-                {/* Section 2: Category Selection */}
+                {/* Section 3: Category Selection */}
                 <div className="flex flex-col gap-2 pt-3 border-t border-white/[0.06]">
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-bold text-zinc-300 flex items-center gap-1.5">
@@ -873,7 +996,7 @@ export default function PerksPage() {
                 {/* Drawer Footer Actions */}
                 <div className="flex items-center justify-between pt-3 border-t border-white/[0.06]">
                   <span className="text-xs text-zinc-400 font-medium">
-                    Found <strong className="text-emerald-400 font-mono">{filteredAndSortedPerks.length}</strong> matching offers
+                    Found <strong className="text-emerald-400 font-mono">{filteredAndSortedPerks.length}</strong> matching offers in <strong className="text-white">{displayRegionName}</strong>
                   </span>
                   <div className="flex items-center gap-2">
                     {isAnyFilterActive && (
