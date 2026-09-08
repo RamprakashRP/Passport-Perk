@@ -32,571 +32,417 @@ import {
   Utensils,
   Zap,
 } from "lucide-react";
-import { BankComparisonMatrix } from "@/components/features/bank-comparison-matrix";
+import { BrandLogo, BrandKey } from "@/components/ui/brand-logo";
 import { SubmitPerkCard } from "@/components/features/submit-perk-card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { IrccGicTooltip } from "@/components/ui/ircc-gic-tooltip";
 import { handleOutboundClick } from "@/lib/telemetry";
 import { syncTaskStatusToSupabase } from "@/lib/supabase";
 import { triggerConfetti } from "@/lib/confetti";
 import { cn } from "@/lib/utils";
 
-interface PerkItem {
+interface AtomicPerk {
   id: string;
   partnerId: string;
-  category: "banking" | "telecom" | "lifestyle" | "transit" | "housing";
-  title: string;
-  partnerName: string;
-  badge: string;
-  valueNum: number;
-  valueEst: string;
+  brandKey: BrandKey;
+  brandName: string;
+  category: "banking" | "tech" | "food" | "telecom" | "transit" | "housing";
+  heroPerk: string;
+  perkDetail: string;
   description: string;
   promoCode?: string;
-  keyPerks: string[];
+  keyPoints: string[];
   ctaLabel: string;
   ctaLink: string;
+  valueDollars: number;
+  badgeTag: string;
   regionSpecific?: "Waterloo" | "Toronto" | "Vancouver" | "All";
 }
 
-const PERK_BRAND_CONFIG: Record<
-  string,
+const ALL_ATOMIC_PERKS: AtomicPerk[] = [
+  // --- BANKING CASH & REWARDS (SEPARATE ATOMIC CARDS) ---
   {
-    logoText: string;
-    bgGradient: string;
-    textGradient: string;
-    accentColor: string;
-    pillBg: string;
-    borderAccent: string;
-  }
-> = {
-  "perk-td-student-promo": {
-    logoText: "TD",
-    bgGradient: "from-emerald-500/20 via-green-950/30 to-[#0d1322]",
-    textGradient: "from-emerald-300 to-teal-100",
-    accentColor: "text-emerald-400",
-    pillBg: "bg-emerald-500/15 border-emerald-500/30 text-emerald-300",
-    borderAccent: "hover:border-emerald-500/50",
-  },
-  "perk-rbc-student-promo": {
-    logoText: "RBC",
-    bgGradient: "from-blue-500/20 via-indigo-950/30 to-[#0d1322]",
-    textGradient: "from-blue-300 to-sky-100",
-    accentColor: "text-blue-400",
-    pillBg: "bg-blue-500/15 border-blue-500/30 text-blue-300",
-    borderAccent: "hover:border-blue-500/50",
-  },
-  "perk-airport-sin-hack": {
-    logoText: "SIN",
-    bgGradient: "from-cyan-500/20 via-teal-950/30 to-[#0d1322]",
-    textGradient: "from-cyan-300 to-emerald-100",
-    accentColor: "text-cyan-400",
-    pillBg: "bg-cyan-500/15 border-cyan-500/30 text-cyan-300",
-    borderAccent: "hover:border-cyan-500/50",
-  },
-  "perk-too-good-to-go": {
-    logoText: "TGTG",
-    bgGradient: "from-emerald-600/20 via-teal-950/30 to-[#0d1322]",
-    textGradient: "from-emerald-300 to-lime-200",
-    accentColor: "text-emerald-400",
-    pillBg: "bg-emerald-500/15 border-emerald-500/30 text-emerald-300",
-    borderAccent: "hover:border-emerald-500/50",
-  },
-  "perk-pc-optimum-grocery": {
-    logoText: "PC",
-    bgGradient: "from-red-500/20 via-blue-950/30 to-[#0d1322]",
-    textGradient: "from-red-300 to-amber-200",
-    accentColor: "text-red-400",
-    pillBg: "bg-red-500/15 border-red-500/30 text-red-300",
-    borderAccent: "hover:border-red-500/50",
-  },
-  "perk-spc-discount-card": {
-    logoText: "SPC+",
-    bgGradient: "from-purple-500/20 via-indigo-950/30 to-[#0d1322]",
-    textGradient: "from-purple-300 to-pink-200",
-    accentColor: "text-purple-400",
-    pillBg: "bg-purple-500/15 border-purple-500/30 text-purple-300",
-    borderAccent: "hover:border-purple-500/50",
-  },
-  "perk-apple-education": {
-    logoText: "",
-    bgGradient: "from-zinc-400/20 via-zinc-900/40 to-[#0d1322]",
-    textGradient: "from-white to-zinc-300",
-    accentColor: "text-zinc-200",
-    pillBg: "bg-white/10 border-white/20 text-zinc-200",
-    borderAccent: "hover:border-white/40",
-  },
-  "perk-amazon-prime-student": {
-    logoText: "PRIME",
-    bgGradient: "from-amber-500/20 via-orange-950/30 to-[#0d1322]",
-    textGradient: "from-amber-300 to-yellow-100",
-    accentColor: "text-amber-400",
-    pillBg: "bg-amber-500/15 border-amber-500/30 text-amber-300",
-    borderAccent: "hover:border-amber-500/50",
-  },
-  "perk-spotify-student": {
-    logoText: "SPOTIFY",
-    bgGradient: "from-green-500/20 via-emerald-950/30 to-[#0d1322]",
-    textGradient: "from-green-300 to-emerald-100",
-    accentColor: "text-green-400",
-    pillBg: "bg-green-500/15 border-green-500/30 text-green-300",
-    borderAccent: "hover:border-green-500/50",
-  },
-  "perk-esim-phonebox": {
-    logoText: "5G",
-    bgGradient: "from-cyan-500/20 via-blue-950/30 to-[#0d1322]",
-    textGradient: "from-cyan-300 to-sky-100",
-    accentColor: "text-cyan-400",
-    pillBg: "bg-cyan-500/15 border-cyan-500/30 text-cyan-300",
-    borderAccent: "hover:border-cyan-500/50",
-  },
-  "perk-fizz-mobile": {
-    logoText: "FIZZ",
-    bgGradient: "from-teal-500/20 via-emerald-950/30 to-[#0d1322]",
-    textGradient: "from-teal-300 to-emerald-100",
-    accentColor: "text-teal-400",
-    pillBg: "bg-teal-500/15 border-teal-500/30 text-teal-300",
-    borderAccent: "hover:border-teal-500/50",
-  },
-  "perk-grt-ion-waterloo": {
-    logoText: "ION",
-    bgGradient: "from-blue-500/20 via-indigo-950/30 to-[#0d1322]",
-    textGradient: "from-blue-300 to-indigo-100",
-    accentColor: "text-blue-400",
-    pillBg: "bg-blue-500/15 border-blue-500/30 text-blue-300",
-    borderAccent: "hover:border-blue-500/50",
-  },
-  "perk-go-transit-waterloo": {
-    logoText: "GO",
-    bgGradient: "from-green-600/20 via-emerald-950/30 to-[#0d1322]",
-    textGradient: "from-green-300 to-emerald-100",
-    accentColor: "text-green-400",
-    pillBg: "bg-green-500/15 border-green-500/30 text-green-300",
-    borderAccent: "hover:border-green-500/50",
-  },
-  "perk-up-express-toronto": {
-    logoText: "UP",
-    bgGradient: "from-lime-500/20 via-green-950/30 to-[#0d1322]",
-    textGradient: "from-lime-300 to-green-100",
-    accentColor: "text-lime-400",
-    pillBg: "bg-lime-500/15 border-lime-500/30 text-lime-300",
-    borderAccent: "hover:border-lime-500/50",
-  },
-  "perk-ttc-toronto": {
-    logoText: "TTC",
-    bgGradient: "from-red-600/20 via-rose-950/30 to-[#0d1322]",
-    textGradient: "from-red-300 to-rose-100",
-    accentColor: "text-red-400",
-    pillBg: "bg-red-500/15 border-red-500/30 text-red-300",
-    borderAccent: "hover:border-red-500/50",
-  },
-  "perk-skytrain-vancouver": {
-    logoText: "YVR",
-    bgGradient: "from-blue-600/20 via-cyan-950/30 to-[#0d1322]",
-    textGradient: "from-blue-300 to-cyan-100",
-    accentColor: "text-blue-400",
-    pillBg: "bg-blue-500/15 border-blue-500/30 text-blue-300",
-    borderAccent: "hover:border-blue-500/50",
-  },
-  "perk-tenant-insurance": {
-    logoText: "SQ1",
-    bgGradient: "from-teal-500/20 via-cyan-950/30 to-[#0d1322]",
-    textGradient: "from-teal-300 to-cyan-100",
-    accentColor: "text-teal-400",
-    pillBg: "bg-teal-500/15 border-teal-500/30 text-teal-300",
-    borderAccent: "hover:border-teal-500/50",
-  },
-};
-
-const EXCLUSIVE_PERKS: PerkItem[] = [
-  // --- 2026 BANKING PROMOS & WELCOME PACKAGES ---
-  {
-    id: "perk-td-student-promo",
-    partnerId: "td_student_gic",
+    id: "scotia-150-cash",
+    partnerId: "scotiabank_startright",
+    brandKey: "scotiabank",
+    brandName: "Scotiabank",
     category: "banking",
-    title: "TD Canada Trust 2026 Student Advantage Package",
-    partnerName: "TD Canada Trust",
-    badge: "Up to $350 Bonus + Guaranteed Card",
-    valueNum: 350,
-    valueEst: "$350 CAD Bonus Value",
-    description:
-      "Earn up to $150 direct cash on chequing, up to $200 in TD Rewards credit card points, guaranteed $1,000 credit limit without Canadian credit history, and 7-day extended weekend branch hours.",
-    keyPerks: [
-      "Up to $150 cash on chequing + $200 in TD Rewards points",
-      "Guaranteed $1,000 credit card with $0 Canadian credit history",
-      "7-day branches open late evenings & Sundays near campus",
-    ],
-    ctaLabel: "Compare TD Student Package",
-    ctaLink: "https://www.td.com/ca/en/personal-banking/products/bank-accounts/chequing-accounts/student-chequing-account?ref=passportperk",
+    heroPerk: "$150 CASH",
+    perkDetail: "Welcome Cash Bonus",
+    description: "Open the Student Banking Advantage Plan with $0 monthly fee and complete qualifying transactions to get $150 deposited directly.",
+    keyPoints: ["$0 Monthly Account Fee", "Unlimited Interac e-Transfers", "Closest branches to UW, UofT & UBC gates"],
+    ctaLabel: "Claim $150 with Scotiabank",
+    ctaLink: "https://www.scotiabank.com/ca/en/personal/bank-accounts/students/student-banking-advantage-plan.html?ref=passportperk",
+    valueDollars: 150,
+    badgeTag: "Most Popular on Campus",
     regionSpecific: "All",
   },
   {
-    id: "perk-rbc-student-promo",
+    id: "scotia-scene-rewards",
+    partnerId: "scotiabank_startright",
+    brandKey: "scotiabank",
+    brandName: "Scotiabank",
+    category: "banking",
+    heroPerk: "FREE MOVIES",
+    perkDetail: "Scene+ Points on Everyday Debit",
+    description: "Earn Scene+ rewards points on every debit purchase at Cineplex, Sobeys, and dining spots across Canada. Redeem for free movie tickets and groceries.",
+    keyPoints: ["Points on daily debit spending", "Free Cineplex movies & snacks", "Included free with student account"],
+    ctaLabel: "Get Scene+ Rewards Card",
+    ctaLink: "https://www.scotiabank.com/ca/en/personal/bank-accounts/students/student-banking-advantage-plan.html?ref=passportperk",
+    valueDollars: 60,
+    badgeTag: "Entertainment Perk",
+    regionSpecific: "All",
+  },
+  {
+    id: "rbc-airpods-promo",
     partnerId: "rbc_student_advantage",
+    brandKey: "rbc",
+    brandName: "RBC Royal Bank",
     category: "banking",
-    title: "RBC Royal Bank 2026 Student Advantage Package",
-    partnerName: "RBC Royal Bank",
-    badge: "Free Apple AirPods or $100 Cash",
-    valueNum: 250,
-    valueEst: "$250 CAD Value",
-    description:
-      "Choose between a Free pair of Apple AirPods (or tech credit) OR $100 cash bonus, plus Avion Points rewards on everyday debit spending and NOMI AI automated financial budgeting.",
-    keyPerks: [
-      "Free Apple AirPods or $100 cash upon student account opening",
-      "Avion Rewards points on everyday debit spending",
-      "Integrated NOMI AI automated budgeting inside the RBC app",
-    ],
-    ctaLabel: "Compare RBC Student Package",
+    heroPerk: "FREE AIRPODS",
+    perkDetail: "Apple AirPods (or $100 Cash)",
+    description: "Open an RBC Student Advantage Banking account and receive a brand new pair of Apple AirPods upon setting up qualifying direct transactions.",
+    keyPoints: ["Free Apple AirPods upon account setup", "Avion Points rewards on debit", "NOMI AI automated spending insights"],
+    ctaLabel: "Claim Free AirPods with RBC",
     ctaLink: "https://www.rbcroyalbank.com/accounts/student-banking.html?ref=passportperk",
+    valueDollars: 240,
+    badgeTag: "Top Tech Reward",
+    regionSpecific: "All",
+  },
+  {
+    id: "rbc-100-cash",
+    partnerId: "rbc_student_advantage",
+    brandKey: "rbc",
+    brandName: "RBC Royal Bank",
+    category: "banking",
+    heroPerk: "$100 CASH",
+    perkDetail: "Direct Student Deposit Bonus",
+    description: "Prefer cash over headphones? Choose the instant $100 cash deposit. Canada's largest branch network with locations in every major student town.",
+    keyPoints: ["$0 Monthly maintenance fee", "Largest ATM network in Canada", "Instant Interac e-Transfers"],
+    ctaLabel: "Claim $100 with RBC",
+    ctaLink: "https://www.rbcroyalbank.com/accounts/student-banking.html?ref=passportperk",
+    valueDollars: 100,
+    badgeTag: "Instant Cash",
+    regionSpecific: "All",
+  },
+  {
+    id: "cibc-spc-pass",
+    partnerId: "cibc_student_banking",
+    brandKey: "cibc",
+    brandName: "CIBC",
+    category: "banking",
+    heroPerk: "FREE SPC+ PASS",
+    perkDetail: "Discounts at 450+ Canadian Brands",
+    description: "Get a free annual SPC+ membership linked directly to your CIBC student card. Save 10% to 25% at Apple, Adidas, Samsung, Domino's, and H&M.",
+    keyPoints: ["Free SPC+ pass ($11.99/yr waived)", "Save 10-25% at 450+ major brands", "Works both in-store and online"],
+    ctaLabel: "Get Free SPC+ with CIBC",
+    ctaLink: "https://www.cibc.com/en/student/bank-accounts.html?ref=passportperk",
+    valueDollars: 120,
+    badgeTag: "Top Shopping Perk",
+    regionSpecific: "All",
+  },
+  {
+    id: "cibc-100-cash",
+    partnerId: "cibc_student_banking",
+    brandKey: "cibc",
+    brandName: "CIBC",
+    category: "banking",
+    heroPerk: "$100 CASH",
+    perkDetail: "CIBC Smart Account for Students",
+    description: "Open the CIBC Smart™ Account for Students with zero monthly fees, unlimited transactions, and $0 fee on international remittances to send money home.",
+    keyPoints: ["$0 monthly fee while enrolled", "Free international wire transfers ($0 fee)", "Digital onboarding on mobile app"],
+    ctaLabel: "Claim $100 with CIBC",
+    ctaLink: "https://www.cibc.com/en/student/bank-accounts.html?ref=passportperk",
+    valueDollars: 100,
+    badgeTag: "Zero-Fee Banking",
+    regionSpecific: "All",
+  },
+  {
+    id: "td-100-cash",
+    partnerId: "td_student_gic",
+    brandKey: "td",
+    brandName: "TD Canada Trust",
+    category: "banking",
+    heroPerk: "$100 CASH",
+    perkDetail: "TD Student Chequing Bonus",
+    description: "Open a TD Student Chequing Account and earn $100 cash. Enjoy Canada's longest branch hours—open 7 days a week including late evenings and Sundays.",
+    keyPoints: ["Open 7 days a week (late evenings & Sundays)", "$0 monthly chequing fee", "Seamless TD mobile app integration"],
+    ctaLabel: "Claim $100 with TD Bank",
+    ctaLink: "https://www.td.com/ca/en/personal-banking/products/bank-accounts/chequing-accounts/student-chequing-account?ref=passportperk",
+    valueDollars: 100,
+    badgeTag: "Open 7 Days a Week",
+    regionSpecific: "All",
+  },
+  {
+    id: "td-first-credit-card",
+    partnerId: "td_student_gic",
+    brandKey: "td",
+    brandName: "TD Canada Trust",
+    category: "banking",
+    heroPerk: "FIRST CREDIT CARD",
+    perkDetail: "Guaranteed $1,000 Limit (No Credit History)",
+    description: "Start building your Canadian credit score from Day 1. Guaranteed approval path for international students with $0 Canadian credit history.",
+    keyPoints: ["No Canadian credit history needed", "$0 Annual fee student Visa", "Start building Equifax/TransUnion score"],
+    ctaLabel: "Apply for TD Student Visa",
+    ctaLink: "https://www.td.com/ca/en/personal-banking/products/credit-cards/student?ref=passportperk",
+    valueDollars: 150,
+    badgeTag: "Build Canadian Credit",
+    regionSpecific: "All",
+  },
+  {
+    id: "simplii-400-bonus",
+    partnerId: "simplii_financial",
+    brandKey: "simplii",
+    brandName: "Simplii Financial",
+    category: "banking",
+    heroPerk: "$400 BONUS",
+    perkDetail: "High-Yield Digital Chequing",
+    description: "100% digital bank with $0 monthly fees forever (even post-graduation). Earn up to $400 cash bonus when setting up qualifying payroll or student deposits.",
+    keyPoints: ["$0 fees forever (no student proof needed)", "Free access to 4,000+ CIBC ATMs", "High-interest student savings booster"],
+    ctaLabel: "Claim $400 with Simplii",
+    ctaLink: "https://www.simplii.com/en/special-offers/student-banking.html?ref=passportperk",
+    valueDollars: 400,
+    badgeTag: "$0 Fees Forever",
     regionSpecific: "All",
   },
 
-  // --- INSIDER SETTLEMENT & AIRPORT HACKS ---
-  {
-    id: "perk-airport-sin-hack",
-    partnerId: "service_canada_airport",
-    category: "transit",
-    title: "Pearson & YVR Airport Instant SIN Kiosk Shortcut",
-    partnerName: "Service Canada Airport Desks",
-    badge: "Skip 4-Hour Downtown Queues",
-    valueNum: 100,
-    valueEst: "Saves 4 Hours & $100 Time-Value",
-    description:
-      "Get your official 9-digit Social Insurance Number (SIN) printed in under 10 minutes right after baggage claim at Pearson Airport (Terminal 1 & 3 Arrivals) or Vancouver (YVR). Skip 3-4 hour lines at downtown centers and activate payroll immediately!",
-    keyPerks: [
-      "Seasonal Service Canada desks inside Pearson T1/T3 & YVR Arrivals",
-      "Printed physical SIN confirmation in under 10 minutes",
-      "Immediate payroll onboarding and banking verification on Day 1",
-    ],
-    ctaLabel: "View Airport SIN Desk Locations",
-    ctaLink: "https://www.canada.ca/en/employment-social-development/services/sin/before-applying.html",
-    regionSpecific: "All",
-  },
-
-  // --- DINING, FOOD & GROCERY HACKS ---
-  {
-    id: "perk-too-good-to-go",
-    partnerId: "too_good_to_go_ca",
-    category: "lifestyle",
-    title: "Too Good To Go (Surplus Restaurant & Grocery Meals)",
-    partnerName: "Too Good To Go Canada",
-    badge: "70% Off Meals ($3.99 - $6.99)",
-    valueNum: 500,
-    valueEst: "$500+ CAD / Year Saved",
-    description:
-      "Rescue fresh surplus meals, bakery boxes, and groceries from top Canadian chains and cafes (Tim Hortons, Metro, Whole Foods, 7-Eleven) for 1/3 of the retail price ($3.99 to $6.99 for $18 to $25 worth of food).",
-    keyPerks: [
-      "$18 to $25 CAD worth of fresh meals for just $3.99 - $6.99",
-      "Hundreds of participating cafes & supermarkets around campuses",
-      "Grab fresh surprise bags during 4 PM - 8 PM pickup windows",
-    ],
-    ctaLabel: "Download Too Good To Go App",
-    ctaLink: "https://www.toogoodtogo.com/en-ca",
-    regionSpecific: "All",
-  },
-  {
-    id: "perk-pc-optimum-grocery",
-    partnerId: "pc_optimum_rewards",
-    category: "lifestyle",
-    title: "PC Optimum Grocery Hacks & 10-15% Student Tuesdays",
-    partnerName: "Loblaws / Zehrs / Shoppers Drug Mart",
-    badge: "10-15% Off Tuesdays + 20x Points",
-    valueNum: 380,
-    valueEst: "$380+ CAD / Year",
-    description:
-      "Stack student savings: 10%–15% off total grocery bills on Tuesdays at Zehrs, Real Canadian Superstore, and Bulk Barn (show Student ID), plus 20x Points events at Shoppers Drug Mart (30% cashback).",
-    keyPerks: [
-      "10-15% student discount off entire grocery cart every Tuesday",
-      "20x Points events at Shoppers Drug Mart (30% net cashback)",
-      "Stack with weekly digital coupons to save $80+/mo on groceries",
-    ],
-    ctaLabel: "Get PC Optimum & View Tuesday Stores",
-    ctaLink: "https://www.pcoptimum.ca/",
-    regionSpecific: "All",
-  },
-  {
-    id: "perk-spc-discount-card",
-    partnerId: "spc_student_discount",
-    category: "lifestyle",
-    title: "SPC+ (Student Price Card) Membership",
-    partnerName: "SPC Canada / CIBC Partner",
-    badge: "Free with CIBC / $11.99 Value",
-    valueNum: 250,
-    valueEst: "$250+ CAD / Year",
-    description:
-      "Canada's #1 student discount membership. Unlock 10% to 25% instant discounts at 450+ top brands including Apple, Samsung, DoorDash, Adidas, H&M, and Rexall.",
-    promoCode: "STUDENT2026",
-    keyPerks: [
-      "10-25% off food, fashion, technology, and travel across Canada",
-      "Free 1-year digital membership when opening a CIBC Student Account",
-      "Instant barcode scan via SPC Mobile iOS/Android App",
-    ],
-    ctaLabel: "Unlock Free SPC+ Pass",
-    ctaLink: "https://www.spccard.ca/?ref=passportperk",
-    regionSpecific: "All",
-  },
+  // --- TECH & ENTERTAINMENT ---
   {
     id: "perk-apple-education",
-    partnerId: "apple_education_canada",
-    category: "lifestyle",
-    title: "Apple Education Pricing & Back-to-School",
-    partnerName: "Apple Canada",
-    badge: "Save Up to $200 + Gift Card",
-    valueNum: 200,
-    valueEst: "$200+ CAD Saved",
-    description:
-      "Special higher education pricing on MacBook Air, MacBook Pro, and iPad for Canadian university & college students, plus 20% off AppleCare+ protection.",
-    keyPerks: [
-      "Save up to $200 CAD on Mac laptops and up to $100 on iPads",
-      "Seasonal promotion includes bonus $150–$200 Apple Gift Card",
-      "Available with valid student email (.edu, @uwaterloo.ca, @utoronto.ca)",
-    ],
-    ctaLabel: "View Apple Student Store",
-    ctaLink: "https://www.apple.com/ca_edu_93120/shop",
+    partnerId: "apple_education_store",
+    brandKey: "apple",
+    brandName: "Apple Canada",
+    category: "tech",
+    heroPerk: "$150 GIFT CARD",
+    perkDetail: "+ 10% Off Mac & iPad",
+    description: "Verified university/college students get up to $150 Apple Gift Card with Back-to-School promo, plus year-round 10% education pricing on MacBooks & iPads.",
+    keyPoints: ["Up to $150 Apple Gift Card with purchase", "10% education discount on Mac & iPad", "20% off AppleCare+ warranty"],
+    ctaLabel: "Unlock Apple Education Store",
+    ctaLink: "https://www.apple.com/ca_edu_93120/shop?ref=passportperk",
+    valueDollars: 150,
+    badgeTag: "Hardware Discount",
     regionSpecific: "All",
   },
   {
     id: "perk-amazon-prime-student",
     partnerId: "amazon_prime_student_ca",
-    category: "lifestyle",
-    title: "Amazon Prime Student (6-Month Free Trial)",
-    partnerName: "Amazon Canada",
-    badge: "6 Months Free + 50% Off",
-    valueNum: 60,
-    valueEst: "$60 CAD Saved",
-    description:
-      "Enjoy 6 months of fast, free 1-2 day delivery for college textbooks, dorm essentials, and winter clothing, plus full Prime Video and Amazon Music streaming access.",
-    keyPerks: [
-      "Full 6-month trial with $0 charge for verified students",
-      "50% discounted membership ($4.99 CAD/mo) after trial ends",
-      "Free Fast Shipping to Canadian campuses and residences",
-    ],
-    ctaLabel: "Start 6-Month Free Trial",
+    brandKey: "amazon-prime",
+    brandName: "Amazon Prime",
+    category: "tech",
+    heroPerk: "6 MOS FREE",
+    perkDetail: "Prime Delivery + Prime Video",
+    description: "Get 6 months of 100% free Amazon Prime Student trial using your Canadian .edu / university email. Enjoy free fast delivery, Prime Video, and Amazon Music.",
+    keyPoints: ["6 months 100% free trial", "Free 1-day delivery on essentials", "50% off regular Prime price after trial"],
+    ctaLabel: "Claim 6 Months Free Prime",
     ctaLink: "https://www.amazon.ca/joinstudent?ref=passportperk",
+    valueDollars: 60,
+    badgeTag: "Free Trial",
     regionSpecific: "All",
   },
   {
     id: "perk-spotify-student",
-    partnerId: "spotify_student_canada",
-    category: "lifestyle",
-    title: "Spotify Premium Student (50% Off)",
-    partnerName: "Spotify Canada",
-    badge: "$5.99 CAD / Month",
-    valueNum: 72,
-    valueEst: "$72 CAD / Year",
-    description:
-      "Ad-free music, offline listening downloads, and unlimited skips with SheerID verification for all enrolled post-secondary students in Canada.",
-    keyPerks: [
-      "50% discount off standard Individual Premium ($5.99 vs $11.99/mo)",
-      "High-fidelity offline downloads for study sessions and transit commutes",
-      "Verified easily with your Canadian student portal or admission letter",
-    ],
-    ctaLabel: "Get Spotify Student",
-    ctaLink: "https://www.spotify.com/ca-en/student/",
+    partnerId: "spotify_student_ca",
+    brandKey: "spotify",
+    brandName: "Spotify",
+    category: "tech",
+    heroPerk: "$5.99 / MO",
+    perkDetail: "Spotify Premium + Free Apple TV+ promo",
+    description: "Enjoy Spotify Premium for just $5.99/month (regular $10.99). Includes 1 month free trial, ad-free listening, offline downloads, and streaming perks.",
+    keyPoints: ["50% off monthly subscription", "1 month free trial included", "High-fidelity offline music downloads"],
+    ctaLabel: "Get Spotify Student ($5.99)",
+    ctaLink: "https://www.spotify.com/ca-en/student/?ref=passportperk",
+    valueDollars: 60,
+    badgeTag: "50% Off Subscription",
     regionSpecific: "All",
   },
 
-  // --- TELECOM & CONNECTIVITY ---
+  // --- FOOD & GROCERY SAVINGS ---
+  {
+    id: "perk-too-good-to-go",
+    partnerId: "too_good_to_go_ca",
+    brandKey: "too-good-to-go",
+    brandName: "Too Good To Go",
+    category: "food",
+    heroPerk: "70% OFF FOOD",
+    perkDetail: "Rescue $15-$25 Meals for $4.99",
+    description: "Get fresh surplus meals, bakery goods, and groceries from top local restaurants and supermarkets at 1/3 of the regular price. Huge savings for students.",
+    keyPoints: ["Meals for $4.99 - $6.99 (valued at $18+)", "Active across Waterloo, Toronto & Vancouver", "Save $150+ monthly on meals"],
+    ctaLabel: "Download Too Good To Go",
+    ctaLink: "https://www.toogoodtogo.com/en-ca?ref=passportperk",
+    valueDollars: 150,
+    badgeTag: "Surplus Food App",
+    regionSpecific: "All",
+  },
+  {
+    id: "perk-pc-optimum-grocery",
+    partnerId: "pc_optimum_loblaws",
+    brandKey: "pc-optimum",
+    brandName: "PC Optimum / Zehrs",
+    category: "food",
+    heroPerk: "10% TUESDAYS",
+    perkDetail: "+ 10,000 Bonus PC Points",
+    description: "Show your student ID every Tuesday at Zehrs, Real Canadian Superstore, and Shoppers Drug Mart for an instant 10% off your entire grocery bill.",
+    keyPoints: ["10% off student Tuesdays", "Points redeemable for free groceries", "Free PC Optimum mobile card"],
+    ctaLabel: "Join PC Optimum for Free",
+    ctaLink: "https://www.pcoptimum.ca/?ref=passportperk",
+    valueDollars: 80,
+    badgeTag: "10% Grocery Hack",
+    regionSpecific: "All",
+  },
+
+  // --- MOBILE & ESIM ---
   {
     id: "perk-esim-phonebox",
-    partnerId: "phonebox_airalo_esim",
+    partnerId: "phonebox_esim_ca",
+    brandKey: "phonebox",
+    brandName: "PhoneBox 5G",
     category: "telecom",
-    title: "Canadian 5G eSIM Instant Activation",
-    partnerName: "Airalo / PhoneBox Canada",
-    badge: "15% Exclusive Student Discount",
-    valueNum: 35,
-    valueEst: "$35 CAD Saved",
-    description:
-      "Activate an authentic Canadian mobile eSIM before boarding your flight. Zero airport roaming charges, instant QR code install, and 5G data the second you touch down in Canada.",
-    promoCode: "CANADA15",
-    keyPerks: [
-      "15% off any 10GB - 50GB 30-day Canadian data package",
-      "Instant eSIM profile download to Apple / Google Wallet",
-      "Local Canadian +1 phone number included for landlord & banking calls",
-    ],
-    ctaLabel: "Claim 15% Off eSIM",
-    ctaLink: "https://www.airalo.com/canada-esim?ref=passportperk",
+    heroPerk: "$34 / 50GB",
+    perkDetail: "Pre-Arrival 5G eSIM + $0 Activation",
+    description: "Set up your Canadian phone number before your flight lands. No credit checks, operates on the Rogers 5G network with free international calling to 20+ countries.",
+    promoCode: "PASSPORT5G",
+    keyPoints: ["$34/mo for 50GB 5G data", "Free 1000 mins international calling", "Instant QR eSIM activation before flying"],
+    ctaLabel: "Order eSIM ($34 Promo)",
+    ctaLink: "https://gophonebox.com/plans?ref=passportperk",
+    valueDollars: 50,
+    badgeTag: "Pre-Arrival 5G eSIM",
     regionSpecific: "All",
   },
   {
     id: "perk-fizz-mobile",
-    partnerId: "fizz_mobile_student",
+    partnerId: "fizz_mobile_ca",
+    brandKey: "fizz",
+    brandName: "Fizz Mobile",
     category: "telecom",
-    title: "Fizz Mobile Rollover Student Plans",
-    partnerName: "Fizz Mobile Canada",
-    badge: "$25 Welcome Referral Bonus",
-    valueNum: 75,
-    valueEst: "$75+ CAD Value",
-    description:
-      "Canada's most flexible prepaid student network with 100% rollover unused data, customizable plans, and zero binding contracts or credit checks.",
-    promoCode: "FIZZ25",
-    keyPerks: [
-      "$25 CAD bill credit applied automatically on your 2nd month",
-      "Unused data automatically rolls over to your next month",
-      "No Canadian credit history or SIN required to activate",
-    ],
-    ctaLabel: "Get $25 Fizz Credit",
+    heroPerk: "ROLLOVER DATA",
+    perkDetail: "+ $25 Referral Cash Credit",
+    description: "Customizable 5G plans where unused monthly data automatically rolls over to the next month. Fully digital with no contracts or hidden fees.",
+    promoCode: "PERK25",
+    keyPoints: ["Unused data rolls over automatically", "$25 referral bonus on 2nd month", "Change plan limits anytime in app"],
+    ctaLabel: "Activate Fizz ($25 Credit)",
     ctaLink: "https://fizz.ca/en?ref=passportperk",
+    valueDollars: 25,
+    badgeTag: "Rollover Data",
     regionSpecific: "All",
   },
 
-  // --- AIRPORT & REGIONAL TRANSIT ---
+  // --- TRANSIT & IMMIGRATION SHORTCUTS ---
   {
-    id: "perk-grt-ion-waterloo",
-    partnerId: "grt_ion_waterloo",
+    id: "perk-airport-sin-hack",
+    partnerId: "airport_sin_desk",
+    brandKey: "service-canada",
+    brandName: "Service Canada Desk",
     category: "transit",
-    title: "GRT ION Light Rail & Bus (WatCard / OneCard U-Pass)",
-    partnerName: "Grand River Transit (Waterloo Region)",
-    badge: "Unlimited Transit Included",
-    valueNum: 380,
-    valueEst: "$380+ CAD / Term",
-    description:
-      "University of Waterloo and Wilfrid Laurier students receive unlimited access to the ION Light Rail and all Grand River Transit buses automatically loaded on their student ID card.",
-    keyPerks: [
-      "Direct ION Light Rail connection between UW, Laurier, and Kitchener",
-      "Simply tap your physical or digital WatCard / OneCard",
-      "Runs every 10-15 minutes across Kitchener-Waterloo",
-    ],
-    ctaLabel: "View GRT Student U-Pass Info",
-    ctaLink: "https://www.grt.ca/en/fares-passes/post-secondary-students.aspx",
-    regionSpecific: "Waterloo",
+    heroPerk: "SKIP 4-HR LINE",
+    perkDetail: "Instant SIN at Airport Immigration",
+    description: "Get your 9-digit Social Insurance Number (SIN) issued in 5 minutes at Pearson T1/T3 or YVR arrivals right after Border Services, avoiding the 4-hour queues at town offices.",
+    keyPoints: ["Issued in 5 minutes at airport desk", "Saves 4-hour wait at town offices", "Needed immediately for banking & work"],
+    ctaLabel: "View Airport SIN Instructions",
+    ctaLink: "https://www.canada.ca/en/employment-social-development/services/sin/apply.html?ref=passportperk",
+    valueDollars: 100,
+    badgeTag: "Airport Arrival Hack",
+    regionSpecific: "All",
   },
   {
-    id: "perk-go-transit-waterloo",
-    partnerId: "go_transit_ontario",
+    id: "perk-grt-ion-waterloo",
+    partnerId: "grt_waterloo_transit",
+    brandKey: "ion-waterloo",
+    brandName: "GRT & ION Light Rail",
     category: "transit",
-    title: "GO Transit Student Discount (Route 25 & Ontario Rail)",
-    partnerName: "Metrolinx GO Transit",
-    badge: "40% Off Adult Fares",
-    valueNum: 140,
-    valueEst: "$140+ CAD Saved",
-    description:
-      "Travel from Toronto Pearson Airport / Square One directly to University of Waterloo Davis Centre & Laurier for under $15 CAD using post-secondary PRESTO discount fares.",
-    keyPerks: [
-      "Direct highway express coach with free Wi-Fi and power plugs",
-      "Drops off directly on University of Waterloo campus",
-      "40% fare discount linked automatically to your PRESTO card",
-    ],
-    ctaLabel: "Setup PRESTO 40% Student Pass",
-    ctaLink: "https://www.gotransit.com/en/student-discount",
+    heroPerk: "FREE TRANSIT",
+    perkDetail: "Unlimited ION Light Rail & Buses",
+    description: "Included in your university tuition! Tap your WatCard (UW) or Laurier OneCard for 100% free unlimited rides on all Grand River Transit buses and ION light rail.",
+    keyPoints: ["100% Free unlimited rides with student card", "Direct connection between UW, Laurier & Conestoga", "No monthly transit pass needed"],
+    ctaLabel: "View GRT Route Schedules",
+    ctaLink: "https://www.grt.ca/en/fares/universal-transit-pass-u-pass.aspx?ref=passportperk",
+    valueDollars: 360,
+    badgeTag: "Unlimited U-Pass",
     regionSpecific: "Waterloo",
   },
   {
     id: "perk-up-express-toronto",
     partnerId: "up_express_toronto",
+    brandKey: "ttc-toronto",
+    brandName: "TTC & UP Express",
     category: "transit",
-    title: "UP Express Airport Train Student Fare",
-    partnerName: "Union Pearson Express (Toronto)",
-    badge: "$9.25 CAD Airport Express Fare",
-    valueNum: 30,
-    valueEst: "$30+ Saved vs Taxi",
-    description:
-      "Travel from Toronto Pearson Terminal 1 to Downtown Union Station in exactly 25 minutes with luggage racks and free high-speed Wi-Fi.",
-    keyPerks: [
-      "Departures every 15 minutes directly from Pearson Terminal 1",
-      "Tap PRESTO card for $9.25 CAD youth/student fare",
-      "Free transfers to TTC Subway at Dundas West and Bloor",
-    ],
-    ctaLabel: "View UP Express Schedule & Fares",
-    ctaLink: "https://www.upexpress.com/en/fares-and-tickets/fares",
-    regionSpecific: "Toronto",
-  },
-  {
-    id: "perk-ttc-toronto",
-    partnerId: "ttc_toronto_transit",
-    category: "transit",
-    title: "TTC Post-Secondary Monthly Transit Pass",
-    partnerName: "Toronto Transit Commission (TTC)",
-    badge: "Save $30+ CAD / Month",
-    valueNum: 120,
-    valueEst: "$120+ CAD Saved",
-    description:
-      "Unlimited monthly subway, streetcar, and bus transit across Toronto for enrolled post-secondary students loaded directly onto your PRESTO card.",
-    keyPerks: [
-      "Discounted $128.15 CAD monthly pass (vs $156 regular adult pass)",
-      "Unlimited rides across all 4 subway lines and 140+ routes",
-      "One-tap digital PRESTO in Apple Wallet and Google Wallet",
-    ],
-    ctaLabel: "Setup TTC Post-Secondary Pass",
-    ctaLink: "https://www.ttc.ca/fares-and-passes/Post-Secondary-Students",
+    heroPerk: "FREE TRANSFERS",
+    perkDetail: "Ontario One Fare Program",
+    description: "Under Ontario's One Fare program, transfers between TTC, GO Transit, MiWay, and Brampton Transit are 100% free with your PRESTO card or credit card tap.",
+    keyPoints: ["Free transfers across TTC, GO & YRT", "Airport to Union Station in 25 mins", "$3.00 flat student cap"],
+    ctaLabel: "Learn One Fare Program",
+    ctaLink: "https://www.upexpress.com/en/fares-and-passes/student-discount?ref=passportperk",
+    valueDollars: 120,
+    badgeTag: "One Fare Program",
     regionSpecific: "Toronto",
   },
   {
     id: "perk-skytrain-vancouver",
-    partnerId: "translink_bc_yvr",
+    partnerId: "translink_vancouver",
+    brandKey: "skytrain-vancouver",
+    brandName: "TransLink SkyTrain",
     category: "transit",
-    title: "YVR Canada Line SkyTrain & U-Pass BC",
-    partnerName: "TransLink British Columbia",
-    badge: "Unlimited Transit with U-Pass",
-    valueNum: 180,
-    valueEst: "$180+ CAD / Month",
-    description:
-      "Direct 25-minute rapid transit from Vancouver International Airport into Downtown Vancouver, plus unlimited SkyTrain, SeaBus, and bus transit across Metro Vancouver.",
-    keyPerks: [
-      "Board directly on Level 4 of YVR Airport Terminal",
-      "Unlimited 3-zone travel with student U-Pass BC on Compass Card",
-      "Contactless credit/debit card tap support at all fare gates",
-    ],
-    ctaLabel: "Link U-Pass to Compass Card",
-    ctaLink: "https://upassbc.translink.ca/",
+    heroPerk: "3-ZONE U-PASS",
+    perkDetail: "Unlimited SkyTrain, SeaBus & Buses",
+    description: "Included with UBC & SFU tuition: Unlimited all-zone access to Expo Line, Millennium Line, Canada Line, SeaBus, and all TransLink buses with Compass Card.",
+    keyPoints: ["All 3 zones included at 70% off regular fare", "Covers airport to downtown Canada Line", "Loaded digitally onto Compass Card"],
+    ctaLabel: "Link U-Pass to Compass",
+    ctaLink: "https://www.translink.ca/transit-fares/u-pass-bc?ref=passportperk",
+    valueDollars: 450,
+    badgeTag: "All-Zone U-Pass",
     regionSpecific: "Vancouver",
   },
 
-  // --- HOUSING & SETTLEMENT ---
+  // --- TENANT INSURANCE ---
   {
     id: "perk-tenant-insurance",
     partnerId: "square_one_insurance",
+    brandKey: "square-one",
+    brandName: "Square One Insurance",
     category: "housing",
-    title: "Student Tenant Insurance & Lease Protection",
-    partnerName: "Square One / Apollo Insurance",
-    badge: "Starting at $12 / month",
-    valueNum: 150,
-    valueEst: "$150+ CAD Saved",
-    description:
-      "Meets all Ontario and BC landlord lease requirements. Covers personal belongings, laptop protection, accidental damage, and tenant legal liability.",
-    promoCode: "STUDENTSAFE",
-    keyPerks: [
-      "Instant policy PDF certificate to send to your landlord in 5 minutes",
-      "Covers laptop, smartphone, and contents against theft or water damage",
-      "$1,000,000 to $2,000,000 CAD comprehensive tenant liability",
-    ],
-    ctaLabel: "Get $12/mo Tenant Insurance Quote",
+    heroPerk: "$12 / MO",
+    perkDetail: "Instant Student Tenant Insurance",
+    description: "Most Canadian student leases require proof of tenant insurance. Get instant online coverage starting at just $12/month with $1M liability protection and $0 deductible options.",
+    keyPoints: ["Instant PDF certificate for landlord", "Plans start at only $12/month", "$1,000,000 liability protection"],
+    ctaLabel: "Get Instant Quote ($12/mo)",
     ctaLink: "https://www.squareone.ca/tenant-insurance?ref=passportperk",
+    valueDollars: 50,
+    badgeTag: "Landlord Required",
     regionSpecific: "All",
   },
 ];
 
-export default function PerksHubPage() {
+export default function PerksPage() {
+  const [activeCategory, setActiveCategory] = useState<string>("all");
+  const [activeRegion, setActiveRegion] = useState<string>("All Canada");
   const [claimedPerks, setClaimedPerks] = useState<Record<string, boolean>>({});
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
-  const [activeCategory, setActiveCategory] = useState<string>("all");
-  const [activeRegion, setActiveRegion] = useState<string>("Waterloo Region, ON");
-  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
     if (typeof window !== "undefined") {
-      try {
-        const storedIntake = localStorage.getItem("waterloo_newcomer_intake");
-        if (storedIntake) {
-          const parsed = JSON.parse(storedIntake);
-          if (parsed?.targetCity) {
-            setActiveRegion(parsed.targetCity);
-          }
+      const saved = localStorage.getItem("northstar_claimed_perks");
+      if (saved) {
+        try {
+          setClaimedPerks(JSON.parse(saved));
+        } catch (e) {
+          console.error("Failed to parse saved perks", e);
         }
-
-        const storedClaims = localStorage.getItem("northstar_claimed_perks");
-        if (storedClaims) {
-          setClaimedPerks(JSON.parse(storedClaims));
-        }
-      } catch (e) {
-        // Fallback
       }
 
-      const handleRegionEvent = (event: Event) => {
-        const customEvent = event as CustomEvent<{ targetCity: string }>;
-        if (customEvent.detail?.targetCity) {
-          setActiveRegion(customEvent.detail.targetCity);
+      const intakeData = localStorage.getItem("northstar_user_profile");
+      if (intakeData) {
+        try {
+          const parsed = JSON.parse(intakeData);
+          if (parsed.destinationCity) {
+            setActiveRegion(parsed.destinationCity);
+          }
+        } catch (e) {
+          console.error("Failed to parse intake profile", e);
+        }
+      }
+
+      const handleRegionEvent = (e: any) => {
+        if (e.detail?.region) {
+          setActiveRegion(e.detail.region);
         }
       };
 
@@ -635,15 +481,16 @@ export default function PerksHubPage() {
     }
   };
 
-  const handlePerkCta = (perk: PerkItem) => {
+  const handlePerkCta = (perk: AtomicPerk) => {
     handleOutboundClick(perk.partnerId, perk.category, perk.ctaLink, {
-      position_on_page: "perks_hub_card",
-      perk_title: perk.title,
-      value_estimate: perk.valueEst,
+      position_on_page: "perks_marketplace_card",
+      brand_name: perk.brandName,
+      hero_perk: perk.heroPerk,
+      value_estimate: perk.valueDollars,
     });
   };
 
-  const filteredPerks = EXCLUSIVE_PERKS.filter((perk) => {
+  const filteredPerks = ALL_ATOMIC_PERKS.filter((perk) => {
     if (activeCategory !== "all" && perk.category !== activeCategory) return false;
 
     if (perk.regionSpecific && perk.regionSpecific !== "All") {
@@ -656,28 +503,28 @@ export default function PerksHubPage() {
   });
 
   const totalClaimedCount = Object.values(claimedPerks).filter(Boolean).length;
-  const totalClaimedDollars = EXCLUSIVE_PERKS.reduce((acc, p) => {
-    return claimedPerks[p.id] ? acc + p.valueNum : acc;
+  const totalClaimedDollars = ALL_ATOMIC_PERKS.reduce((acc, p) => {
+    return claimedPerks[p.id] ? acc + p.valueDollars : acc;
   }, 0);
 
-  const totalAvailableDollars = EXCLUSIVE_PERKS.reduce((acc, p) => acc + p.valueNum, 0);
+  const totalAvailableDollars = ALL_ATOMIC_PERKS.reduce((acc, p) => acc + p.valueDollars, 0);
 
   return (
     <div className="flex flex-col gap-6 sm:gap-8 lg:gap-10">
-      {/* Hero Banner: Perks Marketplace Header (UNiDAYS Vibe) */}
+      {/* Hero Banner: Student Marketplace Header (UNiDAYS / Student Beans Vibe) */}
       <div className="w-full bg-[#0d1322]/90 backdrop-blur-2xl border border-white/[0.1] rounded-3xl p-5 sm:p-6 lg:p-8 relative overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,0.4)]">
         <div className="absolute top-0 right-0 -mr-16 -mt-16 w-80 h-80 rounded-full bg-emerald-500/10 blur-3xl pointer-events-none -z-10" />
-        <div className="absolute bottom-0 left-1/3 -mb-20 w-80 h-80 rounded-full bg-amber-500/10 blur-3xl pointer-events-none -z-10" />
+        <div className="absolute bottom-0 left-1/3 -mb-20 w-80 h-80 rounded-full bg-cyan-500/10 blur-3xl pointer-events-none -z-10" />
 
         <div className="relative z-10 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5 sm:gap-6">
           <div className="max-w-2xl flex flex-col gap-2.5 sm:gap-3">
             <div className="flex items-center gap-2 flex-wrap">
               <Badge variant="emerald" className="px-2.5 sm:px-3 py-0.5 text-xs font-bold">
                 <Gift className="w-3.5 h-3.5 text-emerald-400" />
-                <span>Student Perks & Discounts</span>
+                <span>Student Deals & Perks</span>
               </Badge>
               <Badge variant="zinc" className="text-xs font-mono font-semibold">
-                {EXCLUSIVE_PERKS.length} Verified Deals
+                {ALL_ATOMIC_PERKS.length} Verified Offers
               </Badge>
             </div>
 
@@ -686,7 +533,7 @@ export default function PerksHubPage() {
             </h1>
 
             <p className="text-xs sm:text-sm text-zinc-400 leading-relaxed">
-              Instant student discounts, welcome banking bonuses, surplus meals, and airport shortcuts curated for newcomers arriving in{" "}
+              Every current student offer, banking cash bonus, tech discount, and grocery hack in one clean hub. Zero fluff, instant savings for newcomers in{" "}
               <strong className="text-white">{activeRegion.split(",")[0]}</strong>.
             </p>
           </div>
@@ -696,10 +543,10 @@ export default function PerksHubPage() {
             <div className="flex items-center justify-between">
               <span className="text-[11px] font-mono uppercase tracking-wider text-emerald-400 font-bold flex items-center gap-1.5">
                 <Calculator className="w-3.5 h-3.5" />
-                <span>Savings Calculator</span>
+                <span>Savings Tracker</span>
               </span>
               <span className="text-xs font-mono font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
-                {totalClaimedCount}/{EXCLUSIVE_PERKS.length} Claimed
+                {totalClaimedCount}/{ALL_ATOMIC_PERKS.length} Saved
               </span>
             </div>
 
@@ -708,7 +555,7 @@ export default function PerksHubPage() {
                 ${totalClaimedDollars > 0 ? totalClaimedDollars.toLocaleString() : totalAvailableDollars.toLocaleString()}<span className="text-emerald-400 text-lg sm:text-xl font-sans">+ CAD</span>
               </div>
               <p className="text-[11px] sm:text-xs text-zinc-400 mt-0.5">
-                {totalClaimedDollars > 0 ? "Saved so far in student welcome perks!" : "Estimated total student value across all verified perks"}
+                {totalClaimedDollars > 0 ? "Saved so far in student welcome perks!" : "Estimated total value available across all student perks"}
               </p>
             </div>
 
@@ -720,49 +567,31 @@ export default function PerksHubPage() {
         </div>
       </div>
 
-      {/* Section 1: 5-Bank Student Packages Suite */}
-      <section className="flex flex-col gap-4 sm:gap-5">
-        <div className="flex items-center justify-between gap-3 border-b border-white/[0.08] pb-3 sm:pb-4">
-          <div className="flex items-center gap-2">
-            <Building2 className="w-4 h-4 text-emerald-400" />
-            <h2 className="text-lg sm:text-xl font-bold tracking-tight text-white">
-              Student Banking & Welcome Offers
-            </h2>
-          </div>
-          <Badge variant="emerald" className="font-mono text-[10px] sm:text-[11px] font-bold">
-            2026 Student Packages
-          </Badge>
-        </div>
-
-        <BankComparisonMatrix />
-      </section>
-
-      {/* Community Perks Contribution Card */}
-      <SubmitPerkCard />
-
-      {/* Section 2: Atomic Deal Cards (UNiDAYS Marketplace Style) */}
-      <section className="flex flex-col gap-5 sm:gap-6 pt-4 sm:pt-6 border-t border-white/[0.08]">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
+      {/* Main Deals Marketplace Section */}
+      <section className="flex flex-col gap-5 sm:gap-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 border-b border-white/[0.08] pb-4">
           <div>
             <div className="flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-amber-400" />
+              <Sparkles className="w-4 h-4 text-emerald-400" />
               <h2 className="text-lg sm:text-xl font-bold tracking-tight text-white">
-                Lifestyle, Food, Transit & Telecom Deals
+                All Verified Student Deals
               </h2>
             </div>
-            <p className="text-xs text-zinc-400 mt-0.5 sm:mt-1">
-              Tap any deal to unlock exclusive promo codes and student verification links.
+            <p className="text-xs text-zinc-400 mt-0.5">
+              Select any category to filter offers. Tap any card to claim with student status.
             </p>
           </div>
 
           {/* Category Filter Pills (Touch Scrollable) */}
           <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
             {[
-              { id: "all", label: `All Deals (${EXCLUSIVE_PERKS.length})` },
-              { id: "lifestyle", label: "Discounts & Food" },
-              { id: "transit", label: "Transit & Airport SIN" },
-              { id: "telecom", label: "eSIM & Mobile" },
-              { id: "housing", label: "Tenant Insurance" },
+              { id: "all", label: `🔥 All Deals (${ALL_ATOMIC_PERKS.length})` },
+              { id: "banking", label: "💰 Banking & Cash" },
+              { id: "tech", label: "🎧 Tech & Stream" },
+              { id: "food", label: "🍕 Food & Groceries" },
+              { id: "telecom", label: "📱 Mobile & 5G" },
+              { id: "transit", label: "🚆 Transit & Passes" },
+              { id: "housing", label: "🏠 Tenant Insurance" },
             ].map((cat) => (
               <button
                 key={cat.id}
@@ -771,7 +600,7 @@ export default function PerksHubPage() {
                 className={cn(
                   "whitespace-nowrap px-3.5 py-1.5 rounded-xl text-xs font-semibold border transition-all cursor-pointer",
                   activeCategory === cat.id
-                    ? "bg-emerald-500 text-zinc-950 border-emerald-400 font-bold shadow-md"
+                    ? "bg-emerald-500 text-zinc-950 border-emerald-400 font-bold shadow-[0_0_15px_rgba(16,185,129,0.3)]"
                     : "bg-[#0d1322]/70 text-zinc-400 border-white/[0.08] hover:border-white/[0.18] hover:text-white"
                 )}
               >
@@ -781,19 +610,11 @@ export default function PerksHubPage() {
           </div>
         </div>
 
-        {/* UNiDAYS-Style Atomic Deal Cards Grid */}
+        {/* Atomic Deal Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
           <AnimatePresence mode="popLayout">
             {filteredPerks.map((perk) => {
               const isClaimed = Boolean(claimedPerks[perk.id]);
-              const brand = PERK_BRAND_CONFIG[perk.id] || {
-                logoText: "PERK",
-                bgGradient: "from-emerald-500/20 via-green-950/30 to-[#0d1322]",
-                textGradient: "from-emerald-300 to-teal-100",
-                accentColor: "text-emerald-400",
-                pillBg: "bg-emerald-500/15 border-emerald-500/30 text-emerald-300",
-                borderAccent: "hover:border-emerald-500/50",
-              };
 
               return (
                 <motion.div
@@ -806,28 +627,20 @@ export default function PerksHubPage() {
                   transition={{ duration: 0.2 }}
                   className={cn(
                     "relative border rounded-3xl p-5 sm:p-6 flex flex-col justify-between gap-5 transition-all group overflow-hidden shadow-lg",
-                    brand.borderAccent,
                     isClaimed
-                      ? "border-emerald-500/25 bg-[#0d1322]/50 shadow-2xs"
-                      : "bg-[#0d1322]/90 backdrop-blur-2xl border-white/[0.1] hover:shadow-[0_12px_40px_rgba(0,0,0,0.5)]"
+                      ? "border-emerald-500/30 bg-[#0d1322]/60 shadow-2xs"
+                      : "bg-[#0d1322]/90 backdrop-blur-2xl border-white/[0.1] hover:border-emerald-500/40 hover:shadow-[0_12px_40px_rgba(0,0,0,0.5)]"
                   )}
                 >
-                  {/* Ambient Glow */}
-                  <div
-                    className={cn(
-                      "absolute top-0 right-0 -mr-12 -mt-12 w-44 h-44 rounded-full bg-gradient-to-br blur-3xl pointer-events-none opacity-30 transition-opacity group-hover:opacity-60",
-                      brand.bgGradient
-                    )}
-                  />
+                  {/* Subtle Ambient Radial Glow */}
+                  <div className="absolute top-0 right-0 -mr-12 -mt-12 w-48 h-48 rounded-full bg-emerald-500/10 blur-3xl pointer-events-none opacity-30 group-hover:opacity-60 transition-opacity" />
 
                   <div className="relative z-10 flex flex-col gap-4">
-                    {/* Card Top: Brand Logo Avatar + Partner Title + Claim Toggle */}
+                    {/* Top Row: Authentic Brand Logo + Partner Info + Save Button */}
                     <div className="flex items-start justify-between gap-2">
-                      <div className="flex items-center gap-3">
-                        {/* Brand Logo Placeholder Avatar Tile */}
-                        <div className="w-12 h-12 rounded-2xl bg-white/[0.06] border border-white/15 flex items-center justify-center font-black font-mono tracking-tighter text-sm text-white shadow-inner group-hover:scale-105 transition-transform flex-shrink-0">
-                          <span className={brand.accentColor}>{brand.logoText}</span>
-                        </div>
+                      <div className="flex items-center gap-3 min-w-0">
+                        {/* Authentic Brand SVG Vector Logo */}
+                        <BrandLogo brand={perk.brandKey} size="md" />
 
                         <div className="min-w-0">
                           <h3
@@ -836,15 +649,17 @@ export default function PerksHubPage() {
                               isClaimed ? "text-zinc-500 line-through" : "text-white"
                             )}
                           >
-                            {perk.partnerName}
+                            {perk.brandName}
                           </h3>
-                          <p className="text-[11px] font-mono text-zinc-400 capitalize truncate">
-                            {perk.category} • {perk.regionSpecific || "All Canada"}
-                          </p>
+                          <div className="flex items-center gap-1.5 mt-0.5">
+                            <span className="text-[10px] font-mono text-zinc-400 capitalize truncate">
+                              {perk.category} • {perk.regionSpecific === "All" ? "All Canada" : perk.regionSpecific}
+                            </span>
+                          </div>
                         </div>
                       </div>
 
-                      {/* Claim toggle button */}
+                      {/* Save / Claim Toggle */}
                       <button
                         type="button"
                         onClick={() => handleToggleClaim(perk.id)}
@@ -853,7 +668,7 @@ export default function PerksHubPage() {
                         {isClaimed ? (
                           <span className="inline-flex items-center gap-1 text-emerald-400 font-bold">
                             <CheckCircle2 className="w-4 h-4 fill-emerald-500/20" />
-                            <span>Claimed</span>
+                            <span>Saved</span>
                           </span>
                         ) : (
                           <span className="inline-flex items-center gap-1 text-zinc-400 hover:text-white">
@@ -864,27 +679,22 @@ export default function PerksHubPage() {
                       </button>
                     </div>
 
-                    {/* Hero Reward Headline (UNiDAYS Big Bold Style) */}
-                    <div className="py-0.5">
-                      <div
-                        className={cn(
-                          "text-2xl sm:text-3xl font-black tracking-tight bg-gradient-to-r bg-clip-text text-transparent leading-tight",
-                          brand.textGradient
-                        )}
-                      >
-                        {perk.badge}
+                    {/* ZOOMED-IN HIGHLIGHTED PERK BADGE */}
+                    <div className="py-1">
+                      <div className="text-3xl sm:text-4xl font-black tracking-tight bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-300 bg-clip-text text-transparent leading-none">
+                        {perk.heroPerk}
                       </div>
-                      <p className="text-xs text-zinc-300 font-medium mt-1 leading-snug">
-                        {perk.title}
+                      <p className="text-xs font-bold text-zinc-200 mt-1.5 leading-snug">
+                        {perk.perkDetail}
                       </p>
                     </div>
 
-                    {/* Description One-Liner */}
+                    {/* Clear 1-2 Sentence Description */}
                     <p className="text-xs text-zinc-400 leading-relaxed line-clamp-2">
                       {perk.description}
                     </p>
 
-                    {/* Promo Code Box */}
+                    {/* Promo Code Box (if applicable) */}
                     {perk.promoCode && (
                       <div className="flex items-center justify-between p-2.5 rounded-2xl bg-white/[0.04] border border-dashed border-emerald-500/40">
                         <div className="flex items-center gap-2 min-w-0">
@@ -915,16 +725,13 @@ export default function PerksHubPage() {
                       </div>
                     )}
 
-                    {/* Key Perks Chips */}
-                    <div className="flex flex-wrap gap-1.5 pt-1">
-                      {perk.keyPerks.slice(0, 2).map((item, idx) => (
-                        <span
-                          key={idx}
-                          className="px-2.5 py-1 rounded-xl bg-white/[0.04] border border-white/[0.08] text-[11px] font-medium text-zinc-300 flex items-center gap-1 truncate max-w-full"
-                        >
-                          <Check className="w-3 h-3 text-emerald-400 flex-shrink-0 stroke-[2.5]" />
+                    {/* Key Benefits Chips */}
+                    <div className="flex flex-col gap-1.5 pt-0.5">
+                      {perk.keyPoints.map((item, idx) => (
+                        <div key={idx} className="flex items-center gap-2 text-[11px] font-medium text-zinc-300">
+                          <Check className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0 stroke-[2.5]" />
                           <span className="truncate">{item}</span>
-                        </span>
+                        </div>
                       ))}
                     </div>
                   </div>
@@ -955,7 +762,10 @@ export default function PerksHubPage() {
         </div>
       </section>
 
-      {/* Bottom CTA to Checklist */}
+      {/* Community Contribution Section */}
+      <SubmitPerkCard />
+
+      {/* Bottom CTA to Core Checklist */}
       <div className="bg-[#0d1322]/80 backdrop-blur-xl border border-white/[0.08] rounded-3xl p-5 sm:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-[0_8px_30px_rgba(0,0,0,0.3)]">
         <div className="flex items-center gap-3.5">
           <div className="w-10 h-10 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400 flex-shrink-0">
@@ -963,10 +773,10 @@ export default function PerksHubPage() {
           </div>
           <div>
             <h4 className="text-sm sm:text-base font-bold text-white">
-              Ready to review your essential settlement steps?
+              Ready to check off your pre-arrival roadmap?
             </h4>
             <p className="text-xs text-zinc-400 mt-0.5">
-              Check off your personalized roadmap in the core checklist.
+              Review your personalized settlement timeline and mandatory documents.
             </p>
           </div>
         </div>

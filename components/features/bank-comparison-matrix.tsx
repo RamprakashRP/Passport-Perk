@@ -3,278 +3,303 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  Building2,
   Sparkles,
   ExternalLink,
   ShieldCheck,
   Check,
   MapPin,
-  Filter,
   Gift,
   Award,
   ArrowRight,
+  CircleDollarSign,
+  Tag,
 } from "lucide-react";
-import { BankComparisonOption } from "@/types";
-import { CANADIAN_BANK_OPTIONS } from "@/lib/data/default-tasks";
+import { BrandLogo, BrandKey } from "@/components/ui/brand-logo";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { handleOutboundClick } from "@/lib/telemetry";
 import { cn } from "@/lib/utils";
 
-interface BankComparisonMatrixProps {
-  onSelectBank?: (bank: BankComparisonOption) => void;
-  className?: string;
+export interface AtomicBankDeal {
+  id: string;
+  partnerId: string;
+  brandKey: BrandKey;
+  bankName: string;
+  heroPerk: string;
+  perkDetail: string;
+  description: string;
+  tag: string;
+  features: string[];
+  ctaLabel: string;
+  ctaLink: string;
+  categoryType: "cash" | "rewards" | "digital" | "credit";
 }
 
-const BANK_BRAND_THEMES: Record<
-  string,
-  { logoText: string; bgGradient: string; textGradient: string; accentColor: string; pillBg: string; borderAccent: string }
-> = {
-  scotiabank: {
-    logoText: "BNS",
-    bgGradient: "from-red-500/20 via-red-950/30 to-[#0d1322]",
-    textGradient: "from-red-400 to-rose-200",
-    accentColor: "text-red-400",
-    pillBg: "bg-red-500/15 border-red-500/30 text-red-300",
-    borderAccent: "group-hover:border-red-500/50",
+export const ATOMIC_BANK_DEALS: AtomicBankDeal[] = [
+  {
+    id: "scotia-150-cash",
+    partnerId: "scotiabank_startright",
+    brandKey: "scotiabank",
+    bankName: "Scotiabank",
+    heroPerk: "$150 CASH",
+    perkDetail: "Welcome Cash Bonus",
+    description: "Open the Student Banking Advantage Plan with $0 monthly fee and complete 2 qualifying transactions to get $150 deposited directly.",
+    tag: "Most Popular on Campus",
+    features: ["$0 Monthly Account Fee", "Unlimited Free Interac e-Transfers", "Closest branch to UW, UofT & UBC gates"],
+    ctaLabel: "Claim $150 with Scotiabank",
+    ctaLink: "https://www.scotiabank.com/ca/en/personal/bank-accounts/students/student-banking-advantage-plan.html?ref=passportperk",
+    categoryType: "cash",
   },
-  cibc: {
-    logoText: "CIBC",
-    bgGradient: "from-rose-600/20 via-red-950/30 to-[#0d1322]",
-    textGradient: "from-rose-400 to-amber-200",
-    accentColor: "text-rose-400",
-    pillBg: "bg-rose-500/15 border-rose-500/30 text-rose-300",
-    borderAccent: "group-hover:border-rose-500/50",
+  {
+    id: "scotia-scene-rewards",
+    partnerId: "scotiabank_startright",
+    brandKey: "scotiabank",
+    bankName: "Scotiabank",
+    heroPerk: "SCENE+ POINTS",
+    perkDetail: "Free Cineplex Movies & Groceries",
+    description: "Earn Scene+ rewards points on every debit purchase at Cineplex, Sobeys, FreshCo, and partner dining spots across Canada.",
+    tag: "Entertainment Perk",
+    features: ["Points on daily debit spending", "Redeem for free movies & snacks", "Student Scene+ debit card included"],
+    ctaLabel: "Get Scene+ Rewards Card",
+    ctaLink: "https://www.scotiabank.com/ca/en/personal/bank-accounts/students/student-banking-advantage-plan.html?ref=passportperk",
+    categoryType: "rewards",
   },
-  td: {
-    logoText: "TD",
-    bgGradient: "from-emerald-500/20 via-green-950/30 to-[#0d1322]",
-    textGradient: "from-emerald-400 to-teal-200",
-    accentColor: "text-emerald-400",
-    pillBg: "bg-emerald-500/15 border-emerald-500/30 text-emerald-300",
-    borderAccent: "group-hover:border-emerald-500/50",
+  {
+    id: "rbc-airpods-promo",
+    partnerId: "rbc_student_advantage",
+    brandKey: "rbc",
+    bankName: "RBC Royal Bank",
+    heroPerk: "FREE AIRPODS",
+    perkDetail: "Apple AirPods or $100 Cash",
+    description: "Open an RBC Student Advantage Banking account and receive a brand new pair of Apple AirPods (or $100 direct cash) upon qualifying setup.",
+    tag: "Top Tech Reward",
+    features: ["Free Apple AirPods promo", "Avion Points on debit purchases", "NOMI AI automated spending tracker"],
+    ctaLabel: "Claim Free AirPods with RBC",
+    ctaLink: "https://www.rbcroyalbank.com/accounts/student-banking.html?ref=passportperk",
+    categoryType: "rewards",
   },
-  rbc: {
-    logoText: "RBC",
-    bgGradient: "from-blue-500/20 via-indigo-950/30 to-[#0d1322]",
-    textGradient: "from-blue-400 to-sky-200",
-    accentColor: "text-blue-400",
-    pillBg: "bg-blue-500/15 border-blue-500/30 text-blue-300",
-    borderAccent: "group-hover:border-blue-500/50",
+  {
+    id: "rbc-100-cash",
+    partnerId: "rbc_student_advantage",
+    brandKey: "rbc",
+    bankName: "RBC Royal Bank",
+    heroPerk: "$100 CASH",
+    perkDetail: "Direct Student Deposit",
+    description: "Choose the instant $100 cash alternative if you already own headphones. Canada's largest branch network with locations in every student hub.",
+    tag: "Instant Cash Alternative",
+    features: ["$0 Monthly maintenance fee", "Largest ATM network in Canada", "Instant Interac e-Transfers"],
+    ctaLabel: "Claim $100 Bonus with RBC",
+    ctaLink: "https://www.rbcroyalbank.com/accounts/student-banking.html?ref=passportperk",
+    categoryType: "cash",
   },
-  simplii: {
-    logoText: "SIMPLII",
-    bgGradient: "from-fuchsia-500/20 via-pink-950/30 to-[#0d1322]",
-    textGradient: "from-fuchsia-400 to-pink-200",
-    accentColor: "text-fuchsia-400",
-    pillBg: "bg-fuchsia-500/15 border-fuchsia-500/30 text-fuchsia-300",
-    borderAccent: "group-hover:border-fuchsia-500/50",
+  {
+    id: "cibc-spc-pass",
+    partnerId: "cibc_student_banking",
+    brandKey: "cibc",
+    bankName: "CIBC",
+    heroPerk: "FREE SPC+ PASS",
+    perkDetail: "Student Price Card (Save at 450+ Brands)",
+    description: "Get a 100% free SPC+ membership linked to your CIBC student card. Save 10% to 25% at Apple, Adidas, Samsung, Domino's, H&M, and Foot Locker.",
+    tag: "Top Shopping Perk",
+    features: ["Free annual SPC+ membership ($11.99/yr waived)", "Discounts at 450+ Canadian retailers", "Works both in-store and online"],
+    ctaLabel: "Get Free SPC+ with CIBC",
+    ctaLink: "https://www.cibc.com/en/student/bank-accounts.html?ref=passportperk",
+    categoryType: "rewards",
   },
-};
+  {
+    id: "cibc-100-cash",
+    partnerId: "cibc_student_banking",
+    brandKey: "cibc",
+    bankName: "CIBC",
+    heroPerk: "$100 CASH",
+    perkDetail: "CIBC Smart for Students Bonus",
+    description: "Open the CIBC Smart™ Account for Students with $0 monthly fees, unlimited transactions, and free international remittances.",
+    tag: "Zero-Fee Banking",
+    features: ["$0 monthly fee while enrolled", "Free international wire transfers ($0 fee)", "Digital onboarding on mobile app"],
+    ctaLabel: "Claim $100 with CIBC",
+    ctaLink: "https://www.cibc.com/en/student/bank-accounts.html?ref=passportperk",
+    categoryType: "cash",
+  },
+  {
+    id: "td-100-cash",
+    partnerId: "td_student_gic",
+    brandKey: "td",
+    bankName: "TD Canada Trust",
+    heroPerk: "$100 CASH",
+    perkDetail: "TD Student Chequing Bonus",
+    description: "Open a TD Student Chequing Account and earn $100 cash. Enjoy Canada's longest branch hours—open 7 days a week including late evenings and Sundays.",
+    tag: "Open 7 Days a Week",
+    features: ["Open weekends & Sunday afternoons", "$0 monthly chequing fee", "Seamless TD mobile app integration"],
+    ctaLabel: "Claim $100 with TD Bank",
+    ctaLink: "https://www.td.com/ca/en/personal-banking/products/bank-accounts/chequing-accounts/student-chequing-account?ref=passportperk",
+    categoryType: "cash",
+  },
+  {
+    id: "td-first-credit-card",
+    partnerId: "td_student_gic",
+    brandKey: "td",
+    bankName: "TD Canada Trust",
+    heroPerk: "FIRST CREDIT CARD",
+    perkDetail: "Guaranteed $1,000 Limit (No Credit History)",
+    description: "Build your Canadian credit score from Day 1. Guaranteed approval for international students with $0 Canadian credit history + up to $200 TD Rewards points.",
+    tag: "Build Canadian Credit",
+    features: ["No Canadian credit history needed", "$0 Annual fee student Visa", "Start building your Equifax/TransUnion score"],
+    ctaLabel: "Apply for TD Student Visa",
+    ctaLink: "https://www.td.com/ca/en/personal-banking/products/credit-cards/student?ref=passportperk",
+    categoryType: "credit",
+  },
+  {
+    id: "simplii-400-bonus",
+    partnerId: "simplii_financial",
+    brandKey: "simplii",
+    bankName: "Simplii Financial",
+    heroPerk: "$400 BONUS",
+    perkDetail: "High-Yield Digital Chequing",
+    description: "100% digital bank with $0 monthly fees forever (even after graduation). Earn up to $400 cash bonus when setting up qualifying payroll or student direct deposit.",
+    tag: "$0 Fees Forever",
+    features: ["$0 fees forever (no student proof needed)", "Free access to 4,000+ CIBC ATMs", "High-interest student savings account"],
+    ctaLabel: "Claim $400 with Simplii",
+    ctaLink: "https://www.simplii.com/en/special-offers/student-banking.html?ref=passportperk",
+    categoryType: "digital",
+  },
+];
+
+interface BankComparisonMatrixProps {
+  className?: string;
+  onSelectDeal?: (deal: AtomicBankDeal) => void;
+}
 
 export function BankComparisonMatrix({
-  onSelectBank,
   className,
+  onSelectDeal,
 }: BankComparisonMatrixProps) {
   const [activeFilter, setActiveFilter] = useState<string>("all");
 
   const filterOptions = [
-    { id: "all", label: "All 5 Banks" },
-    { id: "bonus", label: "Top Cash Bonuses" },
-    { id: "rewards", label: "AirPods & Scene+ Rewards" },
-    { id: "proximity", label: "Near Campus Gates" },
+    { id: "all", label: `All Bank Deals (${ATOMIC_BANK_DEALS.length})` },
+    { id: "cash", label: "Cash Bonuses ($100 - $400)" },
+    { id: "rewards", label: "AirPods, Movies & SPC+" },
+    { id: "credit", label: "Credit Cards (No History)" },
     { id: "digital", label: "100% No-Fee Digital" },
   ];
 
-  const filteredBanks = CANADIAN_BANK_OPTIONS.filter((bank) => {
-    if (activeFilter === "bonus") {
-      return (
-        bank.welcomeBonus.includes("$150") ||
-        bank.welcomeBonus.includes("$350") ||
-        bank.welcomeBonus.includes("$400") ||
-        bank.welcomeBonus.includes("AirPods")
-      );
-    }
-    if (activeFilter === "rewards") {
-      return (
-        bank.studentRewards?.includes("Scene+") ||
-        bank.studentRewards?.includes("SPC+") ||
-        bank.studentRewards?.includes("Avion") ||
-        bank.studentRewards?.includes("TD Rewards")
-      );
-    }
-    if (activeFilter === "proximity") return bank.id === "scotiabank" || bank.id === "td";
-    if (activeFilter === "digital") return bank.isDigitalOnly;
-    return true;
+  const filteredDeals = ATOMIC_BANK_DEALS.filter((deal) => {
+    if (activeFilter === "all") return true;
+    return deal.categoryType === activeFilter;
   });
 
-  const handleBankCta = (bank: BankComparisonOption) => {
+  const handleDealCta = (deal: AtomicBankDeal) => {
     handleOutboundClick(
-      bank.partnerId,
+      deal.partnerId,
       "banking",
-      bank.ctaLink,
+      deal.ctaLink,
       {
-        position_on_page: "bank_comparison_matrix",
-        bank_name: bank.bankName,
-        account_package: bank.accountPackage,
-        welcome_bonus: bank.welcomeBonus,
-        user_intake_stage: "t_minus_45",
+        position_on_page: "bank_deal_card",
+        bank_name: deal.bankName,
+        hero_perk: deal.heroPerk,
+        deal_id: deal.id,
       }
     );
 
-    if (onSelectBank) {
-      onSelectBank(bank);
+    if (onSelectDeal) {
+      onSelectDeal(deal);
     }
   };
 
   return (
     <div className={cn("w-full flex flex-col gap-4 sm:gap-5", className)}>
-      {/* Matrix Header & Aggregator Neutrality */}
-      <div className="bg-[#0d1322]/80 backdrop-blur-xl border border-white/[0.08] rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-[0_8px_30px_rgba(0,0,0,0.3)]">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400 flex-shrink-0 shadow-[0_0_15px_rgba(16,185,129,0.2)]">
-            <Gift className="w-5 h-5" />
-          </div>
-          <div>
-            <div className="flex items-center gap-2 flex-wrap">
-              <span className="text-xs font-mono uppercase text-emerald-400 font-bold tracking-wider">
-                Student Banking Hub
-              </span>
-              <Badge variant="emerald" className="text-[10px] font-bold py-0.2">
-                2026 Verified Promos
-              </Badge>
-            </div>
-            <h4 className="text-base sm:text-lg font-extrabold tracking-tight text-white mt-0.5">
-              Compare 5 Major Canadian Student Packages
-            </h4>
-          </div>
-        </div>
-
-        {/* Filter Pills */}
-        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none self-start sm:self-auto">
-          {filterOptions.map((f) => (
-            <button
-              key={f.id}
-              type="button"
-              onClick={() => setActiveFilter(f.id)}
-              className={cn(
-                "whitespace-nowrap px-3 py-1.5 rounded-xl text-xs font-semibold border transition-all cursor-pointer",
-                activeFilter === f.id
-                  ? "bg-emerald-500 text-zinc-950 border-emerald-400 font-bold shadow-[0_0_15px_rgba(16,185,129,0.3)]"
-                  : "bg-[#0d1322]/70 text-zinc-400 border-white/[0.08] hover:border-white/[0.18] hover:text-white"
-              )}
-            >
-              {f.label}
-            </button>
-          ))}
-        </div>
+      {/* Category Pills */}
+      <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
+        {filterOptions.map((f) => (
+          <button
+            key={f.id}
+            type="button"
+            onClick={() => setActiveFilter(f.id)}
+            className={cn(
+              "whitespace-nowrap px-3.5 py-1.5 rounded-xl text-xs font-semibold border transition-all cursor-pointer",
+              activeFilter === f.id
+                ? "bg-emerald-500 text-zinc-950 border-emerald-400 font-bold shadow-[0_0_15px_rgba(16,185,129,0.3)]"
+                : "bg-[#0d1322]/70 text-zinc-400 border-white/[0.08] hover:border-white/[0.18] hover:text-white"
+            )}
+          >
+            {f.label}
+          </button>
+        ))}
       </div>
 
-      {/* UNiDAYS-Style Atomic Deal Cards Grid */}
+      {/* Atomic UNiDAYS-Style Deal Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
         <AnimatePresence mode="popLayout">
-          {filteredBanks.map((bank) => {
-            const theme = BANK_BRAND_THEMES[bank.id] || BANK_BRAND_THEMES.scotiabank;
-
+          {filteredDeals.map((deal) => {
             return (
               <motion.div
-                key={bank.id}
+                key={deal.id}
                 layout
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.96 }}
                 whileHover={{ y: -4 }}
                 transition={{ duration: 0.2 }}
-                className={cn(
-                  "relative bg-[#0d1322]/90 backdrop-blur-2xl border border-white/[0.1] rounded-3xl p-5 sm:p-6 flex flex-col justify-between gap-5 transition-all group overflow-hidden shadow-lg",
-                  theme.borderAccent,
-                  "hover:shadow-[0_12px_40px_rgba(0,0,0,0.5)]"
-                )}
+                className="relative bg-[#0d1322]/90 backdrop-blur-2xl border border-white/[0.1] hover:border-emerald-500/40 rounded-3xl p-5 sm:p-6 flex flex-col justify-between gap-5 transition-all group overflow-hidden shadow-lg hover:shadow-[0_12px_40px_rgba(0,0,0,0.5)]"
               >
                 {/* Subtle Ambient Radial Glow */}
-                <div
-                  className={cn(
-                    "absolute top-0 right-0 -mr-12 -mt-12 w-48 h-48 rounded-full bg-gradient-to-br blur-3xl pointer-events-none opacity-40 transition-opacity group-hover:opacity-70",
-                    theme.bgGradient
-                  )}
-                />
+                <div className="absolute top-0 right-0 -mr-12 -mt-12 w-48 h-48 rounded-full bg-emerald-500/10 blur-3xl pointer-events-none opacity-40 group-hover:opacity-70 transition-opacity" />
 
                 <div className="relative z-10 flex flex-col gap-4">
-                  {/* Top Bar: Brand Logo Tile + Tag Pill */}
+                  {/* Top Bar: Company Logo + Bank Name + Tag */}
                   <div className="flex items-center justify-between gap-2">
                     <div className="flex items-center gap-3">
-                      {/* Brand Logo Placeholder Avatar */}
-                      <div className="w-12 h-12 rounded-2xl bg-white/[0.06] border border-white/15 flex items-center justify-center font-black font-mono tracking-tighter text-sm text-white shadow-inner group-hover:scale-105 transition-transform">
-                        <span className={theme.accentColor}>{theme.logoText}</span>
-                      </div>
+                      {/* Authentic Brand Vector Logo */}
+                      <BrandLogo brand={deal.brandKey} size="md" />
 
                       <div>
                         <h5 className="text-sm font-bold text-white tracking-tight leading-tight">
-                          {bank.bankName}
+                          {deal.bankName}
                         </h5>
-                        <p className="text-[11px] font-medium text-zinc-400 mt-0.5">
-                          {bank.accountPackage}
+                        <p className="text-[11px] font-medium text-emerald-400 font-mono">
+                          Verified 2026 Offer
                         </p>
                       </div>
                     </div>
 
-                    {bank.isRecommendedFor && (
-                      <span
-                        className={cn(
-                          "px-2.5 py-1 rounded-full text-[10px] font-bold border whitespace-nowrap shadow-2xs",
-                          theme.pillBg
-                        )}
-                      >
-                        {bank.isRecommendedFor}
-                      </span>
-                    )}
+                    <span className="px-2.5 py-1 rounded-full text-[10px] font-bold border border-white/10 bg-white/[0.04] text-zinc-300 whitespace-nowrap">
+                      {deal.tag}
+                    </span>
                   </div>
 
-                  {/* Hero Reward Headline (UNiDAYS Big Bold Style) */}
+                  {/* Zoomed-in Hero Reward Highlight */}
                   <div className="py-1">
-                    <span className="text-[11px] uppercase tracking-wider font-mono font-bold text-zinc-400 block mb-0.5">
-                      Student Welcome Offer
-                    </span>
-                    <div
-                      className={cn(
-                        "text-2xl sm:text-3xl font-black tracking-tight bg-gradient-to-r bg-clip-text text-transparent leading-tight",
-                        theme.textGradient
-                      )}
-                    >
-                      {bank.welcomeBonus}
+                    <div className="text-3xl sm:text-4xl font-black tracking-tight bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-300 bg-clip-text text-transparent leading-none">
+                      {deal.heroPerk}
                     </div>
-                    {bank.studentRewards && (
-                      <p className="text-xs font-semibold text-zinc-300 mt-1 flex items-center gap-1.5">
-                        <Award className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" />
-                        <span>{bank.studentRewards}</span>
-                      </p>
-                    )}
+                    <p className="text-xs font-bold text-zinc-200 mt-1.5">
+                      {deal.perkDetail}
+                    </p>
                   </div>
 
-                  {/* Quick Feature Chips */}
-                  <div className="flex flex-wrap gap-1.5 pt-1">
-                    <span className="px-2.5 py-1 rounded-xl bg-white/[0.04] border border-white/[0.08] text-[11px] font-medium text-zinc-300 flex items-center gap-1">
-                      <Check className="w-3 h-3 text-emerald-400 stroke-[2.5]" />
-                      <span>$0 Monthly Fees</span>
-                    </span>
-                    <span className="px-2.5 py-1 rounded-xl bg-white/[0.04] border border-white/[0.08] text-[11px] font-medium text-zinc-300 flex items-center gap-1">
-                      <Check className="w-3 h-3 text-emerald-400 stroke-[2.5]" />
-                      <span>Free e-Transfers</span>
-                    </span>
-                    <span className="px-2.5 py-1 rounded-xl bg-white/[0.04] border border-white/[0.08] text-[11px] font-medium text-zinc-300 flex items-center gap-1">
-                      <MapPin className="w-3 h-3 text-blue-400" />
-                      <span>{bank.waterlooProximity.split(",")[0]}</span>
-                    </span>
+                  {/* Simple 1-Sentence Description */}
+                  <p className="text-xs text-zinc-400 leading-relaxed line-clamp-2">
+                    {deal.description}
+                  </p>
+
+                  {/* Bullet Points */}
+                  <div className="flex flex-col gap-1.5 pt-1">
+                    {deal.features.map((feat, idx) => (
+                      <div key={idx} className="flex items-center gap-2 text-[11px] font-medium text-zinc-300">
+                        <Check className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0 stroke-[2.5]" />
+                        <span>{feat}</span>
+                      </div>
+                    ))}
                   </div>
                 </div>
 
                 {/* Bottom Unlock Button */}
                 <div className="relative z-10 pt-3 border-t border-white/[0.08]">
                   <a
-                    href={bank.ctaLink}
+                    href={deal.ctaLink}
                     target="_blank"
                     rel="noopener noreferrer"
-                    onClick={() => handleBankCta(bank)}
+                    onClick={() => handleDealCta(deal)}
                     className="block w-full"
                   >
                     <Button
@@ -282,7 +307,7 @@ export function BankComparisonMatrix({
                       size="md"
                       className="w-full justify-between items-center py-2.5 px-4 rounded-2xl font-bold text-xs shadow-md group-hover:scale-[1.02] transition-transform"
                     >
-                      <span>{bank.ctaLabel}</span>
+                      <span>{deal.ctaLabel}</span>
                       <ArrowRight className="w-4 h-4 text-zinc-950 group-hover:translate-x-1 transition-transform" />
                     </Button>
                   </a>
