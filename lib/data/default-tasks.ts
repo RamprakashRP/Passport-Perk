@@ -316,23 +316,21 @@ export function getTasksForRegion(region: TargetCity = "Waterloo Region, ON"): T
     },
     {
       id: "task-airport-sin-hack",
-      title: "Airport Instant SIN Kiosk (Skip Downtown 4-Hour Queues)",
-      description: `💡 Insider Hack: At ${
-        isVancouver ? "Vancouver International (YVR International Arrivals)" : "Toronto Pearson (Terminal 1 & Terminal 3 Arrivals)"
-      }, Service Canada operates a seasonal newcomer desk directly after baggage claim. Present your Study Permit and Passport to receive your official 9-digit Social Insurance Number (SIN) in 10 minutes flat before leaving the terminal!`,
+      title: "Apply for 9-Digit Social Insurance Number (8:00 AM Service Canada Strategy)",
+      description: `💡 Pro-Tip: Arrive at Service Canada at 8:00 AM (30 minutes before doors open at 8:30 AM) to avoid the 3–4 hour mid-day rush and get your official 9-digit SIN letter within 15 minutes. Alternatively, if landing during peak intake weeks, look for the seasonal Service Canada newcomer desk at ${
+        isVancouver ? "YVR International Arrivals" : "Toronto Pearson (T1/T3)"
+      } right after baggage claim.`,
       timelineStage: "transit_border",
       priorityTier: "tier_1_mandatory",
       category: "immigration",
       isComplete: false,
-      cta_label: "View Airport SIN Desk Locations",
+      cta_label: "Find Service Canada Locations & Hours",
       cta_link: "https://www.canada.ca/en/employment-social-development/services/sin/before-applying.html",
-      partnerId: "service_canada_airport",
+      partnerId: "service_canada_locations",
       isAffiliate: false,
-      estimatedTime: "10 mins",
+      estimatedTime: "15–30 mins",
       impactLevel: "Critical",
-      localWaterlooTip: `Getting your SIN at ${
-        isVancouver ? "YVR" : "Pearson"
-      } saves you 3–4 hours of waiting in line at downtown Service Canada centers and allows you to activate employer payroll and bank accounts on Day 1.`,
+      localWaterlooTip: `Arriving by 8:00 AM at Service Canada ensures you finish in 15 minutes and can open your Canadian bank account and set up employer payroll on Day 1.`,
       keyRequirements: [
         "Physical Study Permit issued by CBSA border officer",
         "Original Passport with entry stamp / TRV",

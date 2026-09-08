@@ -19,7 +19,9 @@ export type BrandKey =
   | "skytrain-vancouver"
   | "square-one"
   | "service-canada"
-  | "spc";
+  | "spc"
+  | "uber"
+  | "lyft";
 
 interface BrandLogoProps {
   brand: BrandKey | string;
@@ -290,6 +292,32 @@ export function BrandLogo({ brand, className, size = "md" }: BrandLogoProps) {
             <span className="text-xs">🍁</span>
             <span className="text-[7px] text-zinc-300 font-bold uppercase">SIN</span>
           </div>
+        </div>
+      );
+
+    case "uber":
+      return (
+        <div
+          className={cn(
+            "bg-black border border-white/30 flex items-center justify-center text-white shadow-inner flex-shrink-0 font-black",
+            sizeClasses[size],
+            className
+          )}
+        >
+          <span className="text-xs font-black tracking-tight text-white">Uber</span>
+        </div>
+      );
+
+    case "lyft":
+      return (
+        <div
+          className={cn(
+            "bg-[#FF00BF] border border-pink-300/40 flex items-center justify-center text-white shadow-inner flex-shrink-0 font-black",
+            sizeClasses[size],
+            className
+          )}
+        >
+          <span className="text-xs font-black tracking-tight text-white">lyft</span>
         </div>
       );
 
