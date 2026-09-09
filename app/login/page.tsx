@@ -26,12 +26,16 @@ import {
   signInWithGoogle,
   signInWithMagicLink,
   getCurrentUser,
+  signOutUser,
   isSupabaseConfigured,
 } from "@/lib/supabase";
 import { trackEvent } from "@/lib/telemetry";
+import { Users } from "lucide-react";
 
 export default function LoginPage() {
   const router = useRouter();
+  const [currentUser, setCurrentUser] = useState<any>(null);
+  const [isCheckingSession, setIsCheckingSession] = useState(true);
   const [email, setEmail] = useState("");
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [isMagicLinkLoading, setIsMagicLinkLoading] = useState(false);
@@ -39,14 +43,24 @@ export default function LoginPage() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   useEffect(() => {
-    // If user is already logged in, redirect to dashboard
     (async () => {
-      const user = await getCurrentUser();
-      if (user) {
-        router.push("/dashboard");
+      try {
+        const user = await getCurrentUser();
+        setCurrentUser(user);
+      } catch (e) {
+        // Fallback
+      } finally {
+        setIsCheckingSession(false);
       }
     })();
-  }, [router]);
+  }, []);
+
+  const handleSwitchAccount = async () => {
+    setIsGoogleLoading(true);
+    await signOutUser();
+    setCurrentUser(null);
+    setIsGoogleLoading(false);
+  };
 
   const handleGoogleSignIn = async () => {
     try {
@@ -148,8 +162,53 @@ export default function LoginPage() {
               </div>
             )}
 
-            {/* Success: Magic link sent */}
-            {magicLinkSent ? (
+            {/* When already authenticated: show active session profile card */}
+            {currentUser && !isCheckingSession ? (
+              <div className="space-y-5 text-center">
+                <div className="p-4 rounded-2xl bg-white/[0.04] border border-white/[0.08] flex items-center justify-center gap-3.5 shadow-inner">
+                  {currentUser.user_metadata?.avatar_url || currentUser.user_metadata?.picture ? (
+                    <img
+                      src={currentUser.user_metadata?.avatar_url || currentUser.user_metadata?.picture}
+                      alt="Profile"
+                      referrerPolicy="no-referrer"
+                      className="w-12 h-12 rounded-full object-cover border border-emerald-500/40 shadow-md flex-shrink-0"
+                    />
+                  ) : (
+                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-emerald-400 to-teal-600 text-zinc-950 font-black text-base flex items-center justify-center uppercase shadow-md flex-shrink-0">
+                      {(currentUser.user_metadata?.full_name?.[0] || currentUser.email?.[0] || "U").toUpperCase()}
+                    </div>
+                  )}
+                  <div className="flex flex-col text-left min-w-0">
+                    <span className="text-sm font-bold text-white truncate">
+                      {currentUser.user_metadata?.full_name || currentUser.email?.split("@")[0]}
+                    </span>
+                    <span className="text-xs text-zinc-400 font-mono truncate">{currentUser.email}</span>
+                    <span className="text-[10px] text-emerald-400 font-mono font-semibold mt-0.5">Cloud Sync Active</span>
+                  </div>
+                </div>
+
+                <div className="space-y-2.5">
+                  <Button
+                    variant="primary"
+                    size="md"
+                    onClick={() => router.push("/dashboard")}
+                    className="w-full justify-center gap-2"
+                  >
+                    <span>Continue to Dashboard</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </Button>
+
+                  <button
+                    type="button"
+                    onClick={handleSwitchAccount}
+                    className="w-full py-2.5 px-4 rounded-xl border border-white/[0.12] bg-white/[0.04] hover:bg-white/[0.08] text-xs sm:text-sm font-semibold text-zinc-300 hover:text-white transition-all cursor-pointer flex items-center justify-center gap-2"
+                  >
+                    <Users className="w-4 h-4 text-cyan-400" />
+                    <span>Sign In with a Different Account</span>
+                  </button>
+                </div>
+              </div>
+            ) : magicLinkSent ? (
               <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}

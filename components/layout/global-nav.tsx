@@ -24,6 +24,7 @@ import {
   Sun,
   Snowflake,
   User as UserIcon,
+  Users,
   LogIn,
   LogOut,
   MessageSquarePlus,
@@ -32,6 +33,65 @@ import { cn } from "@/lib/utils";
 import { TargetCity } from "@/types";
 import { supabase, getCurrentUser, signOutUser, isSupabaseConfigured } from "@/lib/supabase";
 import { openFeedbackModal } from "@/lib/feedback";
+
+function UserAvatar({
+  user,
+  size = "sm",
+}: {
+  user: any;
+  size?: "sm" | "md" | "lg";
+}) {
+  const [hasError, setHasError] = useState(false);
+
+  const avatarUrl =
+    user?.user_metadata?.avatar_url ||
+    user?.user_metadata?.picture ||
+    null;
+
+  const displayName =
+    user?.user_metadata?.full_name ||
+    user?.user_metadata?.name ||
+    user?.email?.split("@")[0] ||
+    "User";
+
+  const initialLetter = (
+    user?.user_metadata?.full_name?.[0] ||
+    user?.email?.[0] ||
+    "U"
+  ).toUpperCase();
+
+  const sizeClasses = {
+    sm: "w-6 h-6 text-[11px]",
+    md: "w-8 h-8 text-xs",
+    lg: "w-10 h-10 text-sm",
+  };
+
+  if (avatarUrl && !hasError) {
+    return (
+      <img
+        src={avatarUrl}
+        alt={displayName}
+        referrerPolicy="no-referrer"
+        onError={() => setHasError(true)}
+        className={cn(
+          "rounded-full object-cover border border-white/20 shadow-xs flex-shrink-0",
+          sizeClasses[size]
+        )}
+      />
+    );
+  }
+
+  return (
+    <div
+      className={cn(
+        "rounded-full bg-gradient-to-br from-emerald-400 via-teal-500 to-emerald-600 text-zinc-950 flex items-center justify-center font-black uppercase shadow-xs flex-shrink-0 border border-emerald-300/30",
+        sizeClasses[size]
+      )}
+    >
+      {initialLetter}
+    </div>
+  );
+}
 
 interface NavItem {
   name: string;
@@ -185,18 +245,18 @@ export function GlobalNav() {
 
   return (
     <>
-      <header className="sticky top-0 z-50 w-full bg-[#080c14]/85 backdrop-blur-2xl border-b border-white/[0.08] shadow-[0_4px_30px_rgba(0,0,0,0.4)] transition-all">
+      <header className="sticky top-0 z-40 w-full border-b border-white/[0.08] bg-[#090d16]/90 backdrop-blur-2xl transition-all">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
           <div className="flex items-center gap-3 sm:gap-4 flex-shrink-0">
-            <Link href="/" className="flex items-center gap-2.5 group flex-shrink-0">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-500 via-teal-500 to-emerald-600 flex items-center justify-center shadow-[0_0_20px_rgba(16,185,129,0.35)] text-zinc-950 font-bold group-hover:scale-105 transition-transform flex-shrink-0">
+            <Link href="/" className="flex items-center gap-2.5 group">
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-500 via-teal-500 to-emerald-600 flex items-center justify-center text-zinc-950 font-bold shadow-[0_0_20px_rgba(16,185,129,0.3)] group-hover:scale-105 transition-transform flex-shrink-0">
                 <Compass className="w-5 h-5 stroke-[2.5]" />
               </div>
-              <div className="flex flex-col whitespace-nowrap">
+              <div className="flex flex-col">
                 <span className="text-base font-extrabold tracking-tight text-white flex items-center leading-none">
                   Passport<span className="bg-gradient-to-r from-emerald-400 to-teal-300 bg-clip-text text-transparent font-black">Perk</span>
                 </span>
-                <span className="text-[10px] text-zinc-400 font-semibold tracking-wider uppercase mt-0.5 hidden sm:inline">
+                <span className="text-[10px] text-zinc-400 font-semibold tracking-wider uppercase mt-0.5 whitespace-nowrap">
                   Settlement & Perks Hub
                 </span>
               </div>
@@ -289,15 +349,13 @@ export function GlobalNav() {
                     <button
                       type="button"
                       onClick={() => setIsUserDropdownOpen(!isUserDropdownOpen)}
-                      className="whitespace-nowrap flex items-center gap-2 p-1.5 sm:px-3 sm:py-1.5 rounded-full bg-white/[0.06] hover:bg-white/[0.1] border border-white/[0.1] text-xs font-bold text-zinc-200 transition-all cursor-pointer shadow-xs"
+                      className="whitespace-nowrap flex items-center gap-2 p-1.5 sm:px-3 sm:py-1.5 rounded-full bg-white/[0.06] hover:bg-white/[0.1] border border-white/[0.1] text-xs font-bold text-zinc-200 transition-all cursor-pointer shadow-xs group"
                     >
-                      <div className="w-6 h-6 rounded-full bg-emerald-500 text-zinc-950 flex items-center justify-center font-bold text-[11px] uppercase shadow-xs flex-shrink-0">
-                        {currentUser.email ? currentUser.email[0] : "U"}
-                      </div>
-                      <span className="hidden lg:inline text-xs font-semibold max-w-[130px] truncate">
-                        {currentUser.email}
+                      <UserAvatar user={currentUser} size="sm" />
+                      <span className="hidden lg:inline text-xs font-semibold max-w-[130px] truncate text-zinc-200 group-hover:text-white">
+                        {currentUser.user_metadata?.full_name?.split(" ")[0] || currentUser.email}
                       </span>
-                      <ChevronDown className="w-3.5 h-3.5 text-zinc-400 hidden sm:inline flex-shrink-0" />
+                      <ChevronDown className="w-3.5 h-3.5 text-zinc-400 hidden sm:inline flex-shrink-0 group-hover:text-zinc-200" />
                     </button>
 
                     <AnimatePresence>
@@ -307,26 +365,76 @@ export function GlobalNav() {
                           animate={{ opacity: 1, y: 0, scale: 1 }}
                           exit={{ opacity: 0, y: 8, scale: 0.96 }}
                           transition={{ duration: 0.15 }}
-                          className="absolute right-0 mt-2 w-56 bg-[#0e1424] border border-white/10 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.6)] p-2 z-50 flex flex-col gap-1 backdrop-blur-2xl"
+                          className="absolute right-0 mt-2 w-64 bg-[#0e1424]/95 border border-white/10 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.6)] p-2.5 z-50 flex flex-col gap-2 backdrop-blur-2xl"
                         >
-                          <div className="px-3 py-2 border-b border-white/[0.08]">
-                            <p className="text-[10px] font-mono text-zinc-400 uppercase font-bold">Signed in as</p>
-                            <p className="text-xs font-bold text-white truncate">{currentUser.email}</p>
+                          {/* User Identity Header */}
+                          <div className="px-2.5 py-2 border-b border-white/[0.08] flex items-center gap-3">
+                            <UserAvatar user={currentUser} size="lg" />
+                            <div className="flex flex-col min-w-0">
+                              <p className="text-xs font-bold text-white truncate">
+                                {currentUser.user_metadata?.full_name || currentUser.email?.split("@")[0]}
+                              </p>
+                              <p className="text-[10px] text-zinc-400 font-mono truncate">{currentUser.email}</p>
+                              <div className="flex items-center gap-1.5 mt-1">
+                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                                <span className="text-[10px] text-emerald-400 font-semibold font-mono">Cloud Sync Active</span>
+                              </div>
+                            </div>
                           </div>
 
-                          <div className="px-3 py-1.5 flex items-center gap-2 text-[11px] text-emerald-400 font-semibold bg-emerald-500/10 rounded-xl my-1 border border-emerald-500/20 whitespace-nowrap">
-                            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse flex-shrink-0"></span>
-                            <span>Cloud Sync Active</span>
+                          {/* Regional Hub Switcher & Comparison */}
+                          <div className="p-2 rounded-xl bg-white/[0.03] border border-white/[0.06] flex flex-col gap-1.5">
+                            <div className="flex items-center justify-between">
+                              <span className="text-[10px] font-mono font-bold text-zinc-400 uppercase tracking-wider">
+                                Destination Region
+                              </span>
+                              <span className="text-[10px] font-mono text-emerald-400 font-bold">
+                                {activeRegion.split(",")[0]}
+                              </span>
+                            </div>
+                            <div className="grid grid-cols-3 gap-1">
+                              {AVAILABLE_CITIES.map((c) => {
+                                const isSelected = activeRegion.includes(c.name.split(" ")[0]);
+                                return (
+                                  <button
+                                    key={c.id}
+                                    type="button"
+                                    onClick={() => handleSwitchCity(c.id)}
+                                    className={cn(
+                                      "py-1.5 px-1 rounded-lg text-[10px] font-bold border transition-all text-center flex flex-col items-center gap-0.5 cursor-pointer",
+                                      isSelected
+                                        ? "bg-emerald-500/20 text-emerald-300 border-emerald-500/40"
+                                        : "bg-white/[0.02] text-zinc-400 border-white/[0.06] hover:bg-white/[0.06] hover:text-white"
+                                    )}
+                                  >
+                                    <span className="text-xs">{c.icon}</span>
+                                    <span className="truncate max-w-full text-[10px]">{c.name.split(" ")[0]}</span>
+                                  </button>
+                                );
+                              })}
+                            </div>
                           </div>
 
-                          <button
-                            type="button"
-                            onClick={handleSignOut}
-                            className="w-full text-left px-3 py-2 rounded-xl text-xs font-semibold text-rose-400 hover:bg-rose-500/10 flex items-center gap-2 transition-colors cursor-pointer whitespace-nowrap"
-                          >
-                            <LogOut className="w-3.5 h-3.5 flex-shrink-0" />
-                            <span>Sign Out</span>
-                          </button>
+                          {/* Action Links: Switch Account & Sign Out */}
+                          <div className="flex flex-col gap-1 pt-1 border-t border-white/[0.06]">
+                            <Link
+                              href="/login"
+                              onClick={() => setIsUserDropdownOpen(false)}
+                              className="w-full text-left px-3 py-2 rounded-xl text-xs font-semibold text-zinc-300 hover:text-white hover:bg-white/[0.06] flex items-center gap-2 transition-colors cursor-pointer whitespace-nowrap"
+                            >
+                              <Users className="w-3.5 h-3.5 text-cyan-400 flex-shrink-0" />
+                              <span>Switch Account / Different ID</span>
+                            </Link>
+
+                            <button
+                              type="button"
+                              onClick={handleSignOut}
+                              className="w-full text-left px-3 py-2 rounded-xl text-xs font-semibold text-rose-400 hover:bg-rose-500/10 flex items-center gap-2 transition-colors cursor-pointer whitespace-nowrap"
+                            >
+                              <LogOut className="w-3.5 h-3.5 flex-shrink-0" />
+                              <span>Sign Out</span>
+                            </button>
+                          </div>
                         </motion.div>
                       )}
                     </AnimatePresence>
@@ -387,34 +495,49 @@ export function GlobalNav() {
             >
               <div className="flex flex-col gap-4">
                 {/* Mobile User Profile Section */}
-                <div className="p-3 rounded-2xl bg-white/[0.04] border border-white/[0.08] flex items-center justify-between">
+                <div className="p-3.5 rounded-2xl bg-white/[0.04] border border-white/[0.08] flex flex-col gap-3">
                   {currentUser ? (
-                    <div className="flex items-center justify-between w-full">
-                      <div className="flex items-center gap-2.5">
-                        <div className="w-8 h-8 rounded-full bg-emerald-500 text-zinc-950 flex items-center justify-center font-bold text-xs uppercase">
-                          {currentUser.email ? currentUser.email[0] : "U"}
+                    <>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2.5 min-w-0">
+                          <UserAvatar user={currentUser} size="md" />
+                          <div className="flex flex-col min-w-0">
+                            <span className="text-xs font-bold text-white truncate max-w-[170px]">
+                              {currentUser.user_metadata?.full_name || currentUser.email}
+                            </span>
+                            <span className="text-[10px] text-emerald-400 font-mono font-semibold">
+                              Cloud Sync Active
+                            </span>
+                          </div>
                         </div>
-                        <div className="flex flex-col">
-                          <span className="text-xs font-bold text-white truncate max-w-[170px]">{currentUser.email}</span>
-                          <span className="text-[10px] text-emerald-400 font-mono font-semibold">Cloud Sync Active</span>
-                        </div>
+                        <button
+                          type="button"
+                          onClick={handleSignOut}
+                          className="text-xs font-bold text-rose-400 bg-rose-500/10 px-2.5 py-1.5 rounded-xl border border-rose-500/20 hover:bg-rose-500/20 transition-colors"
+                        >
+                          Sign Out
+                        </button>
                       </div>
-                      <button
-                        type="button"
-                        onClick={handleSignOut}
-                        className="text-xs font-bold text-rose-400 bg-rose-500/10 px-2.5 py-1.5 rounded-xl border border-rose-500/20"
-                      >
-                        Sign Out
-                      </button>
-                    </div>
+
+                      <div className="flex items-center justify-between pt-2 border-t border-white/[0.06] text-xs">
+                        <Link
+                          href="/login"
+                          onClick={() => setIsMobileMenuOpen(false)}
+                          className="text-[11px] font-semibold text-cyan-300 hover:text-cyan-200 flex items-center gap-1.5"
+                        >
+                          <Users className="w-3.5 h-3.5" />
+                          <span>Switch / Log in with different ID</span>
+                        </Link>
+                      </div>
+                    </>
                   ) : (
                     <Link
                       href="/login"
                       onClick={() => setIsMobileMenuOpen(false)}
-                      className="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-xl bg-white/[0.06] border border-white/[0.1] text-xs font-bold text-zinc-200 shadow-xs"
+                      className="w-full flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 text-zinc-950 text-xs font-bold shadow-md"
                     >
-                      <LogIn className="w-3.5 h-3.5 text-emerald-400" />
-                      <span>Sign In to Sync Progress</span>
+                      <LogIn className="w-3.5 h-3.5" />
+                      <span>Sign In with Google / Email</span>
                     </Link>
                   )}
                 </div>
@@ -459,10 +582,10 @@ export function GlobalNav() {
                         href={item.href}
                         onClick={() => setIsMobileMenuOpen(false)}
                         className={cn(
-                          "flex items-center justify-between p-3.5 rounded-2xl transition-all",
+                          "px-4 py-3 rounded-2xl text-xs font-bold transition-all flex items-center justify-between",
                           active
-                            ? "bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 font-bold shadow-[0_0_20px_rgba(16,185,129,0.15)]"
-                            : "bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-zinc-300"
+                            ? "bg-emerald-500/15 text-emerald-300 border border-emerald-500/30"
+                            : "text-zinc-300 hover:bg-white/[0.06] border border-transparent"
                         )}
                       >
                         <div className="flex items-center gap-3">
