@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Suspense } from "react";
+import Link from "next/link";
 import Script from "next/script";
 import { ShieldCheck } from "lucide-react";
 import { PostHogProvider } from "@/components/providers/posthog-provider";
@@ -63,6 +64,16 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "https://passportperk.com",
   },
+  icons: {
+    icon: [
+      { url: "/icon.svg", type: "image/svg+xml" },
+      { url: "/favicon.ico", sizes: "any" },
+    ],
+    apple: [
+      { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
+    ],
+    shortcut: "/favicon.ico",
+  },
   openGraph: {
     title: "PassportPerk | Canadian Newcomer Settlement & Student Perks Hub",
     description:
@@ -100,16 +111,39 @@ const jsonLdStructuredData = {
       "@id": "https://passportperk.com/#website",
       "url": "https://passportperk.com",
       "name": "PassportPerk",
-      "description": "Canadian newcomer settlement engine and student perks marketplace",
+      "alternateName": ["Passport Perk", "PassportPerk Canada", "PassportPerk.com"],
+      "description": "Canada's dedicated newcomer settlement operating system and international student perks marketplace. Not affiliated with IBM or IBM Passport Advantage.",
       "inLanguage": "en-CA",
     },
     {
       "@type": "Organization",
       "@id": "https://passportperk.com/#organization",
       "name": "PassportPerk",
+      "legalName": "PassportPerk Technologies",
+      "alternateName": ["Passport Perk", "PassportPerk Canada"],
       "url": "https://passportperk.com",
-      "logo": "https://passportperk.com/favicon.ico",
+      "logo": "https://passportperk.com/icon.svg",
+      "disambiguatingDescription": "PassportPerk is an independent Canadian settlement platform for international students and newcomers to Canada. It is not affiliated, associated, or connected with IBM Corporation or the IBM Passport Advantage software licensing program.",
+      "knowsAbout": [
+        "Canadian International Student Settlement",
+        "TD Canada Trust New to Canada $500 Bonus",
+        "CIBC Smart for Newcomers Banking",
+        "Scotiabank StartRight Newcomer Program",
+        "RBC Student Advantage Banking AirPods Promo",
+        "IRCC Study Permit Compliance & 24hr Off-Campus Work Regulations",
+        "Service Canada Social Insurance Number (SIN) Process",
+        "Waterloo Region GRT Transit & Housing",
+        "Toronto TTC Post-Secondary Transit",
+        "Vancouver TransLink SkyTrain U-Pass"
+      ],
       "sameAs": ["https://github.com/RamprakashRP/Passport-Perk"],
+    },
+    {
+      "@type": "Brand",
+      "@id": "https://passportperk.com/#brand",
+      "name": "PassportPerk",
+      "slogan": "Canadian Settlement Roadmap & Benefits Engine",
+      "description": "Comprehensive newcomer settlement and student banking rewards engine in Canada."
     },
     {
       "@type": "WebApplication",
@@ -175,27 +209,40 @@ export default function RootLayout({
 
         {/* Premium Dark Glass Footer */}
         <footer suppressHydrationWarning className="w-full bg-[#080c14]/90 backdrop-blur-2xl border-t border-white/[0.08] py-8 text-xs text-zinc-400">
-          <div suppressHydrationWarning className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-4">
-            <div suppressHydrationWarning className="flex items-center gap-2 text-zinc-300">
-              <ShieldCheck className="w-4 h-4 text-emerald-400" />
-              <span>
-                PassportPerk © 2026. Built with precision for students and newcomers arriving in Canada.
-              </span>
+          <div suppressHydrationWarning className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col gap-4">
+            <div suppressHydrationWarning className="flex flex-col md:flex-row items-center justify-between gap-4">
+              <div suppressHydrationWarning className="flex items-center gap-2 text-zinc-300">
+                <ShieldCheck className="w-4 h-4 text-emerald-400" />
+                <span>
+                  PassportPerk © 2026. Built with precision for students and newcomers arriving in Canada.
+                </span>
+              </div>
+              <div suppressHydrationWarning className="flex items-center gap-3 text-zinc-400 font-medium text-xs flex-wrap justify-center">
+                <Link
+                  href="/privacy"
+                  className="text-zinc-400 hover:text-emerald-300 transition-colors"
+                >
+                  Privacy Policy
+                </Link>
+                <span>•</span>
+                <Link
+                  href="/terms"
+                  className="text-zinc-400 hover:text-emerald-300 transition-colors"
+                >
+                  Terms of Service
+                </Link>
+                <span>•</span>
+                <span className="flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_#10b981]"></span>
+                  Official IRCC Guidelines
+                </span>
+                <span>•</span>
+                <span>Waterloo • Toronto • Vancouver</span>
+              </div>
             </div>
-            <div suppressHydrationWarning className="flex items-center gap-3 text-zinc-400 font-medium text-xs">
-              <a
-                href="https://passportperk.com"
-                className="text-zinc-400 hover:text-emerald-300 transition-colors font-mono"
-              >
-                passportperk.com
-              </a>
-              <span>•</span>
-              <span className="flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_#10b981]"></span>
-                Official IRCC Guidelines
-              </span>
-              <span>•</span>
-              <span>Waterloo • Toronto • Vancouver</span>
+
+            <div className="text-[11px] text-zinc-400 text-center md:text-left pt-2 border-t border-white/[0.04]">
+              PassportPerk is an independent Canadian newcomer settlement and benefits platform. Not affiliated with IBM Passport Advantage or IRCC.
             </div>
           </div>
         </footer>
