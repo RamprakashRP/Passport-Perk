@@ -13,6 +13,7 @@ export type BrandKey =
   | "cibc"
   | "td"
   | "rbc"
+  | "bmo"
   | "simplii"
   | "ion-waterloo"
   | "ttc-toronto"
@@ -210,6 +211,22 @@ export function BrandLogo({ brand, className, size = "md" }: BrandLogoProps) {
           <div className="flex flex-col items-center leading-none">
             <span className="text-[11px] font-black text-white">RBC</span>
             <span className="text-[8px] text-yellow-400 font-bold">★</span>
+          </div>
+        </div>
+      );
+
+    case "bmo":
+      return (
+        <div
+          className={cn(
+            "bg-[#0079C1] border border-sky-400/50 flex items-center justify-center text-white shadow-inner flex-shrink-0 font-black",
+            sizeClasses[size],
+            className
+          )}
+        >
+          <div className="flex items-center gap-0.5">
+            <span className="text-xs font-black tracking-tight text-white">BMO</span>
+            <span className="w-1.5 h-1.5 rounded-full bg-red-500 flex-shrink-0"></span>
           </div>
         </div>
       );

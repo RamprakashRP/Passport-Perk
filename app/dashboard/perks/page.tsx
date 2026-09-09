@@ -82,7 +82,124 @@ interface AtomicPerk {
 }
 
 const ALL_ATOMIC_PERKS: AtomicPerk[] = [
-  // --- 5 MAJOR CANADIAN STUDENT BANKS (1 CARD PER BANK) ---
+  // --- FLAGSHIP NEWCOMER TO CANADA BANKING PACKAGES ($400 - $600 CASH) ---
+  {
+    id: "td-newcomer-package",
+    partnerId: "td_newcomer_package",
+    brandKey: "td",
+    brandName: "TD Canada Trust",
+    category: "banking",
+    heroPerk: "$500 CASH",
+    perkDetail: "TD New to Canada Banking Package",
+    description: "Earn up to $500 in direct cash bonuses ($400 on TD Unlimited Chequing with recurring direct deposit or pre-authorized bill payments + $100 on TD Everyday Savings), plus $0 monthly account fees for 1 full year and unlimited free global transfers.",
+    keyPoints: [
+      "Up to $500 Cash Welcome Bonus ($400 Chequing + $100 Savings)",
+      "$0 Monthly Plan Fee for 12 full months (Save $203.40 CAD)",
+      "Guaranteed TD Credit Card ($1k-$5k limit with no Canadian credit history)",
+      "Unlimited free TD Global Money Transfers for 1 full year",
+    ],
+    ctaLabel: "Claim $500 with TD Newcomer Package",
+    ctaLink: "https://www.td.com/ca/en/personal-banking/products/bank-accounts/new-to-canada-banking-package?ref=passportperk",
+    valueDollars: 500,
+    badgeTag: "Flagship $500 Offer",
+    regionSpecific: "All",
+    eligibleAudiences: ["newcomers", "pre_arrival", "students", "all_residents"],
+    audienceTags: ["🧳 All Newcomers (PR & Work)", "✈️ Pre-Arrival", "🎓 Int'l Students"],
+  },
+  {
+    id: "cibc-newcomer-package",
+    partnerId: "cibc_newcomer_smart",
+    brandKey: "cibc",
+    brandName: "CIBC",
+    category: "banking",
+    heroPerk: "$500 CASH",
+    perkDetail: "CIBC Smart™ for Newcomers + 2 Yrs $0 Fees",
+    description: "Get up to $500 in cash bonuses ($400 on CIBC Smart Account with direct deposit + $100 on eAdvantage Savings), plus $0 monthly account fees for 2 full years (save ~$400) and $0 remittance transfer fees.",
+    keyPoints: [
+      "Up to $500 Cash Bonus on new chequing & savings",
+      "$0 monthly account fees for 2 full years (Save ~$400)",
+      "CIBC Credit Card approval with no Canadian credit history",
+      "$0 transfer fee on CIBC Global Money Transfers home",
+    ],
+    ctaLabel: "Claim $500 with CIBC Newcomers",
+    ctaLink: "https://www.cibc.com/en/special-offers/smart-for-newcomers.html?ref=passportperk",
+    valueDollars: 500,
+    badgeTag: "$500 + 2 Yrs $0 Fees",
+    regionSpecific: "All",
+    eligibleAudiences: ["newcomers", "pre_arrival", "all_residents"],
+    audienceTags: ["🧳 All Newcomers (PR & Work)", "✈️ Pre-Arrival", "💼 Work Permits"],
+  },
+  {
+    id: "bmo-newcomer-package",
+    partnerId: "bmo_newstart_program",
+    brandKey: "bmo",
+    brandName: "BMO Bank of Montreal",
+    category: "banking",
+    heroPerk: "$600 CASH",
+    perkDetail: "BMO NewStart® Program for Newcomers",
+    description: "Earn up to $600 in total welcome value ($350 cash on BMO Performance Chequing + $100 Savings Amplifier bonus + $150 credit card / family bonus) with 1 full year of $0 monthly plan fees.",
+    keyPoints: [
+      "Up to $600 in combined cash & welcome rewards",
+      "$0 monthly plan fees for 12 months (Performance Plan)",
+      "BMO Mastercard with no Canadian credit history required",
+      "Unlimited free Global Money Transfers for 1 year",
+    ],
+    ctaLabel: "Claim $600 with BMO NewStart",
+    ctaLink: "https://www.bmo.com/main/personal/bank-accounts/newcomers-to-canada/?ref=passportperk",
+    valueDollars: 600,
+    badgeTag: "Up to $600 Value",
+    regionSpecific: "All",
+    eligibleAudiences: ["newcomers", "pre_arrival", "all_residents"],
+    audienceTags: ["🧳 All Newcomers (PR & Work)", "✈️ Pre-Arrival", "💼 Permanent Residents"],
+  },
+  {
+    id: "scotia-newcomer-package",
+    partnerId: "scotiabank_newcomer_startright",
+    brandKey: "scotiabank",
+    brandName: "Scotiabank",
+    category: "banking",
+    heroPerk: "$400 CASH",
+    perkDetail: "Scotiabank StartRight® Newcomer Program",
+    description: "Earn up to $400 cash bonus on the Preferred Package + up to 45,000 Scene+ Points ($450 value for groceries & travel), $0 monthly account fees for 1 year, and free credit cards.",
+    keyPoints: [
+      "$400 Cash Welcome Bonus on Preferred Package",
+      "Up to 45,000 Scene+ Points ($450 value for food & flights)",
+      "$0 monthly account fee for 1 full year",
+      "High approval Scotiabank credit cards with $0 credit score",
+    ],
+    ctaLabel: "Claim $400 with Scotiabank StartRight",
+    ctaLink: "https://www.scotiabank.com/ca/en/personal/bank-accounts/newcomers.html?ref=passportperk",
+    valueDollars: 400,
+    badgeTag: "$400 Cash + Scene+",
+    regionSpecific: "All",
+    eligibleAudiences: ["newcomers", "pre_arrival", "all_residents"],
+    audienceTags: ["🧳 All Newcomers (PR & Work)", "✈️ Pre-Arrival", "🍁 PR Landings"],
+  },
+  {
+    id: "rbc-newcomer-package",
+    partnerId: "rbc_newcomer_advantage",
+    brandKey: "rbc",
+    brandName: "RBC Royal Bank",
+    category: "banking",
+    heroPerk: "$450 CASH",
+    perkDetail: "RBC Newcomer Advantage Banking Plan",
+    description: "Earn up to $450 in cash bonuses (or 25,000 Avion points) when you open an RBC Signature No-Limit Banking account, with 12 months of $0 monthly fees and 2 free international wire transfers per month.",
+    keyPoints: [
+      "Up to $450 Cash Bonus upon setting up qualifying payroll/bills",
+      "$0 monthly fee for your first year in Canada",
+      "2 free international money transfers per month",
+      "Unsecured RBC credit card up to $15,000 credit limit",
+    ],
+    ctaLabel: "Claim $450 with RBC Newcomer",
+    ctaLink: "https://www.rbcroyalbank.com/new-to-canada/index.html?ref=passportperk",
+    valueDollars: 450,
+    badgeTag: "$450 Welcome Bonus",
+    regionSpecific: "All",
+    eligibleAudiences: ["newcomers", "pre_arrival", "all_residents"],
+    audienceTags: ["🧳 All Newcomers (PR & Work)", "✈️ Pre-Arrival", "🍁 PR & Work Permits"],
+  },
+
+  // --- 5 MAJOR CANADIAN STUDENT BANKS (STUDENT PACKAGES) ---
   {
     id: "scotia-package",
     partnerId: "scotiabank_startright",
@@ -1226,10 +1343,18 @@ export default function PerksPage() {
                 "mainEntity": [
                   {
                     "@type": "Question",
-                    "name": "What are the best student offers and banking welcome bonuses in Canada for 2026?",
+                    "name": "What are the best student and newcomer banking offers in Canada for 2026?",
                     "acceptedAnswer": {
                       "@type": "Answer",
-                      "text": "The top 2026 Canadian student banking offers include: (1) RBC Royal Bank: Free Apple AirPods 4 promo (or $100 cash alternative) with Student Advantage Banking; (2) Scotiabank: $200 cash welcome bonus on the Preferred Package for Students & Youth; (3) CIBC: $175 cash reward plus a free 1-year SPC+ discount card (save 10-25% at 450+ Canadian brands); (4) TD Canada Trust: Up to $150 cash offer plus a guaranteed $1,000 credit card without Canadian credit history; (5) Simplii Financial: Up to $400 cash bonus with 100% no-fee digital chequing forever."
+                      "text": "The top 2026 Canadian student and newcomer banking offers include: (1) TD Canada Trust: Up to $500 CAD Cash Bonus with the TD New to Canada Banking Package ($400 Chequing + $100 Savings) and 1 year $0 monthly fees; (2) CIBC: Up to $500 Cash Bonus on CIBC Smart for Newcomers + 2 full years of $0 monthly account fees; (3) BMO: Up to $600 value with the BMO NewStart Program; (4) Scotiabank: $400 Cash + 45,000 Scene+ Points on StartRight Newcomer Program, or $200 cash on the Student Preferred Package; (5) RBC Royal Bank: Free Apple AirPods 4 promo (or $100 cash) for students, or up to $450 cash for newcomers."
+                    }
+                  },
+                  {
+                    "@type": "Question",
+                    "name": "How does the TD $500 New to Canada banking offer work?",
+                    "acceptedAnswer": {
+                      "@type": "Answer",
+                      "text": "The TD New to Canada Banking Package awards up to $500 CAD in direct cash: (1) $400 cash bonus when you open a TD Unlimited Chequing or All-Inclusive Account and complete qualifying transactions (recurring direct deposit or 2 pre-authorized debits / bill payments); (2) $100 cash bonus when you open a TD Everyday Savings account within 30 days and deposit $500; (3) 12 months of $0 monthly plan fees (saving $203.40); (4) Unlimited free TD Global Money Transfers; (5) First TD Credit Card approval ($1,000-$5,000 limit) with no Canadian credit history required."
                     }
                   },
                   {
@@ -1253,15 +1378,7 @@ export default function PerksPage() {
                     "name": "What are the three biggest financial benefits for students moving to Canada?",
                     "acceptedAnswer": {
                       "@type": "Answer",
-                      "text": "(1) $0 Fee Banking & Big Welcome Bonuses: Free student chequing accounts offering up to $400 cash or free Apple AirPods 4; (2) Universal Tuition-Included Transit (U-Pass): Unlimited public transit on trains, buses, and subways in major student cities; (3) First Credit Card without Credit History: Guaranteed approval for $1,000 student credit cards from TD, RBC, and Scotiabank allowing international students to establish an Equifax/TransUnion Canadian credit score from Day 1."
-                    }
-                  },
-                  {
-                    "@type": "Question",
-                    "name": "Which Canadian banks offer student accounts with no Canadian credit history?",
-                    "acceptedAnswer": {
-                      "@type": "Answer",
-                      "text": "TD Canada Trust, Scotiabank, CIBC, RBC Royal Bank, and Simplii Financial all provide dedicated international student and newcomer banking packages that require no Canadian credit history, no domestic co-signer, and charge $0 monthly account maintenance fees while enrolled in post-secondary education."
+                      "text": "(1) $0 Fee Banking & Big Welcome Bonuses: Free student chequing accounts offering up to $500 cash or free Apple AirPods 4; (2) Universal Tuition-Included Transit (U-Pass): Unlimited public transit on trains, buses, and subways in major student cities; (3) First Credit Card without Credit History: Guaranteed approval for $1,000 student credit cards from TD, RBC, and Scotiabank allowing international students to establish an Equifax/TransUnion Canadian credit score from Day 1."
                     }
                   }
                 ]
@@ -1274,31 +1391,31 @@ export default function PerksPage() {
                   {
                     "@type": "ListItem",
                     "position": 1,
-                    "name": "Scotiabank $200 Cash Welcome Bonus",
+                    "name": "TD Canada Trust $500 Cash New to Canada Package",
                     "url": "https://passportperk.com/dashboard/perks"
                   },
                   {
                     "@type": "ListItem",
                     "position": 2,
-                    "name": "RBC Royal Bank Free Apple AirPods 4 Promo",
+                    "name": "CIBC $500 Cash Smart for Newcomers + 2 Yrs $0 Fees",
                     "url": "https://passportperk.com/dashboard/perks"
                   },
                   {
                     "@type": "ListItem",
                     "position": 3,
-                    "name": "CIBC $175 Cash Reward + Free SPC+ Pass",
+                    "name": "BMO Bank of Montreal $600 NewStart Welcome Package",
                     "url": "https://passportperk.com/dashboard/perks"
                   },
                   {
                     "@type": "ListItem",
                     "position": 4,
-                    "name": "TD Canada Trust $150 Cash Offer + Guaranteed First Credit Card",
+                    "name": "Scotiabank $400 Cash StartRight Newcomer Program",
                     "url": "https://passportperk.com/dashboard/perks"
                   },
                   {
                     "@type": "ListItem",
                     "position": 5,
-                    "name": "Simplii Financial $400 Direct Deposit Bonus",
+                    "name": "RBC Royal Bank Free Apple AirPods 4 Promo (or $100 Cash)",
                     "url": "https://passportperk.com/dashboard/perks"
                   }
                 ]
@@ -1317,7 +1434,7 @@ export default function PerksPage() {
             </div>
             <div>
               <h2 className="text-base sm:text-lg font-bold text-white tracking-tight">
-                Guide to Canadian Student Offers & Newcomer Discounts
+                Guide to Canadian Student Offers &amp; Newcomer Discounts
               </h2>
               <p className="text-xs text-zinc-400 mt-0.5">
                 Frequently asked questions on 2026 banking promos, food hacks, off-campus work rules, and savings.
@@ -1335,21 +1452,42 @@ export default function PerksPage() {
             <summary className="text-sm font-bold text-white flex items-center justify-between gap-3 list-none">
               <span className="flex items-center gap-2">
                 <Gift className="w-4 h-4 text-emerald-400 flex-shrink-0" />
-                <span>What are the best student offers in Canada for 2026?</span>
+                <span>What are the best student &amp; newcomer banking offers in Canada for 2026?</span>
               </span>
               <ChevronDown className="w-4 h-4 text-zinc-400 group-open:rotate-180 transition-transform flex-shrink-0" />
             </summary>
             <div className="text-xs text-zinc-300 leading-relaxed mt-3 pt-3 border-t border-white/[0.06] space-y-2">
               <p>
-                Canadian Big 5 banks and major retailers offer high-value student incentives active for the 2026 academic year:
+                Canadian Big 5 banks offer high-value cash bonuses and welcome incentives active for 2026:
               </p>
               <ul className="list-disc pl-5 space-y-1.5 text-zinc-300 font-medium">
-                <li><strong className="text-white">RBC Royal Bank:</strong> Free pair of Apple AirPods 4 (or $100 direct cash deposit) with RBC Student Advantage Banking (valid until Nov 2, 2026).</li>
-                <li><strong className="text-white">Scotiabank:</strong> $200 Cash Welcome Bonus on the Preferred Package for Students &amp; Youth (valid until Nov 1, 2026) + Scene+ points for free movies.</li>
-                <li><strong className="text-white">CIBC:</strong> $175 Cash Reward on CIBC Smart Start / Smart for Students + Free annual SPC+ student discount membership ($250+ value at 450+ stores).</li>
-                <li><strong className="text-white">TD Canada Trust:</strong> Up to $150 Cash Offer + Guaranteed $1,000 first credit card approval with $0 Canadian credit history.</li>
-                <li><strong className="text-white">Simplii Financial:</strong> Up to $400 welcome deposit bonus with $0 monthly fees forever.</li>
-                <li><strong className="text-white">Amazon Prime &amp; Apple:</strong> 6 months 100% free Prime Student trial and up to $150 Apple Gift Card with 10% hardware discounts.</li>
+                <li><strong className="text-white">TD Canada Trust:</strong> <strong className="text-emerald-400">$500 CAD Cash Bonus</strong> with the TD New to Canada Package ($400 chequing + $100 savings) + 1 year $0 monthly fees, or $150 cash for TD Student Chequing.</li>
+                <li><strong className="text-white">CIBC:</strong> <strong className="text-emerald-400">$500 CAD Cash</strong> with CIBC Smart for Newcomers + 2 full years of $0 monthly account fees, or $175 cash + free SPC+ card for students.</li>
+                <li><strong className="text-white">BMO Bank of Montreal:</strong> <strong className="text-emerald-400">Up to $600 Value</strong> with the BMO NewStart Program + 12 months no monthly fees.</li>
+                <li><strong className="text-white">Scotiabank:</strong> <strong className="text-emerald-400">$400 Cash + Scene+ Points</strong> on StartRight Newcomer, or $200 cash on the Student Preferred Package (ends Nov 1, 2026).</li>
+                <li><strong className="text-white">RBC Royal Bank:</strong> Free pair of <strong className="text-emerald-400">Apple AirPods 4</strong> (or $100 cash) with Student Advantage Banking (valid until Nov 2, 2026), or $450 cash for newcomers.</li>
+                <li><strong className="text-white">Simplii Financial:</strong> <strong className="text-emerald-400">Up to $400 bonus</strong> with $0 monthly fees forever.</li>
+              </ul>
+            </div>
+          </details>
+
+          <details className="group border border-white/[0.08] rounded-2xl bg-white/[0.02] p-4 transition-all open:bg-white/[0.04] open:border-emerald-500/30 cursor-pointer">
+            <summary className="text-sm font-bold text-white flex items-center justify-between gap-3 list-none">
+              <span className="flex items-center gap-2">
+                <CreditCard className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+                <span>How do I qualify for the TD $500 New to Canada cash bonus?</span>
+              </span>
+              <ChevronDown className="w-4 h-4 text-zinc-400 group-open:rotate-180 transition-transform flex-shrink-0" />
+            </summary>
+            <div className="text-xs text-zinc-300 leading-relaxed mt-3 pt-3 border-t border-white/[0.06] space-y-2">
+              <p>
+                The TD New to Canada Banking Package is designed for Permanent Residents, Work Permit holders, and International Students who arrived in Canada within the last 5 years:
+              </p>
+              <ul className="list-disc pl-5 space-y-1.5 text-zinc-300 font-medium">
+                <li><strong className="text-white">$400 Chequing Bonus:</strong> Open a TD Unlimited Chequing or TD All-Inclusive Account and complete 2 of 3 steps within 60 days: (a) set up recurring direct deposit, (b) set up a recurring pre-authorized payment of $50+, or (c) make an online bill payment of $50+.</li>
+                <li><strong className="text-white">$100 Savings Bonus:</strong> Open a TD Everyday Savings or High Interest Savings Account within 30 days of opening your chequing account and deposit at least $500.</li>
+                <li><strong className="text-white">1 Year $0 Fees:</strong> The monthly account fee is automatically waived for your first 12 months (saving over $200 CAD).</li>
+                <li><strong className="text-white">No Credit History Credit Card:</strong> Get approved for an unsecured TD credit card ($1,000–$5,000 limit) without Canadian credit history to build your credit score immediately.</li>
               </ul>
             </div>
           </details>
