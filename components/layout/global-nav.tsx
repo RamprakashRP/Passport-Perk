@@ -34,7 +34,7 @@ import { TargetCity } from "@/types";
 import { supabase, getCurrentUser, signOutUser, isSupabaseConfigured } from "@/lib/supabase";
 import { openFeedbackModal } from "@/lib/feedback";
 
-function UserAvatar({
+export function UserAvatar({
   user,
   size = "sm",
 }: {

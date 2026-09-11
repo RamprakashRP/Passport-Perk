@@ -154,6 +154,26 @@ export function IntakeForm() {
   const router = useRouter();
   const [step, setStep] = useState<number>(1);
 
+  // Preload saved intake if user already configured one
+  React.useEffect(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const saved = localStorage.getItem("waterloo_newcomer_intake");
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (parsed && parsed.targetCity) {
+            setFormData((prev) => ({
+              ...prev,
+              ...parsed,
+            }));
+          }
+        }
+      } catch (e) {
+        // Fallback
+      }
+    }
+  }, []);
+
   // Form State
   const [formData, setFormData] = useState<UserIntake>({
     targetCity: "Waterloo Region, ON",

@@ -1,9 +1,9 @@
 "use client";
 
 import React from "react";
+import Link from "next/link";
 import { Gift, PlusCircle, Sparkles, Tag, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { openFeedbackModal } from "@/lib/feedback";
 
 export function SubmitPerkCard() {
   return (
@@ -35,15 +35,16 @@ export function SubmitPerkCard() {
         </div>
 
         <div className="flex items-center gap-3 flex-shrink-0">
-          <Button
-            variant="primary"
-            size="md"
-            onClick={() => openFeedbackModal("perk_suggestion")}
-            className="gap-2 shadow-[0_0_25px_rgba(16,185,129,0.3)] whitespace-nowrap cursor-pointer"
-          >
-            <PlusCircle className="w-4 h-4" />
-            <span>Submit a Perk / Deal</span>
-          </Button>
+          <Link href="/contribute?type=perk">
+            <Button
+              variant="primary"
+              size="md"
+              className="gap-2 shadow-[0_0_25px_rgba(16,185,129,0.3)] whitespace-nowrap cursor-pointer"
+            >
+              <PlusCircle className="w-4 h-4" />
+              <span>Submit a Perk / Deal</span>
+            </Button>
+          </Link>
         </div>
       </div>
     </div>
